@@ -146,7 +146,7 @@ const DM_MESSAGES = {
 
   VIP_CREATOR: {
     color: 0xF0B232,
-    title: 'You're a VIP Creator Now! ⭐🏆',
+    title: "You're a VIP Creator Now! ⭐🏆",
     getDescription: (member) =>
       `Hi ${member}! 🌟\n\n` +
       `$500+ GMV — you've officially reached **VIP status**! Incredible! 🔥\n\n` +
