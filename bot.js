@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, EmbedBuilder, Partials } = require("discord.js");
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
 const http = require("http");
 
 // Render 무료 플랜용 웹서버
@@ -10,7 +10,9 @@ http.createServer((req, res) => {
   console.log("웹서버가 포트 " + PORT + "에서 실행 중");
 });
 
+// ─────────────────────────────────────────
 // 설정
+// ─────────────────────────────────────────
 const CONFIG = {
   TOKEN: process.env.DISCORD_TOKEN,
   ROLES: {
@@ -24,142 +26,81 @@ const CONFIG = {
     ACTIVE_CREATOR: "1525809411841589348",
     VIP_CREATOR:    "1525809262117257376",
     VVIP_CREATOR:   "",
+    NEW_PRODUCTS:   "1463777483664134226",
+    GUIDELINES:     "1463776258365198564",
   },
 };
 
-// 서버 첫 입장 DM
-const DM_WELCOME = {
-  color: 0x5865F2,
-  title: "Welcome to Biodance Global! 💙",
-  description:
-    "Hi there! 👋\n\n" +
-    "Thank you for joining the **Biodance Creator Community**!\n\n" +
-    "We are so excited to have you here. This is your space to connect with the Biodance team, " +
-    "get the latest updates, and grow as a creator! 🚀\n\n" +
-    "**Here is how to get started:**\n" +
-    "📌 Check out the guidelines\n" +
-    "🎬 Join the Euka Contest — upload videos & earn rewards!\n" +
-    "💬 Ask us anything — we are here to help\n\n" +
-    "Let us create something amazing together! ✨",
-  footer: "Biodance Creator Community",
-};
+// ─────────────────────────────────────────
+// 기능 2: 승인(서버 입장) 시 → 개인 DM
+// ─────────────────────────────────────────
+const WELCOME_DM =
+  "Hi! So glad you made it over from TikTok! 🎉\n\n" +
+  "It's so great to see you here. We are so excited to have you in our official Biodance community! 💙\n\n" +
+  "Also, feel free to spread the word to your creator besties — the more, the merrier! 🙌\n\n" +
+  "Thank you so much for joining us. Let's grow together! 🚀";
 
-// 채널 공개 메시지
-const PUBLIC_MESSAGES = {
-  NEW_CREATOR: {
-    color: 0x3BA55D,
-    emoji: "🌱",
-    title: "New Creator Alert! 🎉",
-    getDescription: function(member) {
-      return "Everyone welcome " + member + "! 👏\n\n" +
-        "They just uploaded their first video — the journey begins! 🎬\n\n" +
-        "Let us cheer them on! 💚";
-    },
-    footer: "🌱 new-creator",
-  },
-  ACTIVE_CREATOR: {
-    color: 0x5865F2,
-    emoji: "👟",
-    title: "First Sale Unlocked! 💰",
-    getDescription: function(member) {
-      return "Give it up for " + member + "! 🙌\n\n" +
-        "They just made their first sale on Biodance — officially an Active Creator now! 🚀\n\n" +
-        "This is where the real journey begins. Keep pushing! 💪";
-    },
-    footer: "👟 active-creator",
-  },
-  VIP_CREATOR: {
-    color: 0xF0B232,
-    emoji: "⭐",
-    title: "VIP Status Achieved! 🏆",
-    getDescription: function(member) {
-      return "🔥 " + member + " just hit VIP status!\n\n" +
-        "$500+ GMV — one of our top-performing creators!\n\n" +
-        "⭐ Early access to new products & insider trends unlocked\n" +
-        "🎯 Reward incoming!\n\n" +
-        "Incredible work — VVIP is next! 👑";
-    },
-    footer: "⭐ vip-creator",
-  },
-  VVIP_CREATOR: {
-    color: 0xE91E63,
-    emoji: "👑",
-    title: "VVIP Creator! Legend Status! 👑",
-    getDescription: function(member) {
-      return "👑 " + member + " just reached VVIP! $1,000+ GMV!\n\n" +
-        "You are officially one of Biodance elite creators.\n\n" +
-        "🏆 First access to everything — launches, campaigns, insider info\n" +
-        "🎁 Reward on the way!\n\n" +
-        "Thank you for being an incredible part of the Biodance family! 💙";
-    },
-    footer: "👑 vvip-creator",
-  },
-};
+// ─────────────────────────────────────────
+// 기능 3: 🌱 new-creator 역할 부여 시 → 채널 공개 메시지
+// ─────────────────────────────────────────
+function newCreatorMsg(mention, video_ch, guide_ch) {
+  return "Welcome " + mention + "! 🌱\n\n" +
+    "Thank you for posting your video(s) for Biodance! " +
+    "We are super excited to have you here in our space. 🎬💙\n\n" +
+    "This channel is your go-to place for:\n" +
+    "⚡ Exclusive Content Tips & Strategies to make your next video blow up\n" +
+    "🤝 Direct Support from the Biodance team whenever you need help\n\n" +
+    "We will help you drive those sales! 💪\n\n" +
+    "If you ever have questions or need support with your content, " +
+    "feel free to drop a message in this chat or DM us anytime. " +
+    "We are here to help you succeed!\n\n" +
+    "🧴 New products → <#" + video_ch + ">\n" +
+    "📍 Content guidelines → <#" + guide_ch + ">\n\n" +
+    "Stay in touch with us here — let's keep growing together! 🌱";
+}
 
-// 개인 DM 메시지
-const DM_MESSAGES = {
-  NEW_CREATOR: {
-    color: 0x3BA55D,
-    title: "Welcome to the Biodance Family! 🌱💙",
-    getDescription: function(member) {
-      return "Hi " + member + "! 👋\n\n" +
-        "We saw your first video — amazing work taking that first step! 🎬\n\n" +
-        "You are now part of the **Biodance Creator Community**.\n\n" +
-        "📌 Check the pinned messages in **#new-creator** for guidelines\n" +
-        "💬 Feel free to ask us anything — we are always here!\n\n" +
-        "Can not wait to see you grow! 💚";
-    },
-    footer: "🌱 Biodance Creator Community",
-  },
-  ACTIVE_CREATOR: {
-    color: 0x5865F2,
-    title: "You Made Your First Sale! 💰🎉",
-    getDescription: function(member) {
-      return "Hi " + member + "! 🎉\n\n" +
-        "You just made your first sale — that is HUGE! 🚀\n\n" +
-        "You have been moved to the **#active-creator** channel where we share:\n" +
-        "📈 Content tips & trending hooks\n" +
-        "💡 Strategies to grow your GMV\n\n" +
-        "**Next goal:** Hit $500 GMV to unlock ⭐ VIP status!\n\n" +
-        "You have got this — we are rooting for you! 💙";
-    },
-    footer: "👟 Biodance Creator Community",
-  },
-  VIP_CREATOR: {
-    color: 0xF0B232,
-    title: "You are a VIP Creator Now! ⭐🏆",
-    getDescription: function(member) {
-      return "Hi " + member + "! 🌟\n\n" +
-        "$500+ GMV — you have officially reached **VIP status**! Incredible! 🔥\n\n" +
-        "You now have access to the **#vip-creator** channel with:\n" +
-        "✨ Early access to new product launches\n" +
-        "📊 Insider content trends & tips\n" +
-        "🎯 Exclusive campaign opportunities\n\n" +
-        "🎁 Your contest reward is on the way!\n\n" +
-        "**Next goal:** Hit $1,000 GMV to unlock 👑 VVIP status!\n\n" +
-        "Thank you for being an amazing part of Biodance! 💙";
-    },
-    footer: "⭐ Biodance Creator Community",
-  },
-  VVIP_CREATOR: {
-    color: 0xE91E63,
-    title: "VVIP Status — You are a Legend! 👑✨",
-    getDescription: function(member) {
-      return "Hi " + member + "! 👑\n\n" +
-        "$1,000+ GMV — you have reached the highest tier: **VVIP Creator**! 🎊\n\n" +
-        "You now have access to the **#vvip-creator** channel with:\n" +
-        "👑 First access to everything — new launches, campaigns, insider info\n" +
-        "🎯 Priority for brand collaborations\n" +
-        "💎 Exclusive Biodance perks\n\n" +
-        "🏆 Your contest reward is on the way!\n\n" +
-        "You are truly one of our most valued creators.\n" +
-        "Thank you for everything you do for Biodance! 💙";
-    },
-    footer: "👑 Biodance Creator Community",
-  },
-};
+// ─────────────────────────────────────────
+// 기능 4: 👟 active-creator 역할 부여 시 → 채널 공개 메시지
+// ─────────────────────────────────────────
+function activeCreatorMsg(mention) {
+  return "Welcome " + mention + "! 👟🎉\n\n" +
+    "YOU MADE YOUR FIRST SALE!! We are SO proud of you — " +
+    "let's ride this all the way to your reward! 💰🏆\n\n" +
+    "We are going to be boosting and supporting you every step of the way. " +
+    "Keep posting and let's keep the momentum going! 🚀\n\n" +
+    "This channel is your go-to place for:\n" +
+    "⚡ Exclusive Content Tips & Strategies to drive major sales\n" +
+    "🤝 Direct Support from the Biodance team whenever you need help\n\n" +
+    "If you ever have questions or need support with your content, " +
+    "feel free to drop a message in this chat or DM us anytime. " +
+    "We are here to help you succeed! 💙";
+}
 
+// ─────────────────────────────────────────
+// VIP 메시지 (기존 유지)
+// ─────────────────────────────────────────
+function vipCreatorMsg(mention) {
+  return "🔥 Everyone give it up for " + mention + " — just hit **⭐ VIP status**! ($500+ GMV) 👏\n\n" +
+    "One of our top-performing creators — incredible work! 🏆\n\n" +
+    "⭐ VIP perks unlocked:\n" +
+    "✨ Early access to new product info\n" +
+    "📊 Insider content trends shared here first\n" +
+    "🎁 Your contest reward is on the way!\n\n" +
+    "Next stop — VVIP! Keep going! 👑";
+}
+
+function vvipCreatorMsg(mention) {
+  return "👑 " + mention + " just reached **VVIP status**! ($1,000+ GMV) 🎊\n\n" +
+    "Officially one of Biodance elite creators — you are a legend!\n\n" +
+    "👑 VVIP perks:\n" +
+    "🥇 First access to everything — launches, campaigns, insider info\n" +
+    "🎁 Your contest reward is on the way!\n\n" +
+    "Thank you for being such an incredible part of the Biodance family! 💙";
+}
+
+// ─────────────────────────────────────────
 // 봇 실행
+// ─────────────────────────────────────────
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -171,8 +112,6 @@ const client = new Client({
 client.once("clientReady", async function() {
   console.log("✅ " + client.user.tag + " 봇이 온라인입니다!");
   console.log("📊 서버 " + client.guilds.cache.size + "개에 연결됨");
-
-  // 모든 서버 멤버를 미리 캐싱 (역할 변경 감지에 필수!)
   for (const guild of client.guilds.cache.values()) {
     try {
       await guild.members.fetch();
@@ -183,23 +122,17 @@ client.once("clientReady", async function() {
   }
 });
 
-// 기능 1: 서버 입장 시 DM
+// 기능 2: 서버 승인(입장) 시 개인 DM
 client.on("guildMemberAdd", async function(member) {
   try {
-    const embed = new EmbedBuilder()
-      .setColor(DM_WELCOME.color)
-      .setTitle(DM_WELCOME.title)
-      .setDescription(DM_WELCOME.description)
-      .setFooter({ text: DM_WELCOME.footer })
-      .setTimestamp();
-    await member.send({ embeds: [embed] });
+    await member.send(WELCOME_DM);
     console.log("✅ " + member.user.tag + " 입장 DM 전송 완료");
   } catch (error) {
-    console.log("⚠️ " + member.user.tag + " DM 전송 실패");
+    console.log("⚠️ " + member.user.tag + " DM 전송 실패 (DM 꺼져있음)");
   }
 });
 
-// 기능 2: 역할 부여 시 공개 메시지 + 개인 DM
+// 기능 3, 4: 역할 부여 시 채널 공개 메시지
 client.on("guildMemberUpdate", async function(oldMember, newMember) {
   try {
     const addedRoles = newMember.roles.cache.filter(
@@ -208,44 +141,37 @@ client.on("guildMemberUpdate", async function(oldMember, newMember) {
     if (addedRoles.size === 0) return;
 
     const tierChecks = [
-      { roleId: CONFIG.ROLES.VVIP_CREATOR,   channelId: CONFIG.CHANNELS.VVIP_CREATOR,   msgKey: "VVIP_CREATOR" },
-      { roleId: CONFIG.ROLES.VIP_CREATOR,    channelId: CONFIG.CHANNELS.VIP_CREATOR,    msgKey: "VIP_CREATOR" },
-      { roleId: CONFIG.ROLES.ACTIVE_CREATOR, channelId: CONFIG.CHANNELS.ACTIVE_CREATOR, msgKey: "ACTIVE_CREATOR" },
-      { roleId: CONFIG.ROLES.NEW_CREATOR,    channelId: CONFIG.CHANNELS.NEW_CREATOR,    msgKey: "NEW_CREATOR" },
+      { roleId: CONFIG.ROLES.VVIP_CREATOR,   channelId: CONFIG.CHANNELS.VVIP_CREATOR,   msgKey: "VVIP" },
+      { roleId: CONFIG.ROLES.VIP_CREATOR,    channelId: CONFIG.CHANNELS.VIP_CREATOR,    msgKey: "VIP" },
+      { roleId: CONFIG.ROLES.ACTIVE_CREATOR, channelId: CONFIG.CHANNELS.ACTIVE_CREATOR, msgKey: "ACTIVE" },
+      { roleId: CONFIG.ROLES.NEW_CREATOR,    channelId: CONFIG.CHANNELS.NEW_CREATOR,    msgKey: "NEW" },
     ];
 
     for (const tier of tierChecks) {
       if (!tier.roleId) continue;
       if (!addedRoles.has(tier.roleId)) continue;
 
-      // 채널 공개 메시지
       const channel = newMember.guild.channels.cache.get(tier.channelId);
-      if (channel) {
-        const pubMsg = PUBLIC_MESSAGES[tier.msgKey];
-        const pubEmbed = new EmbedBuilder()
-          .setColor(pubMsg.color)
-          .setTitle(pubMsg.emoji + " " + pubMsg.title)
-          .setDescription(pubMsg.getDescription(newMember))
-          .setFooter({ text: pubMsg.footer })
-          .setTimestamp();
-        await channel.send({ embeds: [pubEmbed] });
-        console.log("✅ " + newMember.user.tag + " 채널 공개 메시지 전송");
+      if (!channel) {
+        console.error("❌ 채널 없음: " + tier.channelId);
+        continue;
       }
 
-      // 개인 DM
-      try {
-        const dmMsg = DM_MESSAGES[tier.msgKey];
-        const dmEmbed = new EmbedBuilder()
-          .setColor(dmMsg.color)
-          .setTitle(dmMsg.title)
-          .setDescription(dmMsg.getDescription(newMember))
-          .setFooter({ text: dmMsg.footer })
-          .setTimestamp();
-        await newMember.send({ embeds: [dmEmbed] });
-        console.log("✅ " + newMember.user.tag + " 개인 DM 전송");
-      } catch (dmError) {
-        console.log("⚠️ " + newMember.user.tag + " DM 전송 실패");
+      const mention = "<@" + newMember.id + ">";
+      let msg = "";
+
+      if (tier.msgKey === "NEW") {
+        msg = newCreatorMsg(mention, CONFIG.CHANNELS.NEW_PRODUCTS, CONFIG.CHANNELS.GUIDELINES);
+      } else if (tier.msgKey === "ACTIVE") {
+        msg = activeCreatorMsg(mention);
+      } else if (tier.msgKey === "VIP") {
+        msg = vipCreatorMsg(mention);
+      } else if (tier.msgKey === "VVIP") {
+        msg = vvipCreatorMsg(mention);
       }
+
+      await channel.send({ content: msg });
+      console.log("✅ " + newMember.user.tag + " → " + tier.msgKey + " 메시지 전송");
     }
   } catch (error) {
     console.error("❌ 에러:", error);
