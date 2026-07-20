@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
+const { Client, GatewayIntentBits, EmbedBuilder, Partials } = require("discord.js");
 const http = require("http");
 
 // Render 무료 플랜용 웹서버
@@ -165,11 +165,22 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
   ],
+  partials: [Partials.GuildMember],
 });
 
-client.once("clientReady", function() {
+client.once("clientReady", async function() {
   console.log("✅ " + client.user.tag + " 봇이 온라인입니다!");
   console.log("📊 서버 " + client.guilds.cache.size + "개에 연결됨");
+
+  // 모든 서버 멤버를 미리 캐싱 (역할 변경 감지에 필수!)
+  for (const guild of client.guilds.cache.values()) {
+    try {
+      await guild.members.fetch();
+      console.log("👥 " + guild.name + " 멤버 " + guild.memberCount + "명 캐싱 완료");
+    } catch (e) {
+      console.log("⚠️ 멤버 캐싱 실패: " + e.message);
+    }
+  }
 });
 
 // 기능 1: 서버 입장 시 DM
