@@ -40,15 +40,12 @@ const FAQ = {
   guideline:
     "📍 **Biodance Content Guidelines**\n\n" +
     "Hello! Before you start creating, here is everything you need to know 💙\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**Full guidelines → ** <#1463776258365198564>\n" +
     "*(We update this regularly, so bookmark it!)*\n\n" +
     "Take a look at the keywords and content direction in the guideline channel — " +
     "use them as inspiration to create content that feels natural to you while hitting the right notes for the algorithm! ✨\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**Required Hashtags — include ALL of these in every video:**\n" +
     "`#biodance` `#skinbooster` `#pdrn` `#antiaging` `#tiktokshopcreatorpicks`\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**Quick Content Tips:**\n" +
     "✅ Hook within the first 2-3 seconds — make them stop scrolling\n" +
     "✅ Show the texture, the before/after, the real skin results\n" +
@@ -59,15 +56,12 @@ const FAQ = {
   campaign:
     "🎯 **Caviar PDRN Serum — Euka GMV Contest**\n\n" +
     "This is THE moment. Here is everything you need to know to make the most of it 👇\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "📅 **Contest Period:** July 6 – August 28 (PT)\n" +
     "🎬 **GMV Tracking Starts:** July 22\n" +
     "*(Videos uploaded before July 22 count, but GMV only tracks from July 22!)*\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "🧴 **Hero Product:** Caviar PDRN Serum — **this product ONLY**\n\n" +
     "⚠️ Important: Other Biodance products will NOT count toward your contest GMV. " +
     "Make sure every video is linked to the Caviar PDRN Serum specifically!\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**The earlier you start, the more time you have to build GMV.** " +
     "Consistency is everything — even 1-2 videos a day adds up fast! 🚀\n\n" +
     "Questions about the contest? Drop them here and we will answer ASAP 💙",
@@ -75,13 +69,11 @@ const FAQ = {
   reward:
     "🏆 **Contest Rewards — 10 Winners, Huge Prizes!**\n\n" +
     "We are not playing around with this one 👀 Here is what is up for grabs:\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "🥇 **1st Place** — **$9,000** Cash + Exclusive PR Box\n" +
     "🥈 **2nd Place** — **$5,000** Cash + Exclusive PR Box\n" +
     "🥉 **3rd Place** — **$4,000** Cash + Exclusive PR Box\n" +
     "4️⃣ **4th & 5th Place** — **$2,000 each** + Exclusive PR Box\n" +
     "5️⃣ **6th-10th Place** — **$600 each** + Exclusive PR Box\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**Total Prize Pool: $25,000+** 💸\n\n" +
     "Every single video you post is a chance to climb the leaderboard. " +
     "Do not wait — start posting NOW and let us help you get there! 🔥\n\n" +
@@ -90,24 +82,16 @@ const FAQ = {
   sparkcode:
     "⚡ **How to Submit Your Spark Ad Code**\n\n" +
     "Great news — it is super simple! Here is how:\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "1️⃣ Go to your **Euka Contest dashboard**\n" +
     "2️⃣ Find the video you want to boost\n" +
     "3️⃣ Submit your **Spark Ad Code** directly there\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
-    "**Why does this matter?**\n" +
-    "When we boost your video with Spark Ads, it reaches WAY more people — " +
-    "which means more views, more conversions, and more GMV for YOU! " +
-    "So please submit your code as soon as your video is live 🙏\n\n" +
     "Having trouble finding your Spark Ad Code? Drop your TikTok handle here and we will walk you through it step by step! 💙",
 
   newproduct:
     "✨ **New Products & Product Info**\n\n" +
     "Hello! Curious about our latest products and what makes them special? 💙\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**Check out our new products here → ** <#1463777483664134226>\n" +
-    "You will find all the product details, key ingredients, and what makes each one stand out!\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
+    "You will find all the product details, key ingredients, and what makes each one stand out!\n\n" 
     "**Before you start creating content:**\n" +
     "📍 Head over to <#1463776258365198564> for the content guidelines\n" +
     "Follow the direction there so your videos hit all the right points! ✨\n\n" +
@@ -117,18 +101,15 @@ const FAQ = {
     "🎁 **How to Request a Biodance Sample**\n\n" +
     "We love getting our products into your hands so you can create the most authentic content possible! " +
     "Here is how to request a sample 👇\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**Step 1 — Check your TikTok Shop Inbox first! 📬**\n" +
     "We send collab invitations directly through TikTok Shop. " +
     "You might already have one waiting! Open TikTok → Inbox → TikTok Shop notifications\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "**Step 2 — Request via Creator Center (if no invite yet)**\n" +
     "1️⃣ Open TikTok → **TikTok Studio**\n" +
     "2️⃣ Tap **Showcase → TikTok Shop**\n" +
     "3️⃣ Scroll to **TikTok Shop Toolkit → Manage Samples**\n" +
     "4️⃣ Search for **Biodance** → tap **Get Sample**\n" +
     "5️⃣ Submit your request!\n\n" +
-    "━━━━━━━━━━━━━━━━━━━━\n" +
     "⚠️ **Heads up:** The free sample option requires at least 1 sale in the last 120 days. " +
     "If you do not see it yet, keep posting — once you make your first sale, it unlocks!\n\n" +
     "Do not see an invite or having trouble? Drop your **TikTok handle** right here and we will personally check and send one over for you! 💙",
