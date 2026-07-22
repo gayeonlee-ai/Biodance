@@ -1,7 +1,6 @@
 const { Client, GatewayIntentBits, Partials, REST, Routes, SlashCommandBuilder } = require("discord.js");
 const http = require("http");
 
-// Render 무료 플랜용 웹서버
 const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain" });
@@ -10,12 +9,8 @@ http.createServer((req, res) => {
   console.log("웹서버가 포트 " + PORT + "에서 실행 중");
 });
 
-// ─────────────────────────────────────────
-// 설정
-// ─────────────────────────────────────────
 const CONFIG = {
   TOKEN: process.env.DISCORD_TOKEN,
-  CLIENT_ID: process.env.CLIENT_ID,
   ROLES: {
     NEW_CREATOR:    "1528676082868555857",
     ACTIVE_CREATOR: "1528676173914046525",
@@ -32,16 +27,12 @@ const CONFIG = {
   },
 };
 
-// ─────────────────────────────────────────
-// FAQ 슬래시 커맨드 답변 내용
-// 내용 바꾸고 싶으면 여기만 수정!
-// ─────────────────────────────────────────
 const FAQ = {
   guideline:
     "📍 **Biodance Content Guidelines**\n\n" +
     "Hello! Before you start creating, here is everything you need to know 💙\n\n" +
-    "**Full guidelines → ** <#1463776258365198564>\n" +
-    "*(We update this regularly, so bookmark it!)*\n\n" +
+    "Full guidelines → <#1463776258365198564>\n" +
+    "We update this regularly, so bookmark it!\n\n" +
     "Take a look at the keywords and content direction in the guideline channel — " +
     "use them as inspiration to create content that feels natural to you while hitting the right notes for the algorithm! ✨\n\n" +
     "**Required Hashtags — include ALL of these in every video:**\n" +
@@ -55,20 +46,20 @@ const FAQ = {
 
   campaign:
     "🎯 **Caviar PDRN Serum — Euka GMV Contest**\n\n" +
-    "This is THE moment. Here is everything you need to know to make the most of it 👇\n\n" +
+    "Hello! This is THE moment. Here is everything you need to know 👇\n\n" +
     "📅 **Contest Period:** July 6 – August 28 (PT)\n" +
     "🎬 **GMV Tracking Starts:** July 22\n" +
-    "*(Videos uploaded before July 22 count, but GMV only tracks from July 22!)*\n\n" +
-    "🧴 **Hero Product:** Caviar PDRN Serum — **this product ONLY**\n\n" +
-    "⚠️ Important: Other Biodance products will NOT count toward your contest GMV. " +
+    "Videos uploaded before July 22 count, but GMV only tracks from July 22!\n\n" +
+    "🧴 **Hero Product:** Caviar PDRN Serum — this product ONLY\n\n" +
+    "⚠️ Other Biodance products will NOT count toward your contest GMV. " +
     "Make sure every video is linked to the Caviar PDRN Serum specifically!\n\n" +
-    "**The earlier you start, the more time you have to build GMV.** " +
+    "The earlier you start, the more time you have to build GMV. " +
     "Consistency is everything — even 1-2 videos a day adds up fast! 🚀\n\n" +
     "Questions about the contest? Drop them here and we will answer ASAP 💙",
 
   reward:
     "🏆 **Contest Rewards — 10 Winners, Huge Prizes!**\n\n" +
-    "We are not playing around with this one 👀 Here is what is up for grabs:\n\n" +
+    "Hello! We are not playing around with this one 👀 Here is what is up for grabs:\n\n" +
     "🥇 **1st Place** — **$9,000** Cash + Exclusive PR Box\n" +
     "🥈 **2nd Place** — **$5,000** Cash + Exclusive PR Box\n" +
     "🥉 **3rd Place** — **$4,000** Cash + Exclusive PR Box\n" +
@@ -77,30 +68,23 @@ const FAQ = {
     "**Total Prize Pool: $25,000+** 💸\n\n" +
     "Every single video you post is a chance to climb the leaderboard. " +
     "Do not wait — start posting NOW and let us help you get there! 🔥\n\n" +
-    "*(Rewards are based on GMV generated from the Caviar PDRN Serum only, tracked July 22 – August 28)*",
+    "Rewards are based on GMV generated from the Caviar PDRN Serum only, tracked July 22 – August 28.",
 
   sparkcode:
     "⚡ **How to Submit Your Spark Ad Code**\n\n" +
-    "Great news — it is super simple! Here is how:\n\n" +
+    "Hello! Great news — it is super simple! Here is how:\n\n" +
     "1️⃣ Go to your **Euka Contest dashboard**\n" +
     "2️⃣ Find the video you want to boost\n" +
     "3️⃣ Submit your **Spark Ad Code** directly there\n\n" +
-    "Having trouble finding your Spark Ad Code? Drop your TikTok handle here and we will walk you through it step by step! 💙",
-
-  newproduct:
-    "✨ **New Products & Product Info**\n\n" +
-    "Hello! Curious about our latest products and what makes them special? 💙\n\n" +
-    "**Check out our new products here → ** <#1463777483664134226>\n" +
-    "You will find all the product details, key ingredients, and what makes each one stand out!\n\n" 
-    "**Before you start creating content:**\n" +
-    "📍 Head over to <#1463776258365198564> for the content guidelines\n" +
-    "Follow the direction there so your videos hit all the right points! ✨\n\n" +
-    "If you have any specific questions about the products, feel free to ask us here — we are always here to help! 💬",
+    "**Why does this matter?**\n" +
+    "When we boost your video with Spark Ads, it reaches WAY more people — " +
+    "which means more views, more conversions, and more GMV for YOU! " +
+    "So please submit your code as soon as your video is live 🙏\n\n" +
+    "Having trouble finding your Spark Ad Code? Drop your TikTok handle here and we will walk you through it! 💙",
 
   samplerequest:
     "🎁 **How to Request a Biodance Sample**\n\n" +
-    "We love getting our products into your hands so you can create the most authentic content possible! " +
-    "Here is how to request a sample 👇\n\n" +
+    "Hello! We love getting our products into your hands so you can create the most authentic content possible! 💙\n\n" +
     "**Step 1 — Check your TikTok Shop Inbox first! 📬**\n" +
     "We send collab invitations directly through TikTok Shop. " +
     "You might already have one waiting! Open TikTok → Inbox → TikTok Shop notifications\n\n" +
@@ -110,25 +94,28 @@ const FAQ = {
     "3️⃣ Scroll to **TikTok Shop Toolkit → Manage Samples**\n" +
     "4️⃣ Search for **Biodance** → tap **Get Sample**\n" +
     "5️⃣ Submit your request!\n\n" +
-    "⚠️ **Heads up:** The free sample option requires at least 1 sale in the last 120 days. " +
+    "⚠️ The free sample option requires at least 1 sale in the last 120 days. " +
     "If you do not see it yet, keep posting — once you make your first sale, it unlocks!\n\n" +
-    "Do not see an invite or having trouble? Drop your **TikTok handle** right here and we will personally check and send one over for you! 💙",
+    "Do not see an invite or having trouble? Drop your **TikTok handle** right here and we will personally send one over! 💙",
+
+  newproduct:
+    "✨ **New Products & Product Info**\n\n" +
+    "Hello! Curious about our latest products and what makes them special? 💙\n\n" +
+    "Check out all the product details here → <#1463777483664134226>\n" +
+    "You will find key ingredients, product highlights, and everything you need to know!\n\n" +
+    "Before you start creating content, head over to <#1463776258365198564> for the content guidelines — " +
+    "follow the direction there so your videos hit all the right points! ✨\n\n" +
+    "If you have any specific questions about the products, feel free to ask us here — we are always here to help! 💬",
 };
 
-// ─────────────────────────────────────────
-// 서버 입장 DM
-// ─────────────────────────────────────────
 const WELCOME_DM =
   "Hi! So glad you made it over from TikTok! 🎉\n\n" +
   "It's so great to see you here. We are so excited to have you in our official Biodance community! 💙\n\n" +
   "Feel free to spread the word to your creator besties — the more, the merrier! 🙌\n\n" +
-  "**One quick thing:** Please set your server nickname to your **TikTok handle** so we can easily find and support you!\n" +
-  "*(Right-click your name → Edit Server Profile → Nickname)*\n\n" +
+  "One quick thing: Please set your server nickname to your **TikTok handle** so we can easily find and support you!\n" +
+  "Right-click your name → Edit Server Profile → Nickname\n\n" +
   "Thank you so much for joining us. Let's grow together! 🚀";
 
-// ─────────────────────────────────────────
-// 티어별 채널 공개 메시지
-// ─────────────────────────────────────────
 function newCreatorMsg(mention) {
   return "Welcome " + mention + "! 🌱\n\n" +
     "Thank you for posting your video(s) for Biodance! " +
@@ -140,7 +127,7 @@ function newCreatorMsg(mention) {
     "🧴 New products → <#1463777483664134226>\n" +
     "📍 Content guidelines → <#1463776258365198564>\n\n" +
     "Stay in touch with us here — let's keep growing together! 🌱\n\n" +
-    "💡 **Quick tip:** Type `/samplerequest` `/reward` `/campaign` anytime for instant answers!";
+    "💡 Tip: Type /samplerequest /reward /campaign anytime for instant answers!";
 }
 
 function activeCreatorMsg(mention) {
@@ -175,21 +162,15 @@ function vvipCreatorMsg(mention) {
     "Thank you for being such an incredible part of the Biodance family! 💙";
 }
 
-// ─────────────────────────────────────────
-// 슬래시 커맨드 등록
-// ─────────────────────────────────────────
 const commands = [
   new SlashCommandBuilder().setName("guideline").setDescription("View Biodance content guidelines & required hashtags"),
   new SlashCommandBuilder().setName("campaign").setDescription("View current contest period and product info"),
   new SlashCommandBuilder().setName("reward").setDescription("View contest reward structure"),
   new SlashCommandBuilder().setName("sparkcode").setDescription("Learn how to submit your Spark Ad Code"),
   new SlashCommandBuilder().setName("samplerequest").setDescription("Learn how to request a free sample from Biodance"),
-  new SlashCommandBuilder().setName("newproduct").setDescription("Check out Biodance new products and what makes them special"),
+  new SlashCommandBuilder().setName("newproduct").setDescription("Check out Biodance new products and product info"),
 ].map(function(cmd) { return cmd.toJSON(); });
 
-// ─────────────────────────────────────────
-// 봇 실행
-// ─────────────────────────────────────────
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -202,7 +183,6 @@ client.once("clientReady", async function() {
   console.log("✅ " + client.user.tag + " 봇이 온라인입니다!");
   console.log("📊 서버 " + client.guilds.cache.size + "개에 연결됨");
 
-  // 슬래시 커맨드 등록
   try {
     const rest = new REST({ version: "10" }).setToken(CONFIG.TOKEN);
     await rest.put(
@@ -214,7 +194,6 @@ client.once("clientReady", async function() {
     console.error("❌ 슬래시 커맨드 등록 실패:", e);
   }
 
-  // 멤버 캐싱
   for (const guild of client.guilds.cache.values()) {
     try {
       await guild.members.fetch();
@@ -225,7 +204,6 @@ client.once("clientReady", async function() {
   }
 });
 
-// 기능 1: 서버 입장 시 개인 DM
 client.on("guildMemberAdd", async function(member) {
   try {
     await member.send(WELCOME_DM);
@@ -235,7 +213,6 @@ client.on("guildMemberAdd", async function(member) {
   }
 });
 
-// 기능 2: 역할 부여 시 채널 공개 메시지
 client.on("guildMemberUpdate", async function(oldMember, newMember) {
   try {
     const addedRoles = newMember.roles.cache.filter(
@@ -266,17 +243,16 @@ client.on("guildMemberUpdate", async function(oldMember, newMember) {
   }
 });
 
-// 기능 3: FAQ 슬래시 커맨드 응답
 client.on("interactionCreate", async function(interaction) {
   if (!interaction.isChatInputCommand()) return;
 
   const responses = {
-    "guideline":      FAQ.guideline,
-    "campaign":       FAQ.campaign,
-    "reward":         FAQ.reward,
-    "sparkcode":      FAQ.sparkcode,
-    "samplerequest":  FAQ.samplerequest,
-    "newproduct":     FAQ.newproduct,
+    "guideline":     FAQ.guideline,
+    "campaign":      FAQ.campaign,
+    "reward":        FAQ.reward,
+    "sparkcode":     FAQ.sparkcode,
+    "samplerequest": FAQ.samplerequest,
+    "newproduct":    FAQ.newproduct,
   };
 
   const response = responses[interaction.commandName];
