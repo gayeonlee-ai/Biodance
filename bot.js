@@ -188,7 +188,7 @@ function newCreatorEmbed(mention) {
         "📍 Content guidelines → <#1463776258365198564>"
       }
     )
-    .setFooter({ text: "💡 Type /samplerequest /reward /campaign anytime for instant answers!" });
+    .setFooter({ text: "💡 Use our slash commands for instant info! /newproduct /guideline /sparkcode /samplerequest /reward /campaign" });
 }
 
 function activeCreatorEmbed(mention) {
