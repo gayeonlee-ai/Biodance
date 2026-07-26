@@ -1,12 +1,13 @@
 {
-  "name": "biodance-discord-bot",
+  "name": "biodance-tracker",
   "version": "1.0.0",
-  "description": "Biodance Creator Community Discord Bot",
-  "main": "bot.js",
+  "description": "Biodance Creator Tracker + Discord Bot",
+  "main": "server.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "discord.js": "^14.16.3"
+    "discord.js": "^14.14.1",
+    "express": "^4.18.2"
   }
 }
