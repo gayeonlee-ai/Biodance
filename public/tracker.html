@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodance Creator Tracker v5</title>
+<style>
+:root{--bg:#1a1b1e;--s1:#222428;--s2:#2b2d31;--s3:#35373c;--bd:#3f4147;--tx:#e0e0e6;--dim:#8b8d94;--ac:#5865f2;--ach:#4752c4;--gn:#23a559;--gnb:rgba(35,165,89,.12);--yw:#f0b232;--ywb:rgba(240,178,50,.12);--rd:#da373c;--rdb:rgba(218,55,60,.12);--or:#e67e22;--orb:rgba(230,126,34,.12);--pk:#eb459e;--pkb:rgba(235,69,158,.12);--cy:#00b4d8;--cyb:rgba(0,180,216,.12);--pp:#9b59b6;--ppb:rgba(155,89,182,.12)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.hdr h1{font-size:17px;font-weight:700}.hdr h1 span{color:var(--ac)}
+.hdr-acts{display:flex;gap:6px;flex-wrap:wrap}
+.tabs{display:flex;background:var(--s1);border-bottom:2px solid var(--bd);padding:0 20px;overflow-x:auto}
+.tab{padding:10px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;user-select:none;white-space:nowrap}
+.tab:hover{color:var(--tx);background:var(--s2)}.tab.on{color:var(--ac);border-bottom-color:var(--ac)}
+.tab .bdg{background:var(--rd);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:3px;font-weight:700}
+.cnt{padding:16px;max-width:1440px;margin:0 auto}.pnl{display:none}.pnl.on{display:block}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:14px}
+.kpi{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:10px;text-align:center}
+.kpi .val{font-size:18px;font-weight:700}.kpi .lbl{font-size:8px;color:var(--dim);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.tc{display:flex;gap:5px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+.si{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:6px 8px;color:var(--tx);font-size:12px;width:180px}
+.si:focus{outline:none;border-color:var(--ac)}
+.fb{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:5px 8px;color:var(--dim);font-size:10px;cursor:pointer;font-weight:600;transition:.15s;white-space:nowrap}
+.fb:hover{background:var(--s3);color:var(--tx)}.fb.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--bd);max-height:60vh;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:var(--s2);padding:6px 7px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.3px;color:var(--dim);font-weight:700;border-bottom:1px solid var(--bd);position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none;z-index:2}
+th:hover{color:var(--tx)}td{padding:5px 7px;border-bottom:1px solid var(--bd);vertical-align:middle}tr:hover td{background:var(--s2)}
+.h-cell{font-weight:600;white-space:nowrap}.h-cell a{color:var(--ac);text-decoration:none}.h-cell a:hover{text-decoration:underline}
+.g-cell{font-weight:700;white-space:nowrap}.g-cell.has{color:var(--gn)}.g-cell.no{color:var(--dim)}
+.d-cell{font-size:10px;white-space:nowrap}.d-up{color:var(--gn)}.d-dn{color:var(--rd)}.d-flat{color:var(--dim)}
+.cc{text-align:center}.cc input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:var(--ac)}
+.tb{display:inline-block;padding:2px 5px;border-radius:4px;font-size:8px;font-weight:700}
+.t-new{background:var(--cyb);color:var(--cy)}.t-act{background:var(--gnb);color:var(--gn)}.t-vip{background:var(--ywb);color:var(--yw)}.t-vvip{background:var(--pkb);color:var(--pk)}.t-none{background:var(--s3);color:var(--dim)}
+.ag-badge{display:inline-block;font-size:7px;padding:1px 4px;border-radius:3px;background:rgba(230,126,34,.15);color:var(--or);font-weight:700;margin-left:2px}
+.ni{background:transparent;border:1px solid transparent;border-radius:4px;padding:3px 4px;color:var(--tx);font-size:10px;width:80px}
+.ni:focus{border-color:var(--ac);outline:none;background:var(--s2)}
+.tag{display:inline-block;font-size:7px;padding:1px 3px;border-radius:3px;margin-left:2px;font-weight:700}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sc{background:var(--s1);border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.sh{padding:10px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.sh h3{font-size:11px;display:flex;align-items:center;gap:5px}
+.sh .ct{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:700}
+.sb{padding:0 12px 10px;max-height:240px;overflow-y:auto}.sb.hide{display:none}
+.sb p.desc{font-size:9px;color:var(--dim);margin-bottom:4px}
+.si-item{display:flex;align-items:center;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd);font-size:10px}
+.si-item:last-child{border-bottom:none}.si-item .hnd{font-weight:600}.si-item .mt{color:var(--dim);font-size:9px}
+.btn{border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--ach)}
+.btn-s{background:var(--s3);color:var(--tx);border:1px solid var(--bd)}.btn-s:hover{background:var(--s2)}
+.btn-d{background:var(--rd);color:#fff}
+.snap-box{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:12px}
+.snap-box h4{font-size:11px;color:var(--dim);margin-bottom:4px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--gn);color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.disc-box{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:12px}
+.disc-box h4{font-size:11px;margin-bottom:5px}
+.disc-box p.hint{font-size:10px;color:var(--dim);margin-bottom:6px;line-height:1.4}
+.disc-ta{width:100%;height:100px;background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:8px;color:var(--tx);font-size:11px;font-family:monospace;resize:vertical}
+.disc-ta:focus{outline:none;border-color:var(--ac)}
+.disc-result{margin-top:6px;max-height:160px;overflow-y:auto;font-size:11px}
+.match{color:var(--gn);padding:1px 0}.nomatch{color:var(--rd);padding:1px 0}.fuzzy{color:var(--yw);padding:1px 0}
+.map-table{width:100%;font-size:10px;border-collapse:collapse;margin-top:4px}
+.map-table td,.map-table th{padding:3px 5px;border-bottom:1px solid var(--bd);text-align:left}
+.map-table th{font-size:8px;text-transform:uppercase;color:var(--dim)}
+.disc-stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.ds-card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center}
+.ds-card .val{font-size:16px;font-weight:700}.ds-card .lbl{font-size:8px;color:var(--dim);margin-top:1px}
+.up-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.up-card{background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:14px}
+.up-card h4{font-size:11px;color:var(--dim);margin-bottom:6px}
+.up-zone{border:2px dashed var(--bd);border-radius:8px;padding:24px 8px;text-align:center;cursor:pointer;transition:.2s;background:var(--s2)}
+.up-zone:hover,.up-zone.over{border-color:var(--ac);background:rgba(88,101,242,.05)}
+.up-zone h3{font-size:12px;margin-bottom:2px}.up-zone p{font-size:10px;color:var(--dim)}
+.up-status{margin-top:5px;font-size:11px;font-weight:600}
+.up-status.ok{color:var(--gn)}.up-status.no{color:var(--dim)}
+.hist-tbl{width:100%;border-collapse:collapse;font-size:10px}
+.hist-tbl th,.hist-tbl td{padding:4px 5px;border-bottom:1px solid var(--bd);text-align:right}
+.hist-tbl th{text-align:left;color:var(--dim);font-size:8px;text-transform:uppercase;position:sticky;top:0;background:var(--s2)}
+.hist-tbl td:first-child{text-align:left;font-weight:600}
+@media(max-width:900px){.sg,.disc-grid{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(3,1fr)}.up-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hdr"><h1>&#x1F421; <span>Biodance</span> Creator Tracker</h1>
+<div class="hdr-acts">
+<span id="syncStatus" style="font-size:10px;color:var(--gn)"></span>
+<button class="btn btn-s" onclick="syncSave()" title="수동 저장">&#x1F4BE;</button>
+<button class="btn btn-s" onclick="syncLoad()" title="서버에서 불러오기">&#x1F504;</button>
+<button class="btn btn-s" onclick="expState()" title="JSON 백업">&#x1F4E5;</button>
+<button class="btn btn-s" onclick="$('impF').click()" title="JSON 복원">&#x1F4C2;</button>
+<input type="file" id="impF" accept=".json" style="display:none" onchange="impState(event)">
+</div></div>
+<div class="tabs">
+<div class="tab on" data-t="upload" onclick="sw('upload')">&#x1F4E5; &#xB370;&#xC774;&#xD130;</div>
+<div class="tab" data-t="tracker" onclick="sw('tracker')">&#x1F4CB; &#xD2B8;&#xB798;&#xCEE4;</div>
+<div class="tab" data-t="segments" onclick="sw('segments')">&#x1F3AF; &#xC138;&#xADF8;&#xBA3C;&#xD2B8;<span class="bdg" id="sBdg" style="display:none"></span></div>
+<div class="tab" data-t="discord" onclick="sw('discord')">&#x1F7E3; Discord</div>
+<div class="tab" data-t="history" onclick="sw('history')">&#x1F4C5; &#xD788;&#xC2A4;&#xD1A0;&#xB9AC;</div>
+</div>
+<div class="cnt">
+<div class="pnl on" id="p-upload"><div id="upA"></div></div>
+<div class="pnl" id="p-tracker"><div id="kpiA"></div><div id="trkCtrl"></div><div id="trkTbl"></div></div>
+<div class="pnl" id="p-segments"><div id="segA"></div></div>
+<div class="pnl" id="p-discord"><div id="discA"></div></div>
+<div class="pnl" id="p-history"><div id="histA"></div></div>
+</div>
+<div class="toast" id="tst"></div>
+<script>
+const RAW_P=[["lisabender567",0,5,121,"7h"],["yovi_bella",0,1,5,"7h"],["lilia.geovana.bus",0,3,435,"8h"],["mendyh_",7,7,492,"8h"],["tucarritonaranja1",215,10,10637,"9h"],["clarahyee",10,4,3934,"9h"],["jpjpleeee",161,3,5025,"10h"],["estybestieshopfinds",192,18,12265,"10h"],["christy_jacob1",16,10,1223,"11h"],["ida_entiktokshop",0,2,13,"13h"],["mskayladrew",86,5,2718,"13h"],["somethinggood341",0,2,687,"13h"],["shopapproved",7,4,9609,"14h"],["kamichuru98",0,1,5,"16h"],["darciky5",0,3,148,"18h"],["mel84journey",1081,11,2168,"ad"],["ememcbride",0,3,31,"ad"],["casalacsamana",0,1,69,"ad"],["islandbeauty1216",0,1,236,"ad"],["savvysoulsisters",88,5,1436,"ad"],["logannremington",0,8,1037,"ad"],["katetee002",0,3,397,"ad"],["anajutorquetti.da",716,8,88,"ad"],["curlyglamma",9,18,814,"ad"],["lindsaytuckerofficial",0,5,1075,"ad"],["andrean.rubio",0,1,178,"ad"],["kbeautymom75",0,3,634,"ad"],["blondyinsider",48,16,3925,"ad"],["johatobon3",0,5,4233,"ad"],["nathanwangg",0,8,3017,"2d"],["yarysrosa",0,1,16,"2d"],["glitznglam.chardye",0,6,283,"2d"],["dra.arletty",0,2,217,"2d"],["thatssomailyn",31,5,2378,"2d"],["tuti.fit",145,3,13258,"2d"],["fierceangellb",0,1,15,"2d"],["luxebylaura0",0,12,5193,"2d"],["keepupwiththejones5",0,1,363,"2d"],["amandamassengale3",0,1,37,"2d"],["33dailyfinds",0,3,74,"2d"],["laurameraki41",0,2,511,"2d"],["aly_sanchezofficial",0,1,29538,"2d"],["mandsmarie95",0,3,189,"2d"],["_jessandthefrenchies",344,16,0,"2d"],["soyarianna.resto",0,1,301,"2d"],["cassie.allen",0,1,18,"2d"],["ailene00007",0,1,36,"2d"],["nomukaugc",0,2,3070,"2d"],["marismyxx",39,7,2860,"2d"],["guerragigi18",0,1,19,"2d"],["addisontts",0,3,24,"2d"],["simstitches",0,1,68,"2d"],["definedhands1",0,1,533,"2d"],["glowingupwithvicki",13,6,31,"2d"],["musicaltheatreprincess",9,2,170,"2d"],["hehehohoxd",49,5,4482,"2d"],["andreasglowxo",0,1,43,"3d"],["maehni",0,1,354,"3d"],["sunnys_find",0,1,41,"3d"],["blu3skiiboohottie",0,2,0,"3d"],["natireels",29,6,121,"3d"],["samantha.schinder",0,1,121,"3d"],["kimberly78raern",73,3,2897,"3d"],["purple_passion18",0,1,125,"3d"],["sarcastickarla",0,3,1393,"3d"],["natik4s",0,2,93,"3d"],["shadowblast757",0,15,0,"3d"],["tristintranquilityspa",0,2,67,"3d"],["skindeepmegan",0,2,526,"3d"],["his.sweetgirl13",0,7,0,"3d"],["amy_centenos",0,1,215,"3d"],["tulipsandtarragon",9,2,137,"3d"],["tee.unfiltered",0,1,229,"3d"],["heymegco",15,2,664,"3d"],["thebeautycontrarian",0,5,2851,"4d"],["thismamasonamission",0,3,355,"4d"],["zarinascart",0,1,644,"4d"],["stephbeautyfinds",0,2,525,"4d"],["heyitskatieortega",0,2,703,"4d"],["monikareviews2",0,5,1022,"4d"],["amanunez_",0,1,73,"4d"],["breawnarenee",8,3,2331,"4d"],["golden.goosie",8,1,741,"4d"],["jeanienguyen8899",0,1,16,"4d"],["theselfcarediary",17,7,1711,"4d"],["sobermama82383",8,1,605,"4d"],["i.america8",13,1,568,"4d"],["jaxneedsahero",0,1,3,"4d"],["steffierenee",0,3,958,"4d"],["imranfinds",0,1,72,"4d"],["whatms.sungwears",0,1,352,"4d"],["gemini_amy",0,1,94,"4d"],["haul.yeah.idaho",0,1,402,"4d"],["slinkard_farms",0,1,349,"4d"],["nourishingnaturals",7,4,489,"4d"],["farm2glam",0,1,621,"4d"],["twinmama28",0,1,432,"4d"],["thatdotspotgirl",0,1,56,"4d"],["michaelas_mb",0,1,112,"4d"],["yowmahmah",0,1,33,"4d"],["usuariom66",0,1,132,"4d"],["amigas.valientes",0,3,0,"4d"],["time_bestill",0,1,0,"4d"],["mindyfeatherstone",31,1,45,"4d"],["shoplikejcc",0,1,121,"4d"],["skincarewithmonica",0,1,0,"4d"],["crissyauthenticallyme",0,3,0,"5d"],["alaina.jpg",0,2,0,"5d"],["rossymara0706",0,9,0,"5d"],["ca785208",0,1,0,"16d"],["shopwithviolet",0,1,0,"16d"],["_kristytaylornguyen",0,0,0,"-"],["addictedtocart",0,0,0,"-"],["addisonwellness",0,0,0,"-"],["andreaalucena",0,0,0,"-"],["araglows",0,0,0,"-"],["asiasfavfinds",0,0,0,"-"],["askmims",0,0,0,"-"],["aurasaltiktokshop",0,0,0,"-"],["aurearivera83",0,0,0,"-"],["barbieluvsbeauty",0,0,0,"-"],["bedau18tuoine",0,0,0,"-"],["beingromay",0,0,0,"-"],["best_tiktokfindsss",0,0,0,"-"],["boujee.on.pennies",0,0,0,"-"],["brigittesan5",0,0,0,"-"],["britthankin",0,0,0,"-"],["brucehustles",0,0,0,"-"],["candyymdr",0,0,0,"-"],["carmonaclan",0,0,0,"-"],["carolinavegaoficial",0,0,0,"-"],["catawellness",0,0,0,"-"],["catchinupwithtammy",0,0,0,"-"],["chivasharrisfnp",0,0,0,"-"],["christinelomakeup",0,0,0,"-"],["cjaetravels",0,0,0,"-"],["claudiavalenzuelaoficial",0,0,0,"-"],["dailybeautyinspo",0,0,0,"-"],["damaristorquetti2",0,0,0,"-"],["definitelyneededthat",0,0,0,"-"],["dessikafrouni",0,0,0,"-"],["docmisterios",0,0,0,"-"],["elianyiturralde",0,0,0,"-"],["emilywynn1321",0,0,0,"-"],["erikadesenard",0,0,0,"-"],["evolvewiththeresa",0,0,0,"-"],["foodmilkyway",0,0,0,"-"],["forevr.may",0,0,0,"-"],["gee.v.1019",0,0,0,"-"],["genxfavfinds",0,0,0,"-"],["ginaenidahovlogs",0,0,0,"-"],["glamwithnerissa",0,0,0,"-"],["glqmmultiiss",0,0,0,"-"],["godigitalwithdee",0,0,0,"-"],["grace6t1",0,0,0,"-"],["havanasmommy2",0,0,0,"-"],["hellobunky",0,0,0,"-"],["hubbywifeycaplan",0,0,0,"-"],["itsalievans",0,0,0,"-"],["itssaileyva",0,0,0,"-"],["jaebirdieee",0,0,0,"-"],["jencollective",0,0,0,"-"],["jennygurung140",0,0,0,"-"],["joereignsss",0,0,0,"-"],["johatomu",0,0,0,"-"],["johnandroviefinds",0,0,0,"-"],["julisepblog",0,0,0,"-"],["junior_rush",0,0,0,"-"],["just_kayaaa",0,0,0,"-"],["kaicee.jones",0,0,0,"-"],["kcfinds",0,0,0,"-"],["kellyclemence27",0,0,0,"-"],["kelseymarty23",0,0,0,"-"],["keybabyskin",0,0,0,"-"],["kikkit",0,0,0,"-"],["kim_berrrrr",0,0,0,"-"],["kimberlyanne_xoxox",0,0,0,"-"],["ladiibugglovesbeauty",0,0,0,"-"],["lapao1111",0,0,0,"-"],["lifewithlaurenmaries",0,0,0,"-"],["lifewithnerissa",0,0,0,"-"],["live.love.ur.mom",0,0,0,"-"],["liz_urquiacape",0,0,0,"-"],["llora157",0,0,0,"-"],["maggiebecrazy",0,0,0,"-"],["mama2tolleys",0,0,0,"-"],["maryamawan921",0,0,0,"-"],["melissanorman2.0",0,0,0,"-"],["mirandacorneliusbeauty",0,0,0,"-"],["misssnat",0,0,0,"-"],["myttsfindsss",0,0,0,"-"],["naomilslife_",0,0,0,"-"],["ofertasrelampago25",0,0,0,"-"],["ohkrista",0,0,0,"-"],["ohsnap_itsjchap",0,0,0,"-"],["parkercolleen",0,0,0,"-"],["recommendedbyangie",0,0,0,"-"],["rhicuvas",0,0,0,"-"],["richteradventures",0,0,0,"-"],["savvycass",0,0,0,"-"],["selfcareshero",0,0,0,"-"],["seyanurali",0,0,0,"-"],["shelene.beauty",0,0,0,"-"],["shiftchangefinds",0,0,0,"-"],["shopapproved.by.angie",0,0,0,"-"],["shopwithbellla",0,0,0,"-"],["siana_far",0,0,0,"-"],["sindy_selects",0,0,0,"-"],["skin_alchemist",0,0,0,"-"],["slayathomemomvibes",0,0,0,"-"],["spacasero",0,0,0,"-"],["swancrystalbeautyqueen",0,0,0,"-"],["thebostonang",0,0,0,"-"],["theulylopez",0,0,0,"-"],["tiktokshopdealss",0,0,0,"-"],["tink0478",0,0,0,"-"],["ultimaoferta1",0,0,0,"-"],["unbrokenmind",0,0,0,"-"],["w0nda5",0,0,0,"-"],["wecangotospace",0,0,0,"-"],["wisteriacreekdesigns",0,0,0,"-"],["xineakt",0,0,0,"-"],["xoxjoellenxox",0,0,0,"-"],["zahra__afg",0,0,0,"-"],["zaza420x0",0,0,0,"-"]];
+const RAW_S={"natik4s":[2,0,0,0],"breawnarenee":[3,0,8,0],"twinmama28":[1,0,0,0],"laurameraki41":[1,0,0,0],"kimberly78raern":[3,0,73,0],"gemini_amy":[1,0,0,0],"luxebylaura0":[4,6,0,0],"hehehohoxd":[5,0,0,0],"sarcastickarla":[3,0,0,0],"mendyh_":[5,0,0,0],"darciky5":[1,0,0,0],"steffierenee":[3,0,0,0],"tee.unfiltered":[1,0,0,0],"yowmahmah":[1,0,0,0],"simstitches":[1,0,0,0],"mel84journey":[3,7,32,1027],"natireels":[4,2,16,13],"musicaltheatreprincess":[1,0,0,0],"tuti.fit":[2,0,0,0],"purple_passion18":[1,0,0,0],"sunnys_find":[1,0,0,0],"thatssomailyn":[4,0,31,0],"mskayladrew":[3,0,0,0],"michaelas_mb":[1,0,0,0],"sobermama82383":[1,0,8,0],"skindeepmegan":[2,0,0,0],"jpjpleeee":[2,0,33,0],"heyitskatieortega":[2,0,0,0],"theselfcarediary":[7,0,0,0],"clarahyee":[2,0,0,0],"blondyinsider":[15,0,40,0],"tristintranquilityspa":[2,0,0,0],"marismyxx":[6,0,17,0],"glowingupwithvicki":[1,4,0,13],"somethinggood341":[1,0,0,0],"amanunez_":[1,0,0,0],"anajutorquetti.da":[2,4,0,464],"samantha.schinder":[1,0,0,0],"estybestieshopfinds":[12,0,59,0],"shopapproved":[2,0,0,0],"lisabender567":[2,2,0,0],"jaxneedsahero":[1,0,0,0],"golden.goosie":[1,0,8,0],"slinkard_farms":[1,0,0,0],"johatobon3":[4,0,0,0],"definedhands1":[1,0,0,0],"usuariom66":[1,0,0,0],"amy_centenos":[1,0,0,0],"dra.arletty":[1,0,0,0],"maehni":[1,0,0,0],"glitznglam.chardye":[1,3,0,0],"lindsaytuckerofficial":[2,0,0,0],"imranfinds":[1,0,0,0],"nomukaugc":[1,0,0,0],"farm2glam":[1,0,0,0],"whatms.sungwears":[1,0,0,0],"savvysoulsisters":[2,1,0,28],"jeanienguyen8899":[1,0,0,0],"monikareviews2":[5,0,0,0],"thebeautycontrarian":[5,0,0,0],"andreasglowxo":[1,0,0,0],"tulipsandtarragon":[2,0,9,0],"i.america8":[1,0,13,0],"addisontts":[3,0,0,0],"stephbeautyfinds":[2,0,0,0],"thismamasonamission":[2,1,0,0],"haul.yeah.idaho":[1,0,0,0],"zarinascart":[1,0,0,0],"tucarritonaranja1":[6,0,114,0],"heymegco":[2,0,0,0],"thatdotspotgirl":[1,0,0,0],"33dailyfinds":[2,0,0,0],"curlyglamma":[1,16,9,0],"_jessandthefrenchies":[0,15,0,329],"shadowblast757":[0,15,0,0],"his.sweetgirl13":[0,7,0,0],"amigas.valientes":[0,3,0,0],"skincarewithmonica":[0,1,0,0],"crissyauthenticallyme":[0,3,0,0],"alaina.jpg":[0,2,0,0],"rossymara0706":[0,9,0,0],"ca785208":[0,1,0,0],"shopwithviolet":[0,1,0,0]};
+const RAW_AG=["_barbiejean","beautyinitself","sarcastickarla","kokoterashop","lindsaytuckerofficial","thatssomailyn","monisvida","mytopwellnesspicks","blondevixen59","queenlashay91","ericap884","fashminee","asiasfavfinds","pure.lee","alexissnoelle","chanel.cookxo","confettiletsgo1","andreamejia_ugc","health.nut4","makalaverde21","savvytexasginger","nathalysantosv_","estefanyrecomineda","thattallwonderwomanhttps","glowbestieco","herestheweirdpart","allyshopsalot","blossom.bonds","ashton.schwartzman4","asiasfavfindsasiasfavorites","mrsbryan27","candyymdr","ladyrosepromos","nurse.laneymamamarie3","graciestiktokcloset","hlynngarrett","fashminebeauty","sadiejonesuploading","curvefitacademy","estybestieshopfinds","lilia.geovana.bus","loganwalter05","moreniketyi","natausme","dashofdaysh","heycillaa","yannnique","the.beauty.bond","katshopsalot","ohdearabby","aliyah_gallardo","nurse.laney","hannahleigh143","quetoxica","__kristina__marie__","richteradventures","monisapproved","simplysprinkled","julisepblog","taraontop","shopthesales1","shopthesales","alissasdeals","shopthesales3","my-gen-x-life","agallen22","its_ashleyyyb","savvycass","stalnakeracres03","cassymedwards_","elishalovesdeals","dealswithlish","islandbeauty1216","jessiebestiegirl","katetee002","luxebylaura0","leila_ugc3","mellymelfinds","mendyh_","thebeautygirlsarah","the_ss_lifestyle","ss_on_zep","love_shena_xoxo","ashleyjdawson22","brittneymfredericks","britthomeedit","christy_jacob1","danikafinds","ememcbride","nikkyttshop","irina.ocoro","izzyshops","bellytts","glowwwithjana","jennifermruk_","kayse_lynn","spunkyhomeschoolmama","brillaconangela"];
+const RAW_DC=["tucarritonaranja1",".f.u.r.l.o.v.e.s","tuti.fit","alemaryn","kbeautymom75","hehehohoxd","tiktokshopdealss","denverskindoc","nomukaugc","danikafinds","herbestdeals","catfinds4","getdealstoday","tara.elizabeth.official","nursemamanikki","mel84journey","_jessandthefrenchies","jennymontiel1530","asiasfavfinds","anajutorquetti.da","destiney.lucero","bedau18tuoine","dashofdaysh","theselfcarediary","richteradventures","itsmeyolandab","alaina.jpg","queenlashay91","nia228800","luxebylaura0","emilyirlbeck","krisis.tan","stephbeautyfinds","jpjpleeee","brookehotmomhustle","lifewithnerissa","curlyglamma","andrea28soto","kreativeu","daa.momster","gabrielaacalzadilla","veritas.julezop","nikki.ruston","paawlishedlife","golden.goosie","christianbeautyfinds","rochelyl","mindyfeatherstone","jesuisbienbien","heymegco","maricelisquiles","glowingupwithvicki","liv04020","yukie.ng999","janleeshopping","ailene00007","mg5885","jeenalimbu","somethinggood341","heyitskatieortega","tristintranquilityspa","ashleenarvaez","jennathome","lizzie.fregoso","tulipsandtarragon","ibeth_dmgz","jennygurung140","cjaetravels","dariana.ok","liettica","chanel.cookxo","fullbloomletters","_mrs.bryan2.0_","rhicuvas","paige.registerednurse","feddybaby","ktrose.xo","thismamasonamission","arose.christa","mckaylaashlyn","lilyybluu","shopcareyselfcare","findsandvogue","shainarai1989","live.love.ur.mom","maria..theresa","carolynxshop","caitlinwithconfidence13","usuariom66","jperti","affiliatecatmom","bunnyyyieee_","yashodachhetri01","natglow.luxe","shelene.beauty","babyfr3saa","lenaxrsrio","shevycake","domyenn","pajhuabtsabb","carliadiaz","thequietlaurel","wendyidlebird","dabossyaries","lisabender567","imdaenarodriguez","aaravs_mom123","vibewithmiiimiii","sburns2012","shanzfaves","taylortraywickisrad0","esmelatinalove83","trapmulan","becomingico","smilingrn","mackkosborne",".zahranicole","guerragigi18","natty_1998x","mentalcypher","jackie_just_","samierabrown","tricia.g.rutledge","afterhourmeals","trendydeal","bymarialab","tink0478","ryanalexa777","ericasthought","itsmecandice68","omegiee","helensaysyes","stickbyfaith","bethhill_18","spoiledsel","lorraineehrhardt","jeanie_nette","agathalimm","barbieluvsbeauty","marianaberg","ginawow_","ca785208","life_withlindsey","daniellemcarver","gorlmomx2","urstruly_prathyusha","glqmmultiiss","xio_finds","skincarelifewithale","charmainelouisecreates","erika.krystelle","lapao1111","thekarnes","gigiiirennn","jessicaleemcgrath","eeveeochoa27","carejohnston","whatms.sungwears","ayushab05","genobskii","lleilaann","oltyanes","seven.finds2","jencollective","xoash311","yadisantana_","biodance_global","daphnemndoza","askmims","elainadunn","stefanipico","natbee27","josselynpamela8","x","sherytorres0705","unique.love297","claudiavalenzuelaoficial","angelivansolorzano_","glitznglamour94","dr.basssma","madison_owens","fatimaescobar77","amanunez_","mynameissskiz","gee.v.1019","andrean.rubio","lizbettehdzz","xx","wildly_georgina","dannamavss","neenanosimone","devii.khadka24","purple_passion18","desdav_ugc","_kristytaylornguyen","wisteriacreekdesigns","milky.time1","saemiii7","dazi990","tee.unfiltered","lazymxchi","kass0719","boujee.on.pennies","kebaby02","skincarewithmihlee","billieinar","anjlipancake","llora157","jkbzz.esp","palinda333","donnaroseedwards","addisontts, addisonwellness","ashleynu27","baruscape","natexisting","keepupwiththejones5","__night_knight__","lu_sotuff","kamichuru98","kerry.grey","samantha.schinder","elizabeth.drebin","kris_hna_patel","debbuys","nananails732","abbbs83","su.honeyyy","devynashleamiller","wooitscherilyn","alishaariess","komalkariatanna","xoxjoellenxox","k.beautywellness","kelliecrowther","heyits.jennnn, home.withjenn","becominglisa","valeriabarronv","swt.kwon","tinkersparkle7","strongluxe","pookieemac","nora.lullababe","missrubierose","msmarisoljimenez","analouab","ty_cox22","andreasglowxo","genxfavfinds","glitznglam.chardye","b.eauty_b.east","chidinmasworld","quietconfidence.co","_authenticsoul","nicole.brianna_","marcieafter40","officiallyshweta","lizglowandtell","kiaralatina_","formerfatgirlonabike","mamakat_4","live2lovekim","mamiiraquell","kim.randolph86","charityjthecreator","maggiebecrazy","simplyjojo10","cashycustomz_","coupons_xoxo","venus_ttshop_reviews","path2healthy","carmonaclan","odettegarate","kaly_nicole","kimberlyanne_xoxox","i_am3lla","kangaryu12","itslysadizzle","jacqueline_wheeler","agallen22","ayleenmorenougc","sfami.us","katie_rosee_","lorithompson76","bobbie.novak","josi.happiness","itsmebethc","jazziescozycorner","nikiandco","skindeepmegan","amandawifey","carolinarodriguez184","foodmilkyway","blu3skiiboohottie","moryviral","helloevadinexx","nanayjessz","lawonda_","amarilysbloom","aria04440","haul.yeah.idaho","dawnmariecurates","dreamy.glow.with","lupita_recommends","kellyshops3093","junebirdiee","time_bestill"];
+const RAW_DCMAP={"shhhfinds":"tucarritonaranja1","james_blonde00":".f.u.r.l.o.v.e.s","tutifit":"tuti.fit","alexmarbustillos":"alemaryn","yumi_75":"kbeautymom75","allthingsfoodandcute":"tiktokshopdealss","danikahilmer":"danikafinds","taishatts":"herbestdeals","naane2060":"catfinds4","hiyepthatsme":"getdealstoday","taraelizabethofficial_60612":"tara.elizabeth.official","mellylo84":"mel84journey","jessandfrenchies":"_jessandthefrenchies","asialea08":"asiasfavfinds","anajutorquetti":"anajutorquetti.da","destineylucero.":"destiney.lucero","nbtr0909":"bedau18tuoine","alainanw":"alaina.jpg","vicki084293":"queenlashay91","stephanie89777":"stephbeautyfinds","chrisgarrisonsellsmiami":"curlyglamma","paula111424":"daa.momster","veritas.julez.op":"veritas.julezop","nikkirae151":"nikki.ruston","lexithebestee":"golden.goosie","junel_96487":"christianbeautyfinds","rochelylebron":"rochelyl","maricelisqg":"maricelisquiles","7262890020":"glowingupwithvicki","oliveblooms":"liv04020","janleedirect":"janleeshopping","mg5885mg5885":"mg5885","katieortega.":"heyitskatieortega","triseliz":"tristintranquilityspa","ashlee06995":"ashleenarvaez","jenn.athome":"jennathome","lizbeth01001":"lizzie.fregoso","pids8906":"tulipsandtarragon","ibeth0492":"ibeth_dmgz","cbugggs":"cjaetravels","darianakang":"dariana.ok","ladelentes_49034":"liettica","venousluxury":"chanel.cookxo","claudia08626":"fullbloomletters","sarfed":"feddybaby","katy08677":"ktrose.xo","arosechrista":"arose.christa","sevibluu":"lilyybluu","careyselfcare":"shopcareyselfcare","magnolia_o7":"shainarai1989","dannacamp.":"live.love.ur.mom","theresa.signo":"maria..theresa","aliniurka":"usuariom66","nattooeasyy":"natglow.luxe","mommidom":"domyenn","carla110419":"carliadiaz","7917290079":"wendyidlebird","avadabossyaries":"dabossyaries","lisab.567":"lisabender567","iamdaenarodriguez":"imdaenarodriguez","ichchhagiri123":"aaravs_mom123","taylor041749":"taylortraywickisrad0","kreahtions":"trapmulan","becomingico_51227":"becomingico","smilingrn_":"smilingrn","natty27__":"natty_1998x","jackiemama_just_":"jackie_just_","triciarut":"tricia.g.rutledge","hannah._.an":"afterhourmeals","athenatts":"trendydeal","tink0478tts":"tink0478","itsmecandice68_14454":"itsmecandice68","hellsonwheels84":"helensaysyes","jadoresaint_26284":"spoiledsel","lorraineehrhardt5":"lorraineehrhardt","jeany09033":"jeanie_nette","ginamedrano.":"ginawow_","momlifedisneymagic":"ca785208","linds_10323":"life_withlindsey","daniellethepopoftheparty_43231":"daniellemcarver","gocryaboutit.":"gorlmomx2","xiomaravargas33":"xio_finds","clshelton":"charmainelouisecreates","erikakrystelle_50837":"erika.krystelle","michalkarne":"thekarnes","jessicawellness":"jessicaleemcgrath","ms.sung":"whatms.sungwears","ayushabhandari.":"ayushab05","lleilaann_81561":"lleilaann","sevenfinds":"seven.finds2","jencollective_82310":"jencollective","ashxo12":"xoash311","biodance":"biodance_global","daphnemendoza__44378":"daphnemndoza","elainadunnn":"elainadunn","stefanip_":"stefanipico","natbee27_62572":"natbee27","zealous_monkey_48219":"x","sheryliansanchez":"sherytorres0705","tasha018950":"unique.love297","clau0367_71319":"claudiavalenzuelaoficial","dr.basssma_64933":"dr.basssma","madison_owens23":"madison_owens","fatima_25045":"fatimaescobar77","kizzyugc":"mynameissskiz","rubio08905":"andrean.rubio","claire_22712":"xx","danamavs":"dannamavss","neenanosiomone":"neenanosimone","devi043542":"devii.khadka24","kcup_goddess":"purple_passion18","des1253":"desdav_ugc","ktn1866":"_kristytaylornguyen","gypsyv666":"wisteriacreekdesigns","bunnymiku":"milky.time1","koifishda":"saemiii7","jntz0810":"dazi990","kass108":"kass0719","hatsinlove":"skincarewithmihlee","billiehillier":"billieinar","anjlipana":"anjlipancake","bellahadid2001":"jkbzz.esp","madampnw":"addisontts, addisonwellness","ashleynu276499":"ashleynu27","simran0724":"baruscape","nat.mayy":"natexisting","dawifey83020":"keepupwiththejones5","__nightknight__":"__night_knight__","itz.lu":"lu_sotuff","kamichuru":"kamichuru98","kerrygrey2004":"kerry.grey","eed__8":"elizabeth.drebin","meredithgreyyy":"kris_hna_patel","bacashouse":"debbuys","nana050150":"nananails732","dachsgal":"devynashleamiller","ugcbycheryl":"wooitscherilyn","alishaaries":"alishaariess","komaltanna":"komalkariatanna","joellen8211":"xoxjoellenxox","kayl58397":"k.beautywellness","jennifermruk":"heyits.jennnn, home.withjenn","valeriabarron":"valeriabarronv","chilleee":"swt.kwon","pookiem_":"pookieemac","phatpharmgirl":"missrubierose","ms.mari.j":"msmarisoljimenez","analoran":"analouab","mochagem0222":"ty_cox22","starsapphirex":"andreasglowxo","selina_75":"genxfavfinds","chardyethecraftqueen":"glitznglam.chardye","inrussswetrust":"b.eauty_b.east","chichi_naomi":"chidinmasworld","natasha0092":"_authenticsoul","nicolebrianna__":"nicole.brianna_","marciemeadows":"marcieafter40","shwetapandey":"officiallyshweta","kiaralatina_10985":"kiaralatina_","toastmagoatz":"formerfatgirlonabike","kat04644":"mamakat_4","kimlovetro":"live2lovekim","gorggirl.":"mamiiraquell","kimrandolph":"kim.randolph86","ttsimplyjojo10":"simplyjojo10","cashycustomz":"cashycustomz_","couponsxo":"coupons_xoxo","venus_reviews":"venus_ttshop_reviews","vcarmona08":"carmonaclan","kalynicoleswann":"kaly_nicole","luciferskat":"i_am3lla","kangaryuu":"kangaryu12","lysadizzle":"itslysadizzle","almaallen1":"agallen22","ayleenmoreno_":"ayleenmorenougc","b.booyang":"sfami.us","lori06847":"lorithompson76","bobbien188":"bobbie.novak","josi.happiness_04985":"josi.happiness","coloringwithjas":"jazziescozycorner","nikiandcompany":"nikiandco","akoof01":"amandawifey","aurasalgado25":"carolinarodriguez184","sara_loves_popups":"foodmilkyway","evadinexx":"helloevadinexx","nicolem0494":"lawonda_","nay242":"aria04440","ash1613.":"haul.yeah.idaho","dawnmarie7676":"dawnmariecurates","lupita.recommends":"lupita_recommends","itsmekellyp_37979":"kellyshops3093","rchung6":"junebirdiee"};
+
+var $=function(id){return document.getElementById(id)};
+function toast(m){var t=$('tst');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2000)}
+function sw(id){document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.t===id)});document.querySelectorAll('.pnl').forEach(function(p){p.classList.toggle('on',p.id==='p-'+id)})}
+function fmt(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+function today(){return new Date().toISOString().slice(0,10)}
+function parseCSV(text){
+  var rows=[],row=[],field='',inQ=false,i=0,c;text=text.replace(/^\uFEFF/,'');
+  while(i<text.length){c=text[i];if(inQ){if(c==='"'){if(text[i+1]==='"'){field+='"';i+=2}else{inQ=false;i++}}else{field+=c;i++}}
+  else{if(c==='"'){inQ=true;i++}else if(c===','){row.push(field.trim());field='';i++}
+  else if(c==='\n'||c==='\r'){row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);row=[];field='';if(c==='\r'&&text[i+1]==='\n')i+=2;else i++}else{field+=c;i++}}}
+  row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);if(rows.length<2)return[];var hdr=rows[0];
+  return rows.slice(1).map(function(r){var o={};hdr.forEach(function(h,j){o[h]=r[j]||''});return o});
+}
+
+// Tier logic: VVIP=$1000+, VIP=$500-999, Active=$1-499, New=videos>0&GMV=0, (none)=no videos
+function tier(g,v){return g>=1000?'vvip':g>=500?'vip':g>=1?'active':v>0?'new':'none'}
+
+var agSet=new Set(RAW_AG);
+var dcSet=new Set(RAW_DC);
+var C={},sCol='g',sDir='desc',sq='',af='all',discMap=Object.assign({},RAW_DCMAP);
+var hist={};
+
+function init(){
+  // Auto-load from server on startup
+  if(API!==null){fetch('/api/state').then(function(r){return r.json()}).then(function(st){
+    if(st.tracking)Object.keys(st.tracking).forEach(function(h){var d=st.tracking[h];if(C[h]){C[h].dj=d.dj||C[h].dj;C[h].ct=d.ct||false;C[h].rp=d.rp||false;C[h].nt=d.nt||'';C[h].cn=d.cn||false;C[h].ca=d.ca||false;C[h].cv=d.cv||false}});
+    if(st.hist)Object.keys(st.hist).forEach(function(d){if(!hist[d])hist[d]=st.hist[d]});
+    if(st.discMap)Object.assign(discMap,st.discMap);
+    if(st.agList)st.agList.forEach(function(h){agSet.add(h)});
+    if(st.dcList)st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true});
+    Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
+    ctrlDone=false;render();$('syncStatus').textContent='서버 연결됨';$('syncStatus').style.color='var(--gn)'
+  }).catch(function(){$('syncStatus').textContent='로컬 모드';$('syncStatus').style.color='var(--dim)'})}
+  RAW_P.forEach(function(r){
+    var h=r[0],g=r[1],v=r[2],w=r[3],lp=r[4],s=RAW_S[h]||[0,0,0,0];
+    C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
+      dj:dcSet.has(h),ct:false,rp:false,nt:'',ag:agSet.has(h),cn:false,ca:false,cv:false,tier:tier(g,v)};
+  });
+  autoSnap();render();
+}
+function autoSnap(){var d=today(),snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});hist[d]=snap;snapAPI()}
+function prevDay(){var dates=Object.keys(hist).sort(),t=today();for(var i=dates.length-1;i>=0;i--)if(dates[i]<t)return dates[i];return null}
+function getDelta(h,field){var pd=prevDay();if(!pd||!hist[pd]||!hist[pd][h])return null;return C[h][field]-(hist[pd][h][field]||0)}
+function render(){renderUp();renderKPI();renderTrk();renderSeg();renderDisc();renderHist()}
+
+// ===== UPLOAD =====
+function renderUp(){
+  var n=Object.keys(C).length,agc=Object.values(C).filter(function(c){return c.ag}).length;
+  var djc=Object.values(C).filter(function(c){return c.dj}).length;
+  var hDates=Object.keys(hist).sort();
+  $('upA').innerHTML='<div class="up-row">'+
+    '<div class="up-card"><h4>&#x1F4CA; Participants CSV</h4>'+
+    '<div class="up-zone" onclick="$(\'fileP\').click()" ondrop="hdrop(event,\'p\')" ondragover="dover(event)" ondragleave="dlv(event)"><h3>&#xD074;&#xB9AD;/&#xB4DC;&#xB798;&#xADF8;</h3><p>Euka Participants</p></div>'+
+    '<input type="file" id="fileP" accept=".csv" style="display:none" onchange="lf(event,\'p\')">'+
+    '<div class="up-status '+(n?'ok':'no')+'">'+n+'&#xBA85;</div></div>'+
+    '<div class="up-card"><h4>&#x1F3E2; &#xC5D0;&#xC774;&#xC804;&#xC2DC;</h4>'+
+    '<div class="up-zone" onclick="$(\'fileAG\').click()"><h3>CSV/TXT</h3><p>&#xD578;&#xB4E4; &#xBAA9;&#xB85D;</p></div>'+
+    '<input type="file" id="fileAG" accept=".csv,.txt" style="display:none" onchange="lfAG(event)">'+
+    '<div class="up-status '+(agc?'ok':'no')+'">'+agSet.size+'&#xBA85; ('+agc+'&#xBA85; &#xC720;&#xCE74;)</div>'+
+    '<textarea class="disc-ta" id="agTA" style="height:50px;margin-top:4px" placeholder="&#xD578;&#xB4E4; &#xBD99;&#xC5EC;&#xB123;&#xAE30;"></textarea>'+
+    '<button class="btn btn-p" style="margin-top:3px;font-size:10px;padding:4px 8px" onclick="addAGT()">&#xCD94;&#xAC00;</button></div>'+
+    '<div class="up-card"><h4>&#x1F7E3; Discord &#xBA64;&#xBC84;</h4>'+
+    '<div class="up-zone" onclick="$(\'fileDC\').click()"><h3>CSV</h3><p>Discord export</p></div>'+
+    '<input type="file" id="fileDC" accept=".csv" style="display:none" onchange="lfDC(event)">'+
+    '<div class="up-status '+(djc?'ok':'no')+'">'+djc+'&#xBA85; &#xCCB4;&#xD06C;&#xB428;</div></div></div>'+
+    '<div class="snap-box"><h4>&#x1F4C5; &#xD788;&#xC2A4;&#xD1A0;&#xB9AC;: '+hDates.join(', ')+' ('+hDates.length+'&#xC77C;)</h4>'+
+    '<p style="font-size:10px;color:var(--dim)">CSV &#xC5C5;&#xB85C;&#xB4DC;&#xC2DC; &#xC790;&#xB3D9; &#xC800;&#xC7A5;. &#x1F4BE;/&#x1F4C2;&#xB85C; &#xD788;&#xC2A4;&#xD1A0;&#xB9AC; &#xC720;&#xC9C0;</p></div>';
+}
+function dover(e){e.preventDefault();e.currentTarget.classList.add('over')}
+function dlv(e){e.currentTarget.classList.remove('over')}
+function hdrop(e,t){e.preventDefault();e.currentTarget.classList.remove('over');var f=e.dataTransfer.files[0];if(f)pf(f,t)}
+function lf(e,t){var f=e.target.files[0];if(f)pf(f,t)}
+function lfAG(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){
+  var hs=ev.target.result.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'').replace(/"/g,'')}).filter(function(h){return h&&h.length>1&&h!=='handle'});
+  hs.forEach(function(h){agSet.add(h)});Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});ctrlDone=false;render();toast('AG +'+hs.length)};r.readAsText(file);e.target.value=''}
+function addAGT(){var text=$('agTA').value.trim();if(!text)return;var hs=text.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);
+  hs.forEach(function(h){agSet.add(h)});Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});$('agTA').value='';ctrlDone=false;render();toast('AG +'+hs.length)}
+function lfDC(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){
+  var data=parseCSV(ev.target.result);var ok=0;
+  data.forEach(function(row){
+    var tt=(row['TikTok Handles']||'').trim().toLowerCase().replace(/^@/,'');
+    var du=(row['Discord Username']||'').trim().toLowerCase();
+    if(tt&&C[tt]){C[tt].dj=true;ok++;dcSet.add(tt);if(du&&du!==tt)discMap[du]=tt}
+  });ctrlDone=false;render();toast('Discord: '+ok+'&#xBA85; &#xCCB4;&#xD06C;')};r.readAsText(file);e.target.value=''}
+
+var pendingSubs=null;
+function pf(file,type){var r=new FileReader();r.onload=function(ev){
+  var data=parseCSV(ev.target.result);
+  if(type==='p'){
+    var old={};Object.values(C).forEach(function(c){if(c.dj||c.ct||c.rp||c.nt||c.cn||c.ca||c.cv)old[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv}});
+    var subs=pendingSubs||{};C={};
+    data.forEach(function(row){
+      var h=(row['Creator Handle']||'').replace('@','').trim().toLowerCase();if(!h)return;
+      var g=parseFloat((row['Total GMV']||'0').replace(/[$,]/g,''))||0;var v=parseInt(row['Videos'])||0;
+      var w=parseInt((row['Total Views']||'0').replace(/,/g,''))||0;var lp=(row['Last Post']||'-');
+      var s=subs[h]||RAW_S[h]||[0,0,0,0];var o=old[h]||{};
+      C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
+        dj:o.dj||dcSet.has(h),ct:o.ct||false,rp:o.rp||false,nt:o.nt||'',ag:agSet.has(h),cn:o.cn||false,ca:o.ca||false,cv:o.cv||false,tier:tier(g,v)};
+    });autoSnap();ctrlDone=false;render();toast(Object.keys(C).length+'&#xBA85; (&#xD788;&#xC2A4;&#xD1A0;&#xB9AC; &#xC800;&#xC7A5;)')
+  }else{pendingSubs={};data.forEach(function(row){var h=(row['Creator']||'').replace('@','').trim().toLowerCase();var t=row['Type']||'';
+    var sg=parseFloat((row['GMV']||'0').replace(/[$,]/g,''))||0;if(!pendingSubs[h])pendingSubs[h]=[0,0,0,0];
+    if(t==='Video'){pendingSubs[h][0]++;pendingSubs[h][2]+=sg}else{pendingSubs[h][1]++;pendingSubs[h][3]+=sg}});
+    Object.keys(pendingSubs).forEach(function(h){if(C[h]){var s=pendingSubs[h];C[h].vc=s[0];C[h].lc=s[1];C[h].vg=s[2];C[h].lg=s[3]}});render();toast('Subs: '+data.length)}
+};r.readAsText(file)}
+
+// ===== KPI =====
+function renderKPI(){var a=Object.values(C);
+  $('kpiA').innerHTML='<div class="kpi-row">'+
+  '<div class="kpi"><div class="val">'+a.length+'</div><div class="lbl">&#xCC38;&#xAC00;</div></div>'+
+  '<div class="kpi"><div class="val">'+fmt(a.reduce(function(s,c){return s+c.g},0))+'</div><div class="lbl">GMV</div></div>'+
+  '<div class="kpi"><div class="val">'+a.filter(function(c){return c.g>0}).length+'</div><div class="lbl">&#xB9E4;&#xCD9C;O</div></div>'+
+  '<div class="kpi"><div class="val">'+a.filter(function(c){return c.v>0}).length+'</div><div class="lbl">&#xC601;&#xC0C1;O</div></div>'+
+  '<div class="kpi"><div class="val" style="color:var(--ac)">'+a.filter(function(c){return c.dj}).length+'</div><div class="lbl">Discord</div></div>'+
+  '<div class="kpi"><div class="val" style="color:var(--or)">'+a.filter(function(c){return c.ag}).length+'</div><div class="lbl">AG</div></div>'+
+  '<div class="kpi"><div class="val" style="color:var(--rd)">'+a.filter(function(c){return c.v===0}).length+'</div><div class="lbl">&#xC601;&#xC0C1;X</div></div></div>'}
+
+// ===== TRACKER =====
+var ctrlDone=false;
+function renderTrk(){if(!ctrlDone){ctrlDone=true;$('trkCtrl').innerHTML='<div class="tc"><input class="si" id="searchIn" placeholder="&#x1F50D;" oninput="sq=this.value;renderTbl()"><div id="fBtns" style="display:flex;gap:4px;flex-wrap:wrap"></div></div>'}renderTbl()}
+function renderTbl(){var a=Object.values(C);
+  var fc=function(k){return a.filter(function(c){if(k==='dj_n')return !c.dj&&!c.ag;if(k==='dj_y')return c.dj;if(k==='has_g')return c.g>0;if(k==='vid_ng')return c.v>0&&c.g===0;if(k==='no_v')return c.v===0;if(k==='ag')return c.ag;if(k==='nag')return !c.ag;if(k==='surge')return getDelta(c.h,'g')>0;if(k==='nv')return getDelta(c.h,'v')>0;return true}).length};
+  var fltrs=[['all','&#xC804;&#xCCB4;('+a.length+')'],['nag','&#xC77C;&#xBC18;('+fc('nag')+')'],['ag','AG('+fc('ag')+')'],['dj_y','DC&#x2713;('+fc('dj_y')+')'],['dj_n','DC&#x2715;('+fc('dj_n')+')'],['has_g','&#xB9E4;&#xCD9C;O('+fc('has_g')+')'],['surge','GMV&#x2191;('+fc('surge')+')'],['nv','&#xC601;&#xC0C1;&#x2191;('+fc('nv')+')'],['vid_ng','&#xC601;&#xC0C1;O/&#xB9E4;&#xCD9C;X('+fc('vid_ng')+')'],['no_v','&#xC601;&#xC0C1;X('+fc('no_v')+')']];
+  var fb='';fltrs.forEach(function(f){fb+='<button class="fb '+(af===f[0]?'on':'')+'" onclick="af=\''+f[0]+'\';renderTbl()">'+f[1]+'</button>'});$('fBtns').innerHTML=fb;
+  var f=a.slice();if(sq)f=f.filter(function(c){return c.h.indexOf(sq.toLowerCase())>=0});
+  if(af==='dj_n')f=f.filter(function(c){return !c.dj&&!c.ag});else if(af==='dj_y')f=f.filter(function(c){return c.dj});
+  else if(af==='has_g')f=f.filter(function(c){return c.g>0});else if(af==='vid_ng')f=f.filter(function(c){return c.v>0&&c.g===0});
+  else if(af==='no_v')f=f.filter(function(c){return c.v===0});else if(af==='ag')f=f.filter(function(c){return c.ag});
+  else if(af==='nag')f=f.filter(function(c){return !c.ag});else if(af==='surge')f=f.filter(function(c){return getDelta(c.h,'g')>0});
+  else if(af==='nv')f=f.filter(function(c){return getDelta(c.h,'v')>0});
+  f.sort(function(a,b){var va=a[sCol],vb=b[sCol];if(typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase()}return sDir==='desc'?(va>vb?-1:va<vb?1:0):(va<vb?-1:va>vb?1:0)});
+  var si=function(c){return sCol===c?'<span style="font-size:8px;margin-left:1px">'+(sDir==='desc'?'&#x25BC;':'&#x25B2;')+'</span>':''};
+  var h='<div class="tw"><table><thead><tr><th onclick="ts(\'h\')">Handle'+si('h')+'</th><th onclick="ts(\'tier\')">Tier</th><th onclick="ts(\'g\')">GMV'+si('g')+'</th><th>&#x0394;GMV</th><th onclick="ts(\'v\')">&#xC601;&#xC0C1;'+si('v')+'</th><th>&#x0394;V</th><th onclick="ts(\'w\')">Views'+si('w')+'</th><th class="cc">DC</th><th class="cc" title="new-creator">&#x1F331;</th><th class="cc" title="active-creator">&#x1F45F;</th><th class="cc" title="vip-creator">&#x2B50;</th><th class="cc">&#xC5F0;&#xB77D;</th><th class="cc">&#xC751;&#xB2F5;</th><th>&#xBA54;&#xBAA8;</th></tr></thead><tbody>';
+  f.forEach(function(c){var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');var pd=prevDay();var isN=pd&&hist[pd]&&!hist[pd][c.h];
+    var tc='t-'+c.tier;var tl=c.tier==='vvip'?'&#x1F451;VVIP':c.tier==='vip'?'&#x2B50;VIP':c.tier==='active'?'&#x1F45F;Active':c.tier==='new'?'&#x1F331;New':'&#x23F8;&#xFE0F;';
+    h+='<tr><td class="h-cell"><a href="https://www.tiktok.com/@'+c.h+'" target="_blank">@'+c.h+'</a>';
+    if(c.ag)h+='<span class="ag-badge">AG</span>';if(isN)h+='<span class="tag" style="background:var(--cyb);color:var(--cy)">NEW</span>';
+    h+='</td><td><span class="tb '+tc+'">'+tl+'</span></td>';
+    h+='<td class="g-cell '+(c.g>0?'has':'no')+'">'+fmt(c.g)+'</td>';
+    h+='<td class="d-cell '+(dg>0?'d-up':dg<0?'d-dn':'d-flat')+'">'+(dg===null?'':dg>0?'+'+fmt(dg):dg<0?fmt(dg):'-')+'</td>';
+    h+='<td>'+c.v+'</td>';
+    h+='<td class="d-cell '+(dv>0?'d-up':'d-flat')+'">'+(dv===null?'':dv>0?'+'+dv:'-')+'</td>';
+    h+='<td>'+(c.w?c.w.toLocaleString():'-')+'</td>';
+    h+='<td class="cc"><input type=checkbox '+(c.dj?'checked':'')+' onchange="upd(\''+c.h+'\',\'dj\',this.checked)"></td>';
+    h+='<td class="cc">'+(c.ag?'':('<input type=checkbox '+(c.cn?'checked':'')+' onchange="upd(\''+c.h+'\',\'cn\',this.checked)">'))+'</td>';
+    h+='<td class="cc">'+(c.ag?'':('<input type=checkbox '+(c.ca?'checked':'')+' onchange="upd(\''+c.h+'\',\'ca\',this.checked)">'))+'</td>';
+    h+='<td class="cc">'+(c.ag?'':('<input type=checkbox '+(c.cv?'checked':'')+' onchange="upd(\''+c.h+'\',\'cv\',this.checked)">'))+'</td>';
+    h+='<td class="cc"><input type=checkbox '+(c.ct?'checked':'')+' onchange="upd(\''+c.h+'\',\'ct\',this.checked)"></td>';
+    h+='<td class="cc"><input type=checkbox '+(c.rp?'checked':'')+' onchange="upd(\''+c.h+'\',\'rp\',this.checked)"></td>';
+    h+='<td><input class="ni" value="'+(c.nt||'')+'" placeholder="..." onchange="upd(\''+c.h+'\',\'nt\',this.value)"></td></tr>'});
+  h+='</tbody></table></div><p style="margin-top:5px;font-size:9px;color:var(--dim)">'+f.length+'/'+a.length+'</p>';$('trkTbl').innerHTML=h}
+function ts(col){if(sCol===col)sDir=sDir==='desc'?'asc':'desc';else{sCol=col;sDir='desc'}renderTbl()}
+function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);trackAPI(h,f,v);renderSeg();renderKPI();renderDisc()}}
+
+// ===== SEGMENTS =====
+function renderSeg(){var a=Object.values(C);var pd=prevDay();
+  var segs=[
+    {icon:'&#x26A0;',title:'&#xCC44;&#xB110; &#xBBF8;&#xBC30;&#xC815;',color:'var(--or)',bg:'var(--orb)',
+      items:a.filter(function(c){if(!c.dj||c.ag)return false;
+        if(c.tier==='new'&&!c.cn)return true;if((c.tier==='active')&&!c.ca)return true;if((c.tier==='vip'||c.tier==='vvip')&&!c.cv)return true;return false}),
+      desc:'Discord&#xC785;&#xC7A5;O but Tier&#xC5D0; &#xB9DE;&#xB294; &#xBE44;&#xACF5;&#xAC1C;&#xCC44;&#xB110; &#xBBF8;&#xBC30;&#xC815;'},
+    {icon:'&#x1F6AA;',title:'Discord &#xBBF8;&#xC785;&#xC7A5;',color:'var(--rd)',bg:'var(--rdb)',items:a.filter(function(c){return !c.dj&&!c.ct&&!c.ag}),desc:'AG &#xC81C;&#xC678;'},
+    {icon:'&#x1F4DE;',title:'&#xC5F0;&#xB77D;/&#xBBF8;&#xC751;&#xB2F5;',color:'var(--or)',bg:'var(--orb)',items:a.filter(function(c){return c.ct&&!c.rp})},
+    {icon:'&#x1F195;',title:'&#xC2E0;&#xADDC;',color:'var(--cy)',bg:'var(--cyb)',items:pd?a.filter(function(c){return !hist[pd][c.h]}):[]},
+    {icon:'&#x1F4C8;',title:'GMV &#xAE09;&#xB4F1;',color:'var(--yw)',bg:'var(--ywb)',items:a.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>0}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g')})},
+    {icon:'&#x1F3AC;',title:'&#xC601;&#xC0C1;O/&#xB9E4;&#xCD9C;X',color:'var(--pp)',bg:'var(--ppb)',items:a.filter(function(c){return c.v>0&&c.g===0}).sort(function(a,b){return b.v-a.v})},
+    {icon:'&#x1F389;',title:'&#xCD95;&#xD558;: &#xCCAB; &#xC601;&#xC0C1;!',color:'var(--pk)',bg:'var(--pkb)',
+      items:pd?a.filter(function(c){var pv=hist[pd][c.h]?hist[pd][c.h].v:0;return pv===0&&c.v>0}):[],
+      desc:'&#xC5B4;&#xC81C; &#xC601;&#xC0C1;0 &#x2192; &#xC624;&#xB298; &#xCCAB; &#xC5C5;&#xB85C;&#xB4DC;! new-creator &#xCC44;&#xB110;&#xC5D0;&#xC11C; &#xCD95;&#xD558;'},
+    {icon:'&#x1F4B0;',title:'&#xCD95;&#xD558;: &#xCCAB; &#xB9E4;&#xCD9C;!',color:'var(--gn)',bg:'var(--gnb)',
+      items:pd?a.filter(function(c){var pg=hist[pd][c.h]?hist[pd][c.h].g:0;return pg===0&&c.g>0}):[],
+      desc:'&#xC5B4;&#xC81C; GMV=0 &#x2192; &#xC624;&#xB298; &#xCCAB; &#xB9E4;&#xCD9C;! &#xCC44;&#xB110;&#xC5D0;&#xC11C; &#xCD95;&#xD558;'},
+    {icon:'&#x1F38A;',title:'&#xCD95;&#xD558;: &#xC601;&#xC0C1; 3+',color:'var(--pk)',bg:'var(--pkb)',items:a.filter(function(c){return c.v>=3&&c.dj}).sort(function(a,b){return b.v-a.v}),desc:'Discord&#xC5D0;&#xC11C; &#xCD95;&#xD558;'},
+    {icon:'&#x1F45F;',title:'New&#x2192;Active&#xC784;&#xBC15;',color:'var(--gnb)',bg:'var(--gnb)',items:a.filter(function(c){return c.tier==='active'&&c.g<100}).sort(function(a,b){return b.g-a.g}),desc:'&#xB9E4;&#xCD9C; $1~99 &#x2192; &#xB9E4;&#xCD9C; &#xBC1C;&#xC0DD; &#xCD95;&#xD558;'},
+    {icon:'&#x2B50;',title:'Active&#x2192;VIP($500)',color:'var(--yw)',bg:'var(--ywb)',items:a.filter(function(c){return c.tier==='active'&&c.g>=300}).sort(function(a,b){return b.g-a.g})},
+    {icon:'&#x1F451;',title:'VIP&#x2192;VVIP($1K)',color:'var(--pk)',bg:'var(--pkb)',items:a.filter(function(c){return c.tier==='vip'}).sort(function(a,b){return b.g-a.g})},
+    {icon:'&#x1F4A4;',title:'&#xC601;&#xC0C1;&#xC5C6;&#xC74C;',color:'var(--dim)',bg:'rgba(139,141,148,.06)',items:a.filter(function(c){return c.v===0})}
+  ];
+  var tot=segs.slice(0,8).reduce(function(s,seg){return s+seg.items.length},0);
+  var bdg=$('sBdg');if(tot>0){bdg.textContent=tot;bdg.style.display='inline'}else bdg.style.display='none';
+  var h='<div class="sg">';segs.forEach(function(seg){
+    h+='<div class="sc"><div class="sh" style="background:'+seg.bg+'" onclick="this.nextElementSibling.classList.toggle(\'hide\')"><h3>'+seg.icon+' '+seg.title+'</h3><span class="ct" style="background:'+seg.color+';color:#fff">'+seg.items.length+'</span></div>';
+    h+='<div class="sb'+(seg.items.length===0?' hide':'')+'"><p class="desc">'+(seg.desc||'')+'</p>';
+    if(!seg.items.length)h+='<p style="font-size:10px;color:var(--dim);text-align:center;padding:8px">-</p>';
+    else seg.items.slice(0,50).forEach(function(c){var mt=fmt(c.g)+' &#xB7; '+c.v+'&#xC601;&#xC0C1;';var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
+      if(dg>0)mt+=' &#xB7; GMV+'+fmt(dg);if(dv>0)mt+=' &#xB7; V+'+dv;if(c.ag)mt+=' &#xB7; AG';
+      h+='<div class="si-item"><span class="hnd">@'+c.h+'</span><span class="mt">'+mt+'</span></div>'});
+    h+='</div></div>'});h+='</div>';$('segA').innerHTML=h}
+
+// ===== HISTORY =====
+function renderHist(){var dates=Object.keys(hist).sort();
+  if(!dates.length){$('histA').innerHTML='<div class="snap-box"><p style="color:var(--dim)">-</p></div>';return}
+  var allH=new Set();dates.forEach(function(d){Object.keys(hist[d]).forEach(function(h){allH.add(h)})});
+  var handles=Array.from(allH).filter(function(h){return C[h]}).sort(function(a,b){return (C[b]?C[b].g:0)-(C[a]?C[a].g:0)});
+  var h='<div class="snap-box"><h4>&#x1F4C5; GMV + &#xC601;&#xC0C1;&#xC218; &#xD2B8;&#xB798;&#xD0B9;</h4>'+
+    '<div style="max-height:500px;overflow:auto;border:1px solid var(--bd);border-radius:8px"><table class="hist-tbl"><thead><tr><th>Handle</th>';
+  dates.forEach(function(d){h+='<th colspan="2" style="text-align:center;border-left:1px solid var(--bd)">'+d.slice(5)+'</th>'});
+  h+='</tr><tr><th></th>';dates.forEach(function(){h+='<th style="text-align:right">GMV</th><th style="text-align:right;border-right:1px solid var(--bd)">V</th>'});
+  h+='</tr></thead><tbody>';
+  handles.forEach(function(handle){
+    h+='<tr><td><a href="https://www.tiktok.com/@'+handle+'" target="_blank" style="color:var(--ac);text-decoration:none;font-size:10px">@'+handle+'</a>';
+    if(C[handle]&&C[handle].ag)h+='<span class="ag-badge">AG</span>';h+='</td>';
+    dates.forEach(function(d,i){
+      var cur=hist[d]&&hist[d][handle]?hist[d][handle]:{g:0,v:0};
+      var prev=i>0&&hist[dates[i-1]]&&hist[dates[i-1]][handle]?hist[dates[i-1]][handle]:{g:0,v:0};
+      var dg=cur.g-prev.g,dv=cur.v-prev.v;
+      h+='<td class="'+(i>0&&dg>0?'d-up':i>0&&dg<0?'d-dn':'')+'" style="border-left:1px solid var(--bd)">'+fmt(cur.g);
+      if(i>0&&dg!==0)h+='<span style="font-size:8px"> '+(dg>0?'+'+fmt(dg):fmt(dg))+'</span>';h+='</td>';
+      h+='<td style="border-right:1px solid var(--bd)">'+cur.v;if(i>0&&dv>0)h+='<span style="font-size:8px;color:var(--gn)"> +'+dv+'</span>';h+='</td>'});
+    h+='</tr>'});
+  h+='</tbody></table></div></div>';$('histA').innerHTML=h}
+
+// ===== DISCORD =====
+function renderDisc(){var a=Object.values(C);var djC=a.filter(function(c){return c.dj}).length;
+  $('discA').innerHTML='<div class="disc-stat"><div class="ds-card"><div class="val" style="color:var(--gn)">'+djC+'</div><div class="lbl">Discord</div></div><div class="ds-card"><div class="val" style="color:var(--rd)">'+(a.length-djC)+'</div><div class="lbl">&#xBBF8;&#xC785;&#xC7A5;</div></div><div class="ds-card"><div class="val" style="color:var(--ac)">'+Object.keys(discMap).length+'</div><div class="lbl">&#xB9E4;&#xD551;</div></div></div>'+
+  '<div class="disc-grid"><div><div class="disc-box"><h4>&#x1F4CB; &#xC77C;&#xAD04; Discord</h4><textarea class="disc-ta" id="bulkH" placeholder="&#xD578;&#xB4E4;"></textarea><div style="display:flex;gap:4px;margin-top:4px"><button class="btn btn-p" onclick="bm(\'dj\',true,\'bulkH\',\'bR\')">&#x2713;</button><button class="btn btn-s" onclick="bm(\'dj\',false,\'bulkH\',\'bR\')">&#x2715;</button></div><div class="disc-result" id="bR"></div></div>'+
+  '<div class="disc-box" style="margin-top:10px"><h4>&#x1F4DE; &#xC77C;&#xAD04; &#xC5F0;&#xB77D;/&#xC751;&#xB2F5;</h4><textarea class="disc-ta" id="bulkC" style="height:60px"></textarea><div style="display:flex;gap:4px;margin-top:4px"><button class="btn btn-p" onclick="bm(\'ct\',true,\'bulkC\',\'cR\')">&#xC5F0;&#xB77D;</button><button class="btn btn-p" onclick="bm(\'rp\',true,\'bulkC\',\'cR\')">&#xC751;&#xB2F5;</button></div><div class="disc-result" id="cR"></div></div></div>'+
+  '<div><div class="disc-box"><h4>&#x1F517; &#xB2C9;&#xB124;&#xC784; &#xB9E4;&#xD551;</h4><div style="display:flex;gap:4px;margin-bottom:4px"><input class="si" id="mDN" placeholder="Discord" style="width:44%"><input class="si" id="mTT" placeholder="TikTok" style="width:44%"><button class="btn btn-p" onclick="addM()" style="padding:6px 8px">+</button></div><div id="mL"></div></div>'+
+  '<div class="disc-box" style="margin-top:10px"><h4>&#x1F4E5; &#xBA64;&#xBC84; &#xBAA9;&#xB85D; &#xB9E4;&#xCE6D;</h4><textarea class="disc-ta" id="dMem" style="height:70px" placeholder="Discord &#xBA64;&#xBC84;"></textarea><button class="btn btn-p" style="margin-top:4px" onclick="mDisc()">&#x1F50D;</button><div class="disc-result" id="dMR"></div></div></div></div>';rML()}
+function bm(field,val,taId,resId){var text=$(taId).value.trim();if(!text)return;var hs=text.split('\n').map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);var ok=0,bad=[];hs.forEach(function(h){if(C[h]){C[h][field]=val;ok++}else bad.push(h)});
+  $(resId).innerHTML='<p style="color:var(--gn)">&#x2705;'+ok+'</p>'+(bad.length?'<p style="color:var(--rd)">&#x274C;'+bad.join(', ')+'</p>':'');render()}
+function addM(){var dn=$('mDN').value.trim(),tt=$('mTT').value.trim().toLowerCase().replace(/^@/,'');if(!dn||!tt)return;if(!C[tt]){toast('@'+tt+' &#xC5C6;&#xC74C;');return}discMap[dn.toLowerCase()]=tt;$('mDN').value='';$('mTT').value='';rML();toast(dn+'&#x2192;@'+tt)}
+function delM(k){delete discMap[k];rML()}
+function rML(){var el=$('mL');if(!el)return;var e=Object.entries(discMap);if(!e.length){el.innerHTML='<p style="font-size:10px;color:var(--dim)">-</p>';return}
+  var h='<table class="map-table"><thead><tr><th>DC</th><th>TT</th><th></th></tr></thead><tbody>';
+  e.slice(0,20).forEach(function(p){h+='<tr><td>'+p[0]+'</td><td>@'+p[1]+'</td><td><button class="btn btn-d" style="padding:1px 4px;font-size:8px" onclick="delM(\''+p[0].replace(/'/g,"\\'")+'\')">x</button></td></tr>'});
+  if(e.length>20)h+='<tr><td colspan=3 style="color:var(--dim)">...+</td></tr>';h+='</tbody></table>';el.innerHTML=h}
+function lev(a,b){var m=a.length,n=b.length,d=[];for(var i=0;i<=m;i++){d[i]=[];for(var j=0;j<=n;j++)d[i][j]=0;d[i][0]=i}for(var j=0;j<=n;j++)d[0][j]=j;for(var i=1;i<=m;i++)for(var j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));return d[m][n]}
+function mDisc(){var text=$('dMem').value.trim();if(!text)return;var mems=text.split('\n').map(function(m){return m.trim()}).filter(Boolean);var ks=Object.keys(C);var exact=[],mapped=[],fuzzy=[],none=[];
+  mems.forEach(function(m){var ml=m.toLowerCase().replace(/^@/,'');if(C[ml]){C[ml].dj=true;exact.push(ml);return}if(discMap[ml]&&C[discMap[ml]]){C[discMap[ml]].dj=true;mapped.push(ml+'&#x2192;'+discMap[ml]);return}
+  var cands=ks.filter(function(h){return(ml.length>=4&&h.indexOf(ml)>=0)||(ml.length>=4&&ml.indexOf(h)>=0)||(lev(ml,h)<=2&&ml.length>=4)});if(cands.length)fuzzy.push({d:m,c:cands});else none.push(m)});
+  var h='<p style="font-weight:600;font-size:10px">'+(exact.length+mapped.length)+'/'+mems.length+'</p>';
+  if(fuzzy.length){h+='<details open><summary style="cursor:pointer;color:var(--yw);font-size:10px">&#x1F7E1;'+fuzzy.length+'</summary>';fuzzy.forEach(function(e){h+='<div class="fuzzy">'+e.d+' ';e.c.forEach(function(c){h+='<button class="btn btn-p" style="padding:1px 4px;font-size:8px" onclick="cfm(\''+e.d.replace(/'/g,"\\'")+'\',\''+c+'\')">@'+c+'</button> '});h+='</div>'});h+='</details>'}
+  $('dMR').innerHTML=h;render()}
+function cfm(dn,tt){discMap[dn.toLowerCase()]=tt;if(C[tt])C[tt].dj=true;rML();mDisc()}
+
+// ===== EXPORT/IMPORT =====
+function expState(){var st={_v:5,_date:new Date().toISOString(),hist:hist,discMap:discMap,agList:Array.from(agSet),dcList:Array.from(dcSet),tracking:{}};
+  Object.values(C).forEach(function(c){if(c.dj||c.ct||c.rp||c.nt||c.cn||c.ca||c.cv)st.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv}});
+  var blob=new Blob([JSON.stringify(st)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='biodance_'+today()+'.json';a.click();URL.revokeObjectURL(url);toast('&#xC800;&#xC7A5;')}
+function impState(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){try{var st=JSON.parse(ev.target.result);
+  if(st.tracking)Object.keys(st.tracking).forEach(function(h){var d=st.tracking[h];if(C[h]){C[h].dj=d.dj||false;C[h].ct=d.ct||false;C[h].rp=d.rp||false;C[h].nt=d.nt||'';C[h].cn=d.cn||false;C[h].ca=d.ca||false;C[h].cv=d.cv||false}});
+  if(st.hist)Object.keys(st.hist).forEach(function(d){if(!hist[d])hist[d]=st.hist[d]});
+  if(st.discMap)Object.assign(discMap,st.discMap);
+  if(st.agList){st.agList.forEach(function(h){agSet.add(h)});Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)})}
+  if(st.dcList){st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true})}
+  ctrlDone=false;render();toast(Object.keys(hist).length+'&#xC77C; &#xD788;&#xC2A4;&#xD1A0;&#xB9AC;')}catch(err){toast('&#xC624;&#xB958;')}};r.readAsText(file);e.target.value=''}
+
+
+// ===== API SYNC =====
+var API = window.location.hostname === 'localhost' || window.location.protocol === 'file:' ? null : '';
+var saving=false;
+
+function syncSave(){
+  if(!API&&API!=='')return expState(); // fallback to file if local
+  var st={tracking:{},hist:hist,discMap:discMap,agList:Array.from(agSet),dcList:Array.from(dcSet)};
+  Object.values(C).forEach(function(c){if(c.dj||c.ct||c.rp||c.nt||c.cn||c.ca||c.cv)st.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv}});
+  $('syncStatus').textContent='저장중...';$('syncStatus').style.color='var(--yw)';
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(st)})
+    .then(function(r){return r.json()}).then(function(d){
+      $('syncStatus').textContent='저장 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+      $('syncStatus').style.color='var(--gn)';toast('서버 저장 ('+d.dates+'일 히스토리)')})
+    .catch(function(e){$('syncStatus').textContent='저장 실패';$('syncStatus').style.color='var(--rd)';toast('저장 실패')});
+}
+
+function syncLoad(){
+  if(!API&&API!==''){toast('로컬 파일 모드');return}
+  $('syncStatus').textContent='불러오는중...';$('syncStatus').style.color='var(--yw)';
+  fetch('/api/state').then(function(r){return r.json()}).then(function(st){
+    if(st.tracking)Object.keys(st.tracking).forEach(function(h){var d=st.tracking[h];if(C[h]){C[h].dj=d.dj||false;C[h].ct=d.ct||false;C[h].rp=d.rp||false;C[h].nt=d.nt||'';C[h].cn=d.cn||false;C[h].ca=d.ca||false;C[h].cv=d.cv||false}});
+    if(st.hist)Object.keys(st.hist).forEach(function(d){if(!hist[d])hist[d]=st.hist[d]});
+    if(st.discMap)Object.assign(discMap,st.discMap);
+    if(st.agList){st.agList.forEach(function(h){agSet.add(h)});Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)})}
+    if(st.dcList){st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true})}
+    ctrlDone=false;render();
+    $('syncStatus').textContent='로드 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+    $('syncStatus').style.color='var(--gn)';toast(Object.keys(hist).length+'일 히스토리')})
+  .catch(function(e){$('syncStatus').textContent='로드 실패';$('syncStatus').style.color='var(--rd)'});
+}
+
+// Auto-save single checkbox to server
+function trackAPI(h,f,v){
+  if(!API&&API!=='')return;
+  fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({handle:h,field:f,value:v})}).catch(function(){});
+}
+
+// Auto-save history snapshot to server
+function snapAPI(){
+  if(!API&&API!=='')return;
+  var d=today(),snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});
+  fetch('/api/history',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:d,snapshot:snap})})
+    .then(function(r){return r.json()}).then(function(d){
+      $('syncStatus').textContent='히스토리 저장';$('syncStatus').style.color='var(--gn)'})
+    .catch(function(){});
+}
+
+init();
+</script></body></html>
