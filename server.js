@@ -14,91 +14,75 @@ if (!fs.existsSync(path.join(__dirname, 'data'))) {
 // Initialize state file if not exists
 if (!fs.existsSync(DATA_FILE)) {
   fs.writeFileSync(DATA_FILE, JSON.stringify({
-    tracking: {},
-    hist: {},
-    discMap: {},
-    agList: [],
-    dcList: []
+    tracking: {}, hist: {}, discMap: {}, agList: [], dcList: []
   }, null, 2));
 }
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve tracker at root too
 app.get('/tracker', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'tracker.html'));
 });
 
-// GET state
 app.get('/api/state', (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    res.json(data);
+    res.json(JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')));
   } catch (e) {
     res.json({ tracking: {}, hist: {}, discMap: {}, agList: [], dcList: [] });
   }
 });
 
-// POST state (full save)
 app.post('/api/state', (req, res) => {
   try {
-    const current = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    // Merge: incoming data overwrites
-    if (req.body.tracking) current.tracking = req.body.tracking;
-    if (req.body.discMap) current.discMap = req.body.discMap;
-    if (req.body.agList) current.agList = req.body.agList;
-    if (req.body.dcList) current.dcList = req.body.dcList;
-    // History: merge (don't overwrite old dates)
-    if (req.body.hist) {
-      Object.keys(req.body.hist).forEach(d => { current.hist[d] = req.body.hist[d]; });
-    }
-    current._lastSaved = new Date().toISOString();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(current));
-    res.json({ ok: true, dates: Object.keys(current.hist).length });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+    const cur = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    if (req.body.tracking) cur.tracking = req.body.tracking;
+    if (req.body.discMap) cur.discMap = req.body.discMap;
+    if (req.body.agList) cur.agList = req.body.agList;
+    if (req.body.dcList) cur.dcList = req.body.dcList;
+    if (req.body.hist) Object.keys(req.body.hist).forEach(d => { cur.hist[d] = req.body.hist[d]; });
+    cur._lastSaved = new Date().toISOString();
+    fs.writeFileSync(DATA_FILE, JSON.stringify(cur));
+    res.json({ ok: true, dates: Object.keys(cur.hist).length });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// POST single tracking update (lightweight - for checkbox clicks)
 app.post('/api/track', (req, res) => {
   try {
     const { handle, field, value } = req.body;
-    const current = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    if (!current.tracking[handle]) current.tracking[handle] = {};
-    current.tracking[handle][field] = value;
-    current._lastSaved = new Date().toISOString();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(current));
+    const cur = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    if (!cur.tracking[handle]) cur.tracking[handle] = {};
+    cur.tracking[handle][field] = value;
+    cur._lastSaved = new Date().toISOString();
+    fs.writeFileSync(DATA_FILE, JSON.stringify(cur));
     res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// POST history snapshot (when CSV is uploaded)
 app.post('/api/history', (req, res) => {
   try {
     const { date, snapshot } = req.body;
-    const current = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    current.hist[date] = snapshot;
-    current._lastSaved = new Date().toISOString();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(current));
-    res.json({ ok: true, dates: Object.keys(current.hist).length });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+    const cur = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    cur.hist[date] = snapshot;
+    cur._lastSaved = new Date().toISOString();
+    fs.writeFileSync(DATA_FILE, JSON.stringify(cur));
+    res.json({ ok: true, dates: Object.keys(cur.hist).length });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Start Express
+// Start web server
 app.listen(PORT, () => {
-  console.log(`[Tracker] http://localhost:${PORT}/tracker`);
+  console.log(`[Tracker] Running on port ${PORT}`);
 });
 
-// Start Discord bot (existing bot.js)
-try {
-  require('./bot.js');
-  console.log('[Bot] Discord bot loaded');
-} catch (e) {
-  console.log('[Bot] bot.js not found or error:', e.message);
+// Start Discord bot as separate child process (avoids port conflicts)
+const { spawn } = require('child_process');
+const botPath = path.join(__dirname, 'bot.js');
+if (fs.existsSync(botPath)) {
+  const bot = spawn('node', [botPath], { stdio: 'inherit' });
+  bot.on('error', (e) => console.log('[Bot] Error:', e.message));
+  bot.on('exit', (code) => console.log('[Bot] Exited with code', code));
+  console.log('[Bot] Discord bot started as child process');
+} else {
+  console.log('[Bot] bot.js not found, skipping');
 }
