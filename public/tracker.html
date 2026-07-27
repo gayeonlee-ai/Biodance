@@ -159,7 +159,11 @@ var $=function(id){return document.getElementById(id)};
 function toast(m){var t=$('tst');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
 function sw(id){document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.t===id)});document.querySelectorAll('.pnl').forEach(function(p){p.classList.toggle('on',p.id==='p-'+id)});closeAllDropdowns()}
 function fmt(n){if(!n&&n!==0)return'-';return '$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
-function today(){return new Date().toISOString().slice(0,10)}
+function today(){
+  // KST = UTC+9
+  var d=new Date(new Date().getTime()+(9*60*60*1000));
+  return d.toISOString().slice(0,10);
+}
 function parseCSV(text){var rows=[],row=[],field='',inQ=false,i=0,c;text=text.replace(/^\uFEFF/,'');
   while(i<text.length){c=text[i];if(inQ){if(c==='"'){if(text[i+1]==='"'){field+='"';i+=2}else{inQ=false;i++}}else{field+=c;i++}}
   else{if(c==='"'){inQ=true;i++}else if(c===','){row.push(field.trim());field='';i++}
@@ -317,7 +321,17 @@ function renderKPI(){var a=Object.values(C);var tg=a.reduce(function(s,c){return
 
 // ===== TRACKER =====
 var ctrlDone=false;
-function prevDay(){var dates=Object.keys(hist).sort(),t=today();for(var i=dates.length-1;i>=0;i--)if(dates[i]<t)return dates[i];return null}
+function prevDay(){
+  var dates=Object.keys(hist).sort();
+  var t=today();
+  // Find most recent date strictly before today
+  for(var i=dates.length-1;i>=0;i--){
+    if(dates[i]<t)return dates[i];
+  }
+  // If no previous date, use earliest available (for delta display)
+  if(dates.length>=2)return dates[dates.length-2];
+  return null;
+}
 function getDelta(h,field){var pd=prevDay();if(!pd||!hist[pd])return null;var prev=hist[pd][h]?hist[pd][h][field]||0:null;if(prev===null)return null;return C[h][field]-prev}
 
 function renderTrk(){if(!ctrlDone){ctrlDone=true;$('trkCtrl').innerHTML='<div class="trk-top"><input class="si" id="searchIn" placeholder="&#x1F50D; &#xD578;&#xB4E4;/DC&#xBA85;" style="width:160px" oninput="sq=this.value;renderTbl()"><div id="fBtns" style="display:flex;gap:4px;flex-wrap:wrap"></div></div>'}renderTbl()}
@@ -427,17 +441,24 @@ function toggleDD(id,e){e.stopPropagation();var el=$(id);if(openDD&&openDD!==el)
 function ts(col){if(sCol===col)sDir=sDir==='desc'?'asc':'desc';else{sCol=col;sDir='desc'}closeAllDropdowns();renderTbl()}
 function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);autoSave();renderSeg();renderKPI()}}
 function updStr(h,f,v){if(C[h]){C[h][f]=v;autoSave()}}
-var _st=null;
+var _st=null,_saving=false;
 function autoSave(){
-  setSt('저장중...','var(--yw)');
+  if(API===null){setSt('로컬모드','var(--dim)');return;}
+  setSt('...','var(--yw)');
   if(_st)clearTimeout(_st);
   _st=setTimeout(function(){
-    if(API===null){setSt('로컬모드','var(--dim)');return;}
-    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
+    if(_saving)return;
+    _saving=true;
+    var payload=JSON.stringify(buildState());
+    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:payload})
       .then(function(r){return r.json()})
-      .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨','var(--gn)')})
-      .catch(function(){setSt('저장실패','var(--rd)')});
-  },800);
+      .then(function(d){
+        _saving=false;
+        var t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+        setSt(t+' 저장됨','var(--gn)');
+      })
+      .catch(function(e){_saving=false;setSt('저장실패','var(--rd)');console.log('Save error:',e)});
+  },1500);
 }
 
 // ===== SEGMENTS =====
