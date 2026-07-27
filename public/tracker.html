@@ -145,9 +145,14 @@ function init(){
     if(st.discMap)Object.assign(discMap,st.discMap);
     if(st.agList)st.agList.forEach(function(h){agSet.add(h)});
     if(st.dcList)st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true});
+    // Restore latest GMV from server history if available
+    if(st.hist){var dates=Object.keys(st.hist).sort();var latest=dates[dates.length-1];
+      if(latest&&st.hist[latest]){Object.keys(st.hist[latest]).forEach(function(h){
+        if(C[h]&&st.hist[latest][h]){C[h].g=st.hist[latest][h].g||C[h].g;C[h].v=st.hist[latest][h].v||C[h].v;
+          C[h].tier=C[h].g>=1000?'vvip':C[h].g>=500?'vip':C[h].g>=1?'active':C[h].v>0?'new':'none'}})}}
     Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
     ctrlDone=false;render();$('syncStatus').textContent='서버 연결됨';$('syncStatus').style.color='var(--gn)'
-  }).catch(function(){$('syncStatus').textContent='로컬 모드';$('syncStatus').style.color='var(--dim)'})}
+  }).catch(function(){$('syncStatus').textContent='&#xB85C;&#xCEEC; &#xBAA8;&#xB4DC;';$('syncStatus').style.color='var(--dim)'})}
   RAW_P.forEach(function(r){
     var h=r[0],g=r[1],v=r[2],w=r[3],lp=r[4],s=RAW_S[h]||[0,0,0,0];
     C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
@@ -213,7 +218,9 @@ function pf(file,type){var r=new FileReader();r.onload=function(ev){
       var s=subs[h]||RAW_S[h]||[0,0,0,0];var o=old[h]||{};
       C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
         dj:o.dj||dcSet.has(h),ct:o.ct||false,rp:o.rp||false,nt:o.nt||'',ag:agSet.has(h),cn:o.cn||false,ca:o.ca||false,cv:o.cv||false,tier:tier(g,v)};
-    });autoSnap();ctrlDone=false;render();toast(Object.keys(C).length+'&#xBA85; (&#xD788;&#xC2A4;&#xD1A0;&#xB9AC; &#xC800;&#xC7A5;)')
+    });autoSnap();ctrlDone=false;render();toast(Object.keys(C).length+'&#xBA85;');
+      // Save everything to server after CSV upload
+      setTimeout(function(){syncSave()},500);
   }else{pendingSubs={};data.forEach(function(row){var h=(row['Creator']||'').replace('@','').trim().toLowerCase();var t=row['Type']||'';
     var sg=parseFloat((row['GMV']||'0').replace(/[$,]/g,''))||0;if(!pendingSubs[h])pendingSubs[h]=[0,0,0,0];
     if(t==='Video'){pendingSubs[h][0]++;pendingSubs[h][2]+=sg}else{pendingSubs[h][1]++;pendingSubs[h][3]+=sg}});
