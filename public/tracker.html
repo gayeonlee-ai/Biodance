@@ -364,11 +364,12 @@ function impState(e){var file=e.target.files[0];if(!file)return;var r=new FileRe
 
 
 // ===== API SYNC =====
-var API = window.location.hostname === 'localhost' || window.location.protocol === 'file:' ? null : '';
+// Always try server first - only go local if fetch fails
+var API = window.location.protocol === 'file:' ? null : '';
 var saving=false;
 
 function syncSave(){
-  if(!API&&API!=='')return expState(); // fallback to file if local
+  if(API===null)return expState(); // fallback to file if local
   var st={tracking:{},hist:hist,discMap:discMap,agList:Array.from(agSet),dcList:Array.from(dcSet)};
   Object.values(C).forEach(function(c){if(c.dj||c.ct||c.rp||c.nt||c.cn||c.ca||c.cv)st.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv}});
   $('syncStatus').textContent='저장중...';$('syncStatus').style.color='var(--yw)';
@@ -380,7 +381,7 @@ function syncSave(){
 }
 
 function syncLoad(){
-  if(!API&&API!==''){toast('로컬 파일 모드');return}
+  if(API===null){toast('로컬 파일 모드');return}
   $('syncStatus').textContent='불러오는중...';$('syncStatus').style.color='var(--yw)';
   fetch('/api/state').then(function(r){return r.json()}).then(function(st){
     if(st.tracking)Object.keys(st.tracking).forEach(function(h){var d=st.tracking[h];if(C[h]){C[h].dj=d.dj||false;C[h].ct=d.ct||false;C[h].rp=d.rp||false;C[h].nt=d.nt||'';C[h].cn=d.cn||false;C[h].ca=d.ca||false;C[h].cv=d.cv||false}});
@@ -396,13 +397,13 @@ function syncLoad(){
 
 // Auto-save single checkbox to server
 function trackAPI(h,f,v){
-  if(!API&&API!=='')return;
+  if(API===null)return;
   fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({handle:h,field:f,value:v})}).catch(function(){});
 }
 
 // Auto-save history snapshot to server
 function snapAPI(){
-  if(!API&&API!=='')return;
+  if(API===null)return;
   var d=today(),snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});
   fetch('/api/history',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:d,snapshot:snap})})
     .then(function(r){return r.json()}).then(function(d){
