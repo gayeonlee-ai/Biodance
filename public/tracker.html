@@ -292,8 +292,9 @@ function pf(file,type){var r=new FileReader();r.onload=function(ev){
         email:o.email||ct.em||'',phone:o.phone||ct.ph||'',fname:o.fname||ct.fn||'',
         prevTier:o.tier||'',tier:t};
     });
-    hist[td]=JSON.parse(JSON.stringify({}))[td]||{};
-    var snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});hist[td]=snap;
+    // Always save today's snapshot when CSV is uploaded
+    var snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});
+    hist[td]=snap;
     ctrlDone=false;render();setTimeout(function(){syncSave()},800);toast('&#xC5C5;&#xB85C;&#xB4DC; &#xC644;&#xB8CC; ('+Object.keys(C).length+'&#xBA85;)')
   }else{pendingSubs={};data.forEach(function(row){var h=(row['Creator']||'').replace('@','').trim().toLowerCase();var t=row['Type']||'';
     var sg=parseFloat((row['GMV']||'0').replace(/[$,]/g,''))||0;if(!pendingSubs[h])pendingSubs[h]=[0,0,0,0];
@@ -424,8 +425,20 @@ function renderTbl(){
 
 function toggleDD(id,e){e.stopPropagation();var el=$(id);if(openDD&&openDD!==el){openDD.classList.remove('show');openDD=null}if(el.classList.contains('show')){el.classList.remove('show');openDD=null}else{el.classList.add('show');openDD=el}}
 function ts(col){if(sCol===col)sDir=sDir==='desc'?'asc':'desc';else{sCol=col;sDir='desc'}closeAllDropdowns();renderTbl()}
-function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);trackAPI(h,f,v);setSt('자동저장','var(--gn)');renderSeg();renderKPI()}}
-function updStr(h,f,v){if(C[h]){C[h][f]=v;trackAPI(h,f,v);setSt('자동저장','var(--gn)')}}
+function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);autoSave();renderSeg();renderKPI()}}
+function updStr(h,f,v){if(C[h]){C[h][f]=v;autoSave()}}
+var _st=null;
+function autoSave(){
+  setSt('저장중...','var(--yw)');
+  if(_st)clearTimeout(_st);
+  _st=setTimeout(function(){
+    if(API===null){setSt('로컬모드','var(--dim)');return;}
+    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
+      .then(function(r){return r.json()})
+      .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨','var(--gn)')})
+      .catch(function(){setSt('저장실패','var(--rd)')});
+  },800);
+}
 
 // ===== SEGMENTS =====
 function renderSeg(){
@@ -561,18 +574,7 @@ function buildState(){var st={tracking:{},hist:hist,discMap:discMap,agList:Array
   Object.values(C).forEach(function(c){st.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,uname:c.uname||'',drole:c.drole||'',email:c.email||'',phone:c.phone||'',fname:c.fname||'',prevTier:c.prevTier||'',tier:c.tier}});return st}
 function syncSave(){if(API===null)return expState();setSt("...",'var(--yw)');fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())}).then(function(r){return r.json()}).then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장');toast('저장 ('+d.dates+'&#xC77C;)')}).catch(function(){setSt("실패","var(--rd)")})}
 function syncLoad(){if(API===null)return;setSt("...",'var(--yw)');fetch('/api/state').then(function(r){return r.json()}).then(function(st){applyState(st);ctrlDone=false;render();setSt("로드완료");toast(Object.keys(hist).length+'&#xC77C;')}).catch(function(){setSt("실패","var(--rd)")})}
-var _saveTimer=null;
-function trackAPI(h,f,v){
-  if(API===null)return;
-  // Debounce: wait 800ms after last change, then save full state
-  if(_saveTimer)clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(function(){
-    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
-      .then(function(r){return r.json()})
-      .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨','var(--gn)')})
-      .catch(function(){setSt('저장 실패','var(--rd)')});
-  },800);
-}
+function trackAPI(h,f,v){autoSave();}
 function expState(){var blob=new Blob([JSON.stringify(buildState())],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='biodance_backup_'+today()+'.json';a.click();URL.revokeObjectURL(url);toast('백업 저장')}
 function impState(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){try{applyState(JSON.parse(ev.target.result));ctrlDone=false;render();toast('복원 완료')}catch(err){toast('&#xC624;&#xB958;')}};r.readAsText(file);e.target.value=''}
 
