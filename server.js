@@ -3,15 +3,12 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 const DATA_FILE = path.join(__dirname, 'data', 'state.json');
 
-// Ensure data directory exists
 if (!fs.existsSync(path.join(__dirname, 'data'))) {
   fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
 }
-
-// Initialize state file if not exists
 if (!fs.existsSync(DATA_FILE)) {
   fs.writeFileSync(DATA_FILE, JSON.stringify({
     tracking: {}, hist: {}, discMap: {}, agList: [], dcList: []
@@ -26,11 +23,8 @@ app.get('/tracker', (req, res) => {
 });
 
 app.get('/api/state', (req, res) => {
-  try {
-    res.json(JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')));
-  } catch (e) {
-    res.json({ tracking: {}, hist: {}, discMap: {}, agList: [], dcList: [] });
-  }
+  try { res.json(JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); }
+  catch (e) { res.json({ tracking: {}, hist: {}, discMap: {}, agList: [], dcList: [] }); }
 });
 
 app.post('/api/state', (req, res) => {
@@ -70,19 +64,30 @@ app.post('/api/history', (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Start web server
+// Start web server first
 app.listen(PORT, () => {
   console.log(`[Tracker] Running on port ${PORT}`);
-});
 
-// Start Discord bot as separate child process (avoids port conflicts)
-const { spawn } = require('child_process');
-const botPath = path.join(__dirname, 'bot.js');
-if (fs.existsSync(botPath)) {
-  const bot = spawn('node', [botPath], { stdio: 'inherit' });
-  bot.on('error', (e) => console.log('[Bot] Error:', e.message));
-  bot.on('exit', (code) => console.log('[Bot] Exited with code', code));
-  console.log('[Bot] Discord bot started as child process');
-} else {
-  console.log('[Bot] bot.js not found, skipping');
-}
+  // Start Discord bot AFTER web server is ready
+  // Pass BOT_PORT env so bot.js uses a different port if it has its own server
+  const { spawn } = require('child_process');
+  const botPath = path.join(__dirname, 'bot.js');
+  if (fs.existsSync(botPath)) {
+    const bot = spawn('node', [botPath], {
+      stdio: 'inherit',
+      env: { ...process.env, PORT: '10001' } // give bot a different port
+    });
+    bot.on('error', (e) => console.log('[Bot] Error:', e.message));
+    bot.on('exit', (code) => {
+      console.log('[Bot] Exited with code', code);
+      // Restart bot if it crashes
+      if (code !== 0) {
+        setTimeout(() => {
+          console.log('[Bot] Restarting...');
+          spawn('node', [botPath], { stdio: 'inherit', env: { ...process.env, PORT: '10001' } });
+        }, 5000);
+      }
+    });
+    console.log('[Bot] Discord bot started');
+  }
+});
