@@ -561,7 +561,18 @@ function buildState(){var st={tracking:{},hist:hist,discMap:discMap,agList:Array
   Object.values(C).forEach(function(c){st.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,uname:c.uname||'',drole:c.drole||'',email:c.email||'',phone:c.phone||'',fname:c.fname||'',prevTier:c.prevTier||'',tier:c.tier}});return st}
 function syncSave(){if(API===null)return expState();setSt("...",'var(--yw)');fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())}).then(function(r){return r.json()}).then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장');toast('저장 ('+d.dates+'&#xC77C;)')}).catch(function(){setSt("실패","var(--rd)")})}
 function syncLoad(){if(API===null)return;setSt("...",'var(--yw)');fetch('/api/state').then(function(r){return r.json()}).then(function(st){applyState(st);ctrlDone=false;render();setSt("로드완료");toast(Object.keys(hist).length+'&#xC77C;')}).catch(function(){setSt("실패","var(--rd)")})}
-function trackAPI(h,f,v){if(API===null)return;fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({handle:h,field:f,value:v})}).catch(function(){})}
+var _saveTimer=null;
+function trackAPI(h,f,v){
+  if(API===null)return;
+  // Debounce: wait 800ms after last change, then save full state
+  if(_saveTimer)clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(function(){
+    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
+      .then(function(r){return r.json()})
+      .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨','var(--gn)')})
+      .catch(function(){setSt('저장 실패','var(--rd)')});
+  },800);
+}
 function expState(){var blob=new Blob([JSON.stringify(buildState())],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='biodance_backup_'+today()+'.json';a.click();URL.revokeObjectURL(url);toast('백업 저장')}
 function impState(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){try{applyState(JSON.parse(ev.target.result));ctrlDone=false;render();toast('복원 완료')}catch(err){toast('&#xC624;&#xB958;')}};r.readAsText(file);e.target.value=''}
 
