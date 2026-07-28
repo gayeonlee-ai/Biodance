@@ -451,13 +451,25 @@ function autoSave(){
     _saving=true;
     var payload=JSON.stringify(buildState());
     fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:payload})
-      .then(function(r){return r.json()})
-      .then(function(d){
+      .then(function(r){
         _saving=false;
+        return r.json();
+      })
+      .then(function(d){
         var t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
         setSt(t+' 저장됨','var(--gn)');
       })
-      .catch(function(e){_saving=false;setSt('저장실패','var(--rd)');console.log('Save error:',e)});
+      .catch(function(e){
+        _saving=false;
+        setSt('저장실패','var(--rd)');
+        // Retry once after 2s
+        setTimeout(function(){
+          fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:payload})
+            .then(function(r){return r.json()})
+            .then(function(){setSt('재시도 저장됨','var(--gn)')})
+            .catch(function(){setSt('저장실패(재시도)','var(--rd)')});
+        },2000);
+      });
   },1500);
 }
 
@@ -510,7 +522,36 @@ function renderSeg(){
   var tot=segs.filter(function(s){return s.grp!=='none'}).reduce(function(s,seg){return s+seg.items.length},0);
   var bdg=$('sBdg');if(tot>0){bdg.textContent=tot;bdg.style.display='inline'}else bdg.style.display='none';
 
-  function renderGrp(grp,title,list){
+  function renderSegCard(seg){
+    var collapsed=seg.items.length===0;
+    var h='<div class="sc">';
+    h+='<div class="sh" style="background:'+seg.bg+'" onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'block\':\'none\'">';
+    h+='<h3>'+seg.icon+' '+seg.title+'</h3>';
+    h+='<span class="ct" style="background:'+seg.color+';color:#fff">'+seg.items.length+'</span>';
+    h+='</div>';
+    h+='<div style="'+(collapsed?'display:none':'')+'padding:0 12px 10px;max-height:220px;overflow-y:auto">';
+    if(seg.desc)h+='<p style="font-size:9px;color:var(--dim);margin:6px 0 4px">'+seg.desc+'</p>';
+    if(!seg.items.length){
+      h+='<p style="font-size:10px;color:var(--dim);text-align:center;padding:8px">해당없음</p>';
+    } else {
+      seg.items.slice(0,40).forEach(function(cr){
+        var mt=fmt(cr.g);
+        var dg=getDelta(cr.h,'g'),dv=getDelta(cr.h,'v');
+        if(dg>0)mt+=' <b style="color:var(--gn)">+'+fmt(dg)+'</b>';
+        mt+=' · '+cr.v+'개';
+        if(dv>0)mt+=' <b style="color:var(--gn)">+'+dv+'</b>';
+        if(cr.uname)mt+=' <span style="font-size:8px;color:#888;font-style:italic">'+cr.uname+'</span>';
+        if(cr.email)mt+=' <span style="font-size:8px;color:var(--ac)">✉</span>';
+        h+='<div class="si-item">';
+        h+='<span class="hnd">@'+cr.h+(cr.ag?'<span class="ag-badge">AG</span>':'')+'</span>';
+        h+='<span class="mt">'+mt+'</span>';
+        h+='</div>';
+      });
+    }
+    h+='</div></div>';
+    return h;
+  }
+    function renderGrp(grp,title,list){
     var h='<div class="sg-section"><div class="sg-section-hdr">'+title+'</div><div class="sg">';
     list.filter(function(s){return s.grp===grp}).forEach(function(seg){
       h+='<div class="sc"><div class="sh" style="background:'+seg.bg+'" onclick="this.nextElementSibling.classList.toggle(\'hide\')"><h3>'+seg.icon+' '+seg.title+'</h3><span class="ct" style="background:'+seg.color+';color:#fff">'+seg.items.length+'</span></div>';
@@ -519,7 +560,7 @@ function renderSeg(){
       else seg.items.slice(0,40).forEach(function(c){
         var mt=fmt(c.g);var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
         if(dg>0)mt+=' <span style="color:var(--gn)">+'+fmt(dg)+'</span>';mt+=' &#xB7; '+c.v+'V';if(dv>0)mt+=' <span style="color:var(--gn)">+'+dv+'</span>';
-        if(c.uname)mt+='<br><span style="color:var(--pp);font-size:8px">@'+c.uname+'</span>';
+        if(c.uname)mt+='<br><span style="font-size:8px;color:#aaa;font-style:italic">DC:'+c.uname+'</span>';
         h+='<div class="si-item"><span class="hnd">@'+c.h+(c.ag?'<span class="ag-badge">AG</span>':'')+'</span><span class="mt">'+mt+'</span></div>'});
       h+='</div></div>'});
     h+='</div></div>';return h;}
