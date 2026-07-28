@@ -176,7 +176,9 @@ function tierCls(t){return 't-'+t}
 
 var agSet=new Set(SAVED_AG.length?SAVED_AG:RAW_AG);
 var dcSet=new Set(SAVED_DC.length?SAVED_DC:RAW_DC);
-var C={},sCol='g',sDir='desc',sq='',af='all';
+var C={},sCol='g',sDir='desc',sq='';
+// Multi-filter: {dc: null/'y'/'n', tier: null/'new'/'active'/'vip', surge: false, other: null}
+var MF={dc:null,tier:null,surge:false,vid:false,nv:false};
 var discMap=Object.assign({},RAW_DCMAP,SAVED_DCMAP);
 var hist=JSON.parse(JSON.stringify(SAVED_HIST)); // deep copy
 // Column visibility - track which columns to show
@@ -451,6 +453,9 @@ function renderTbl(){
 }
 
 function toggleDD(id,e){e.stopPropagation();var el=$(id);if(openDD&&openDD!==el){openDD.classList.remove('show');openDD=null}if(el.classList.contains('show')){el.classList.remove('show');openDD=null}else{el.classList.add('show');openDD=el}}
+function toggleMF(key,val){MF[key]=(MF[key]===val?null:val);renderTbl();}
+function toggleMFBool(key){MF[key]=!MF[key];renderTbl();}
+function resetMF(){MF={dc:null,tier:null,surge:false,nv:false,vid:false};renderTbl();}
 function ts(col){if(sCol===col)sDir=sDir==='desc'?'asc':'desc';else{sCol=col;sDir='desc'}closeAllDropdowns();renderTbl()}
 function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);autoSave();renderSeg();renderKPI()}}
 function updStr(h,f,v){if(C[h]){C[h][f]=v;autoSave()}}
@@ -610,7 +615,7 @@ function renderHist(){
       var dg=cur.g-prev.g,dv=cur.v-prev.v;
       h+='<td style="border-left:1px solid var(--bd);color:'+(i>0&&dg>0?'var(--gn)':i>0&&dg<0?'var(--rd)':'inherit')+'">'+fmt(cur.g);
       if(i>0&&dg!==0)h+='<br><span style="font-size:8px">'+(dg>0?'+':'')+fmt(dg)+'</span>';h+='</td>';
-      h+='<td style="border-right:1px solid var(--bd)">'+cur.v;
+      h+='<td style="border-right:1px solid var(--bd);min-width:40px">'+cur.v;
       if(i>0&&dv!==0)h+='<br><span style="font-size:8px;color:'+(dv>0?'var(--gn)':'var(--rd)')+'"> '+(dv>0?'+':'')+dv+'</span>';h+='</td>'});
     h+='</tr>'});
   h+='</tbody></table></div></div>';$('histA').innerHTML=h;}
