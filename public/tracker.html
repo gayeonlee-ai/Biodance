@@ -217,9 +217,22 @@ function applyState(st){
   if(st.tracking)Object.keys(st.tracking).forEach(function(h){var d=st.tracking[h];if(C[h]){
     if(d.dj!==undefined)C[h].dj=d.dj;if(d.ct!==undefined)C[h].ct=d.ct;if(d.rp!==undefined)C[h].rp=d.rp;
     if(d.nt!==undefined)C[h].nt=d.nt;if(d.cn!==undefined)C[h].cn=d.cn;if(d.ca!==undefined)C[h].ca=d.ca;
-    if(d.cv!==undefined)C[h].cv=d.cv;if(d.uname)C[h].uname=d.uname;if(d.email)C[h].email=d.email;
-    if(d.phone)C[h].phone=d.phone;if(d.prevTier)C[h].prevTier=d.prevTier;if(d.tier)C[h].tier=d.tier}});
-  if(st.hist)Object.keys(st.hist).forEach(function(d){hist[d]=st.hist[d]});
+    if(d.cv!==undefined)C[h].cv=d.cv;
+    if(d.uname!==undefined)C[h].uname=d.uname;
+    if(d.email!==undefined)C[h].email=d.email;  // fix: was if(d.email) which skips empty string
+    if(d.phone!==undefined)C[h].phone=d.phone;
+    if(d.prevTier!==undefined)C[h].prevTier=d.prevTier;
+    if(d.tier)C[h].tier=d.tier}});
+  // Fix: only keep last 7 days to avoid duplicate/stale dates
+  if(st.hist){
+    Object.keys(st.hist).forEach(function(d){hist[d]=st.hist[d]});
+    // Remove dates that have identical data to adjacent day (dedup)
+    var dates=Object.keys(hist).sort();
+    for(var i=1;i<dates.length;i++){
+      var a=JSON.stringify(hist[dates[i-1]]),b=JSON.stringify(hist[dates[i]]);
+      if(a===b){delete hist[dates[i-1]];} // remove older duplicate
+    }
+  }
   if(st.discMap)Object.assign(discMap,st.discMap);
   if(st.agList)st.agList.forEach(function(h){agSet.add(h)});
   if(st.dcList)st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true});
