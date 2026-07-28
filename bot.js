@@ -224,18 +224,28 @@ const commands = [
   new SlashCommandBuilder().setName("sparkcode").setDescription("Learn how to submit your Spark Ad Code"),
   new SlashCommandBuilder().setName("samplerequest").setDescription("Learn how to request a free sample from Biodance"),
   new SlashCommandBuilder().setName("newproduct").setDescription("Check out Biodance new products and product info"),
-  // ─── NEW: /approve 커맨드 ───
+  // ─── /approve ───
   new SlashCommandBuilder()
     .setName("approve")
-    .setDescription("크리에이터 승인 및 트래커 자동 매핑 (TikTok 핸들 등록)")
+    .setDescription("크리에이터 승인 — Discord↔TikTok 매핑 저장")
     .addUserOption(opt => opt.setName("user").setDescription("승인할 Discord 유저").setRequired(true))
     .addStringOption(opt => opt.setName("tiktok").setDescription("TikTok 핸들 (@없이)").setRequired(true))
-    .addStringOption(opt => opt.setName("tier").setDescription("배정 Tier").setRequired(false)
+    .addStringOption(opt => opt.setName("tier").setDescription("배정 Tier (기본: new)").setRequired(false)
       .addChoices(
         { name: "🌱 New Creator", value: "new" },
         { name: "👟 Active Creator", value: "active" },
         { name: "⭐ VIP Creator", value: "vip" }
       )),
+  // ─── /whois — Discord명 → TikTok 핸들 조회 ───
+  new SlashCommandBuilder()
+    .setName("whois")
+    .setDescription("Discord 유저의 TikTok 핸들 조회")
+    .addUserOption(opt => opt.setName("user").setDescription("조회할 Discord 유저").setRequired(true)),
+  // ─── /find — TikTok 핸들 → Discord명 조회 ───
+  new SlashCommandBuilder()
+    .setName("find")
+    .setDescription("TikTok 핸들로 Discord 유저 조회")
+    .addStringOption(opt => opt.setName("tiktok").setDescription("TikTok 핸들 (@없이)").setRequired(true)),
 ].map(cmd => cmd.toJSON());
 
 // ─── 봇 실행 ───
@@ -350,6 +360,66 @@ client.on("interactionCreate", async (interaction) => {
       console.log("✅ /approve: " + username + " → @" + tiktok);
     } catch (e) {
       await interaction.reply({ content: "❌ 트래커 저장 실패: " + e.message, ephemeral: true });
+    }
+    return;
+  }
+
+  // /whois: Discord 유저 → TikTok 핸들
+  if (interaction.commandName === "whois") {
+    const user = interaction.options.getUser("user");
+    const username = user.username.toLowerCase();
+    try {
+      const result = await trackerAPI("/api/lookup", { type: "discord", value: username });
+      if (result.tiktok) {
+        await interaction.reply({
+          embeds: [new EmbedBuilder()
+            .setColor(0x5865F2)
+            .setTitle("🔍 크리에이터 조회")
+            .addFields(
+              { name: "Discord", value: "@" + user.username, inline: true },
+              { name: "TikTok", value: "@" + result.tiktok, inline: true },
+              { name: "Tier", value: result.tier || "미확인", inline: true },
+              { name: "DC 체크", value: result.dj ? "✅" : "❌", inline: true },
+              { name: "이메일", value: result.email || "없음", inline: true }
+            )
+          ],
+          ephemeral: true
+        });
+      } else {
+        await interaction.reply({ content: "❌ **@" + user.username + "** 의 TikTok 핸들이 등록되지 않았습니다.\n`/approve` 로 먼저 등록해주세요!", ephemeral: true });
+      }
+    } catch(e) {
+      await interaction.reply({ content: "❌ 조회 실패: " + e.message, ephemeral: true });
+    }
+    return;
+  }
+
+  // /find: TikTok 핸들 → Discord 유저
+  if (interaction.commandName === "find") {
+    const tiktok = interaction.options.getString("tiktok").toLowerCase().replace(/^@/, "");
+    try {
+      const result = await trackerAPI("/api/lookup", { type: "tiktok", value: tiktok });
+      if (result.uname || result.dj !== undefined) {
+        await interaction.reply({
+          embeds: [new EmbedBuilder()
+            .setColor(0x5865F2)
+            .setTitle("🔍 크리에이터 조회")
+            .addFields(
+              { name: "TikTok", value: "@" + tiktok, inline: true },
+              { name: "Discord", value: result.uname ? "@" + result.uname : "미등록", inline: true },
+              { name: "Tier", value: result.tier || "미확인", inline: true },
+              { name: "GMV", value: result.gmv ? "$" + result.gmv : "-", inline: true },
+              { name: "이메일", value: result.email || "없음", inline: true },
+              { name: "DC 체크", value: result.dj ? "✅" : "❌", inline: true }
+            )
+          ],
+          ephemeral: true
+        });
+      } else {
+        await interaction.reply({ content: "❌ **@" + tiktok + "** 을 찾을 수 없습니다.", ephemeral: true });
+      }
+    } catch(e) {
+      await interaction.reply({ content: "❌ 조회 실패: " + e.message, ephemeral: true });
     }
     return;
   }
