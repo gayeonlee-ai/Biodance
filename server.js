@@ -224,6 +224,33 @@ app.post('/api/role-assign', (req, res) => {
   });
 });
 
+// /api/lookup: Discord명 or TikTok 핸들로 크리에이터 조회
+app.post('/api/lookup', (req, res) => {
+  const { type, value } = req.body;
+  readFromGitHub((err, cur) => {
+    if (err || !cur) return res.json({});
+    const tracking = cur.tracking || {};
+    const discMap = cur.discMap || {};
+
+    if (type === 'discord') {
+      // Discord username → TikTok handle
+      const tiktok = discMap[value.toLowerCase()];
+      if (!tiktok) return res.json({});
+      const t = tracking[tiktok] || {};
+      return res.json({ tiktok, uname: t.uname, tier: t.tier, dj: t.dj, email: t.email || '' });
+    }
+
+    if (type === 'tiktok') {
+      // TikTok handle → creator info
+      const t = tracking[value.toLowerCase()];
+      if (!t) return res.json({});
+      return res.json({ tiktok: value, uname: t.uname || '', tier: t.tier, dj: t.dj, email: t.email || '', gmv: t.gmv });
+    }
+
+    res.json({});
+  });
+});
+
 // /discord-join: 서버 입장 기록
 app.post('/api/discord-join', (req, res) => {
   const { username, discordId } = req.body;
