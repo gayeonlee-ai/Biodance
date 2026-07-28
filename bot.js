@@ -284,37 +284,80 @@ client.on("guildMemberAdd", async (member) => {
   }
 });
 
-// 기능 2: 역할 부여 시 채널 메시지 + 트래커 자동 업데이트
+// Tier-up DM embeds
+function dmNewToActive(name) {
+  return new EmbedBuilder()
+    .setColor(0x3BA55D)
+    .setTitle("👟 Active Creator Unlocked!")
+    .setDescription("Hey " + name + "! 🎉\n\nYOU DID IT — your first sale just came in! We are SO proud of you 💰\n\nYou have officially leveled up to **Active Creator** status. This is just the beginning — let's keep this momentum going! 🚀")
+    .addFields(
+      { name: "What's next?", value: "✨ Keep posting consistently\n🎯 Focus on the Caviar PDRN Serum\n💬 Check your Active Creator channel for tips & support" }
+    )
+    .setFooter({ text: "The Biodance team is rooting for you! 💙" });
+}
+function dmActiveToVip(name) {
+  return new EmbedBuilder()
+    .setColor(0xF0B232)
+    .setTitle("⭐ VIP Creator — $500 Unlocked!")
+    .setDescription("Hey " + name + "! 🏆\n\n$500+ GMV — you are officially a **VIP Creator**! We are blown away by your dedication! 🔥\n\nYou are now one of our TOP performing creators in this contest!")
+    .addFields(
+      { name: "⭐ VIP Perks", value: "🎁 You are on track for a contest reward\n📊 Early access to insights & tips in your VIP channel\n🚀 Next milestone: $1,000 → VVIP!" }
+    )
+    .setFooter({ text: "Keep going — the top prize is within reach! 👑" });
+}
+function dmActiveToVvip(name) {
+  return new EmbedBuilder()
+    .setColor(0xE91E63)
+    .setTitle("👑 VVIP — $1,000 Legend!")
+    .setDescription("Hey " + name + "! 🎊\n\n$1,000+ GMV — you are officially a **VVIP Creator**! You are an absolute LEGEND! 👑\n\nTop of the leaderboard territory — incredible work!")
+    .addFields(
+      { name: "👑 What this means", value: "🥇 You are competing for the TOP prizes\n🎁 Contest reward is on the way\n💙 Thank you for being an amazing part of Biodance!" }
+    )
+    .setFooter({ text: "You are one of our best. Thank you! 💙" });
+}
+
+// 기능 2: 역할 부여 시 채널 메시지 + Tier업 DM + 트래커 자동 업데이트
 client.on("guildMemberUpdate", async (oldMember, newMember) => {
   try {
     const addedRoles = newMember.roles.cache.filter(r => !oldMember.roles.cache.has(r.id));
     if (addedRoles.size === 0) return;
 
     const tierChecks = [
-      { roleId: CONFIG.ROLES.VVIP_CREATOR,   channelId: CONFIG.CHANNELS.VVIP_CREATOR,   embedFn: vvipCreatorEmbed,   tier: "vvip" },
-      { roleId: CONFIG.ROLES.VIP_CREATOR,    channelId: CONFIG.CHANNELS.VIP_CREATOR,    embedFn: vipCreatorEmbed,    tier: "vip" },
-      { roleId: CONFIG.ROLES.ACTIVE_CREATOR, channelId: CONFIG.CHANNELS.ACTIVE_CREATOR, embedFn: activeCreatorEmbed, tier: "active" },
-      { roleId: CONFIG.ROLES.NEW_CREATOR,    channelId: CONFIG.CHANNELS.NEW_CREATOR,    embedFn: newCreatorEmbed,    tier: "new" },
+      { roleId: CONFIG.ROLES.VVIP_CREATOR,   channelId: CONFIG.CHANNELS.VVIP_CREATOR,   embedFn: vvipCreatorEmbed,   tier: "vvip",   dmFn: dmActiveToVvip },
+      { roleId: CONFIG.ROLES.VIP_CREATOR,    channelId: CONFIG.CHANNELS.VIP_CREATOR,    embedFn: vipCreatorEmbed,    tier: "vip",    dmFn: dmActiveToVip },
+      { roleId: CONFIG.ROLES.ACTIVE_CREATOR, channelId: CONFIG.CHANNELS.ACTIVE_CREATOR, embedFn: activeCreatorEmbed, tier: "active", dmFn: dmNewToActive },
+      { roleId: CONFIG.ROLES.NEW_CREATOR,    channelId: CONFIG.CHANNELS.NEW_CREATOR,    embedFn: newCreatorEmbed,    tier: "new",    dmFn: null },
     ];
 
     for (const t of tierChecks) {
       if (!t.roleId || !addedRoles.has(t.roleId)) continue;
+
+      // 1. 채널 공개 메시지
       const channel = newMember.guild.channels.cache.get(t.channelId);
       if (channel) {
         const mention = "<@" + newMember.id + ">";
         await channel.send({ embeds: [t.embedFn(mention)] });
         console.log("✅ " + newMember.user.tag + " " + t.tier + " 채널 메시지 전송");
       }
-      // 트래커에 채널 배정 자동 업데이트
+
+      // 2. Tier업 개인 DM (New 제외)
+      if (t.dmFn) {
+        try {
+          const displayName = newMember.nickname || newMember.user.globalName || newMember.user.username;
+          await newMember.send({ embeds: [t.dmFn(displayName)] });
+          console.log("💌 " + newMember.user.tag + " Tier업 DM 전송 (" + t.tier + ")");
+        } catch(dmErr) {
+          console.log("⚠️ " + newMember.user.tag + " DM 전송 실패 (DM 비활성화)");
+        }
+      }
+
+      // 3. 트래커 자동 업데이트
       const username = newMember.user.username.toLowerCase();
       const nick = (newMember.nickname || "").toLowerCase().replace(/^@/, "");
       await trackerAPI("/api/role-assign", {
-        username,
-        nickname: nick,
-        tier: t.tier,
-        discordId: newMember.user.id
+        username, nickname: nick, tier: t.tier, discordId: newMember.user.id
       });
-      console.log("📊 트래커 자동 업데이트: " + username + " → " + t.tier);
+      console.log("📊 트래커: " + username + " → " + t.tier);
     }
   } catch (error) {
     console.error("❌ 에러:", error);
