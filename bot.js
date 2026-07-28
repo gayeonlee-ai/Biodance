@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits, EmbedBuilder, Partials, REST, Routes, SlashCommandBuilder } = require("discord.js");
 const http = require("http");
+const https = require("https");
 
 const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
@@ -11,6 +12,7 @@ http.createServer((req, res) => {
 
 const CONFIG = {
   TOKEN: process.env.DISCORD_TOKEN,
+  TRACKER_URL: "http://localhost:10000", // internal tracker API
   ROLES: {
     NEW_CREATOR:    "1528676082868555857",
     ACTIVE_CREATOR: "1528676173914046525",
@@ -27,8 +29,28 @@ const CONFIG = {
   },
 };
 
-// ─── FAQ 슬래시 커맨드 (Embed 카드형) ───
+// ─── TRACKER API HELPER ───
+function trackerAPI(path, body) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify(body);
+    const req = require("http").request({
+      hostname: "localhost",
+      port: 10000,
+      path: path,
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Content-Length": Buffer.byteLength(data) }
+    }, (res) => {
+      let raw = "";
+      res.on("data", c => raw += c);
+      res.on("end", () => { try { resolve(JSON.parse(raw)); } catch(e) { resolve({}); } });
+    });
+    req.on("error", reject);
+    req.write(data);
+    req.end();
+  });
+}
 
+// ─── FAQ EMBEDS ───
 function faqGuideline() {
   return new EmbedBuilder()
     .setColor(0x5865F2)
@@ -42,13 +64,11 @@ function faqGuideline() {
       "**Required Hashtags — include ALL of these:**\n" +
       "`#biodance` `#skinbooster` `#pdrn` `#antiaging` `#tiktokshopcreatorpicks`"
     )
-    .addFields({
-      name: "Quick Content Tips",
-      value:
-        "✅ Hook within the first 2-3 seconds\n" +
-        "✅ Show the texture, before/after, real results\n" +
-        "✅ Be authentic — your audience trusts YOU\n" +
-        "✅ Always add the product link in your video"
+    .addFields({ name: "Quick Content Tips", value:
+      "✅ Hook within the first 2-3 seconds\n" +
+      "✅ Show the texture, before/after, real results\n" +
+      "✅ Be authentic — your audience trusts YOU\n" +
+      "✅ Always add the product link in your video"
     })
     .setFooter({ text: "Questions? Just ask us here 💬" });
 }
@@ -57,9 +77,7 @@ function faqCampaign() {
   return new EmbedBuilder()
     .setColor(0xF0B232)
     .setTitle("🎯 Caviar PDRN Serum — Euka GMV Contest")
-    .setDescription(
-      "Hello! This is THE moment. Here is everything you need to know 👇"
-    )
+    .setDescription("Hello! This is THE moment. Here is everything you need to know 👇")
     .addFields(
       { name: "📅 Contest Period", value: "July 6 – August 28 (PT)", inline: true },
       { name: "🎬 GMV Tracking Starts", value: "July 22", inline: true },
@@ -72,9 +90,7 @@ function faqReward() {
   return new EmbedBuilder()
     .setColor(0xE91E63)
     .setTitle("🏆 Contest Rewards — 10 Winners, Huge Prizes!")
-    .setDescription(
-      "Hello! We are not playing around with this one 👀"
-    )
+    .setDescription("Hello! We are not playing around with this one 👀")
     .addFields(
       { name: "🥇 1st Place", value: "$9,000 Cash + PR Box", inline: true },
       { name: "🥈 2nd Place", value: "$5,000 Cash + PR Box", inline: true },
@@ -90,9 +106,7 @@ function faqSparkcode() {
   return new EmbedBuilder()
     .setColor(0x3BA55D)
     .setTitle("⚡ How to Submit Your Spark Ad Code")
-    .setDescription(
-      "Hello! Great news — it is super simple!"
-    )
+    .setDescription("Hello! Great news — it is super simple!")
     .addFields(
       { name: "Steps", value:
         "1️⃣ Go to your **Euka Contest dashboard**\n" +
@@ -111,9 +125,7 @@ function faqSampleRequest() {
   return new EmbedBuilder()
     .setColor(0x5865F2)
     .setTitle("🎁 How to Request a Biodance Sample")
-    .setDescription(
-      "Hello! We love getting our products into your hands! 💙"
-    )
+    .setDescription("Hello! We love getting our products into your hands! 💙")
     .addFields(
       { name: "Step 1 — Check your Inbox first! 📬", value:
         "We send collab invitations through TikTok Shop.\n" +
@@ -147,8 +159,7 @@ function faqNewProduct() {
     .setFooter({ text: "Questions about the products? Ask us here 💬" });
 }
 
-// ─── 서버 입장 DM (Embed 카드형) ───
-
+// ─── WELCOME DM ───
 function welcomeDmEmbed() {
   return new EmbedBuilder()
     .setColor(0x5865F2)
@@ -158,35 +169,22 @@ function welcomeDmEmbed() {
       "We are so excited to have you in our official Biodance community!\n\n" +
       "Feel free to spread the word to your creator besties — the more, the merrier! 🙌"
     )
-    .addFields(
-      { name: "📝 One quick thing!", value:
-        "Please set your server nickname to your **TikTok handle** so we can easily find and support you!\n" +
-        "Right-click your name → Edit Server Profile → Nickname"
-      }
-    )
+    .addFields({ name: "📝 One quick thing!", value:
+      "Please set your server nickname to your **TikTok handle** so we can easily find and support you!\n" +
+      "Right-click your name → Edit Server Profile → Nickname"
+    })
     .setFooter({ text: "Thank you for joining us. Let's grow together! 🚀" });
 }
 
-// ─── 티어별 채널 환영 메시지 (Embed 카드형) ───
-
+// ─── TIER EMBEDS ───
 function newCreatorEmbed(mention) {
   return new EmbedBuilder()
     .setColor(0x3BA55D)
     .setTitle("🌱 Welcome to Biodance!")
-    .setDescription(
-      "Hello " + mention + "!\n\n" +
-      "Thank you for posting your video(s) for Biodance! " +
-      "We are super excited to have you here 🎬💙"
-    )
+    .setDescription("Hello " + mention + "!\n\nThank you for posting your video(s) for Biodance! We are super excited to have you here 🎬💙")
     .addFields(
-      { name: "This channel is your go-to place for", value:
-        "⚡ Exclusive Content Tips & Strategies\n" +
-        "🤝 Direct Support from the Biodance team"
-      },
-      { name: "Helpful Links", value:
-        "🧴 New products → <#1463777483664134226>\n" +
-        "📍 Content guidelines → <#1463776258365198564>"
-      }
+      { name: "This channel is your go-to place for", value: "⚡ Exclusive Content Tips & Strategies\n🤝 Direct Support from the Biodance team" },
+      { name: "Helpful Links", value: "🧴 New products → <#1463777483664134226>\n📍 Content guidelines → <#1463776258365198564>" }
     )
     .setFooter({ text: "💡 Use our slash commands for instant info! /newproduct /guideline /sparkcode /samplerequest /reward /campaign" });
 }
@@ -195,18 +193,8 @@ function activeCreatorEmbed(mention) {
   return new EmbedBuilder()
     .setColor(0x5865F2)
     .setTitle("👟 First Sale Unlocked!")
-    .setDescription(
-      "Hello " + mention + "!\n\n" +
-      "YOU MADE YOUR FIRST SALE!! We are SO proud of you 💰🎉\n\n" +
-      "Let's ride this all the way to your reward! " +
-      "We are going to be boosting and supporting you every step of the way 🚀"
-    )
-    .addFields(
-      { name: "This channel is your go-to place for", value:
-        "⚡ Exclusive Content Tips & Strategies to drive major sales\n" +
-        "🤝 Direct Support from the Biodance team"
-      }
-    )
+    .setDescription("Hello " + mention + "!\n\nYOU MADE YOUR FIRST SALE!! We are SO proud of you 💰🎉\n\nLet's ride this all the way to your reward! We are going to be boosting and supporting you every step of the way 🚀")
+    .addFields({ name: "This channel is your go-to place for", value: "⚡ Exclusive Content Tips & Strategies to drive major sales\n🤝 Direct Support from the Biodance team" })
     .setFooter({ text: "Questions? Drop a message here or DM us anytime 💙" });
 }
 
@@ -214,17 +202,8 @@ function vipCreatorEmbed(mention) {
   return new EmbedBuilder()
     .setColor(0xF0B232)
     .setTitle("⭐ VIP Status Achieved!")
-    .setDescription(
-      "🔥 Everyone give it up for " + mention + "!\n\n" +
-      "$500+ GMV — one of our top-performing creators! 🏆"
-    )
-    .addFields(
-      { name: "⭐ VIP perks unlocked", value:
-        "✨ Early access to new product info\n" +
-        "📊 Insider content trends shared here first\n" +
-        "🎁 Your contest reward is on the way!"
-      }
-    )
+    .setDescription("🔥 Everyone give it up for " + mention + "!\n\n$500+ GMV — one of our top-performing creators! 🏆")
+    .addFields({ name: "⭐ VIP perks unlocked", value: "✨ Early access to new product info\n📊 Insider content trends shared here first\n🎁 Your contest reward is on the way!" })
     .setFooter({ text: "Next stop — VVIP! Keep going! 👑" });
 }
 
@@ -232,21 +211,12 @@ function vvipCreatorEmbed(mention) {
   return new EmbedBuilder()
     .setColor(0xE91E63)
     .setTitle("👑 VVIP — Legend Status!")
-    .setDescription(
-      mention + " just reached VVIP! $1,000+ GMV! 🎊\n\n" +
-      "Officially one of Biodance elite creators — you are a legend!"
-    )
-    .addFields(
-      { name: "👑 VVIP perks", value:
-        "🥇 First access to everything — launches, campaigns, insider info\n" +
-        "🎁 Your contest reward is on the way!"
-      }
-    )
+    .setDescription(mention + " just reached VVIP! $1,000+ GMV! 🎊\n\nOfficially one of Biodance elite creators — you are a legend!")
+    .addFields({ name: "👑 VVIP perks", value: "🥇 First access to everything — launches, campaigns, insider info\n🎁 Your contest reward is on the way!" })
     .setFooter({ text: "Thank you for being an incredible part of the Biodance family! 💙" });
 }
 
 // ─── 슬래시 커맨드 등록 ───
-
 const commands = [
   new SlashCommandBuilder().setName("guideline").setDescription("View Biodance content guidelines & required hashtags"),
   new SlashCommandBuilder().setName("campaign").setDescription("View current contest period and product info"),
@@ -254,97 +224,140 @@ const commands = [
   new SlashCommandBuilder().setName("sparkcode").setDescription("Learn how to submit your Spark Ad Code"),
   new SlashCommandBuilder().setName("samplerequest").setDescription("Learn how to request a free sample from Biodance"),
   new SlashCommandBuilder().setName("newproduct").setDescription("Check out Biodance new products and product info"),
-].map(function(cmd) { return cmd.toJSON(); });
+  // ─── NEW: /approve 커맨드 ───
+  new SlashCommandBuilder()
+    .setName("approve")
+    .setDescription("크리에이터 승인 및 트래커 자동 매핑 (TikTok 핸들 등록)")
+    .addUserOption(opt => opt.setName("user").setDescription("승인할 Discord 유저").setRequired(true))
+    .addStringOption(opt => opt.setName("tiktok").setDescription("TikTok 핸들 (@없이)").setRequired(true))
+    .addStringOption(opt => opt.setName("tier").setDescription("배정 Tier").setRequired(false)
+      .addChoices(
+        { name: "🌱 New Creator", value: "new" },
+        { name: "👟 Active Creator", value: "active" },
+        { name: "⭐ VIP Creator", value: "vip" }
+      )),
+].map(cmd => cmd.toJSON());
 
 // ─── 봇 실행 ───
-
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
   partials: [Partials.GuildMember],
 });
 
-client.once("clientReady", async function() {
+client.once("clientReady", async () => {
   console.log("✅ " + client.user.tag + " 봇이 온라인입니다!");
   console.log("📊 서버 " + client.guilds.cache.size + "개에 연결됨");
-
   try {
     const rest = new REST({ version: "10" }).setToken(CONFIG.TOKEN);
-    await rest.put(
-      Routes.applicationCommands(client.user.id),
-      { body: commands }
-    );
+    await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
     console.log("✅ 슬래시 커맨드 등록 완료!");
-  } catch (e) {
-    console.error("❌ 슬래시 커맨드 등록 실패:", e);
-  }
+  } catch (e) { console.error("❌ 슬래시 커맨드 등록 실패:", e); }
 
   for (const guild of client.guilds.cache.values()) {
     try {
       await guild.members.fetch();
       console.log("👥 " + guild.name + " 멤버 " + guild.memberCount + "명 캐싱 완료");
-    } catch (e) {
-      console.log("⚠️ 멤버 캐싱 실패: " + e.message);
-    }
+    } catch (e) { console.log("⚠️ 멤버 캐싱 실패: " + e.message); }
   }
 });
 
-// 기능 1: 서버 입장 시 개인 DM
-client.on("guildMemberAdd", async function(member) {
+// 기능 1: 서버 입장 DM
+client.on("guildMemberAdd", async (member) => {
   try {
     await member.send({ embeds: [welcomeDmEmbed()] });
     console.log("✅ " + member.user.tag + " 입장 DM 전송 완료");
+    // 트래커에 Discord 유저 입장 기록
+    const username = member.user.username.toLowerCase();
+    await trackerAPI("/api/discord-join", { username, discordId: member.user.id });
   } catch (error) {
     console.log("⚠️ " + member.user.tag + " DM 전송 실패");
   }
 });
 
-// 기능 2: 역할 부여 시 채널 공개 메시지
-client.on("guildMemberUpdate", async function(oldMember, newMember) {
+// 기능 2: 역할 부여 시 채널 메시지 + 트래커 자동 업데이트
+client.on("guildMemberUpdate", async (oldMember, newMember) => {
   try {
-    const addedRoles = newMember.roles.cache.filter(
-      function(role) { return !oldMember.roles.cache.has(role.id); }
-    );
+    const addedRoles = newMember.roles.cache.filter(r => !oldMember.roles.cache.has(r.id));
     if (addedRoles.size === 0) return;
 
     const tierChecks = [
-      { roleId: CONFIG.ROLES.VVIP_CREATOR,   channelId: CONFIG.CHANNELS.VVIP_CREATOR,   embedFn: vvipCreatorEmbed },
-      { roleId: CONFIG.ROLES.VIP_CREATOR,    channelId: CONFIG.CHANNELS.VIP_CREATOR,    embedFn: vipCreatorEmbed },
-      { roleId: CONFIG.ROLES.ACTIVE_CREATOR, channelId: CONFIG.CHANNELS.ACTIVE_CREATOR, embedFn: activeCreatorEmbed },
-      { roleId: CONFIG.ROLES.NEW_CREATOR,    channelId: CONFIG.CHANNELS.NEW_CREATOR,    embedFn: newCreatorEmbed },
+      { roleId: CONFIG.ROLES.VVIP_CREATOR,   channelId: CONFIG.CHANNELS.VVIP_CREATOR,   embedFn: vvipCreatorEmbed,   tier: "vvip" },
+      { roleId: CONFIG.ROLES.VIP_CREATOR,    channelId: CONFIG.CHANNELS.VIP_CREATOR,    embedFn: vipCreatorEmbed,    tier: "vip" },
+      { roleId: CONFIG.ROLES.ACTIVE_CREATOR, channelId: CONFIG.CHANNELS.ACTIVE_CREATOR, embedFn: activeCreatorEmbed, tier: "active" },
+      { roleId: CONFIG.ROLES.NEW_CREATOR,    channelId: CONFIG.CHANNELS.NEW_CREATOR,    embedFn: newCreatorEmbed,    tier: "new" },
     ];
 
-    for (const tier of tierChecks) {
-      if (!tier.roleId) continue;
-      if (!addedRoles.has(tier.roleId)) continue;
-
-      const channel = newMember.guild.channels.cache.get(tier.channelId);
-      if (!channel) continue;
-
-      const mention = "<@" + newMember.id + ">";
-      await channel.send({ embeds: [tier.embedFn(mention)] });
-      console.log("✅ " + newMember.user.tag + " 채널 메시지 전송");
+    for (const t of tierChecks) {
+      if (!t.roleId || !addedRoles.has(t.roleId)) continue;
+      const channel = newMember.guild.channels.cache.get(t.channelId);
+      if (channel) {
+        const mention = "<@" + newMember.id + ">";
+        await channel.send({ embeds: [t.embedFn(mention)] });
+        console.log("✅ " + newMember.user.tag + " " + t.tier + " 채널 메시지 전송");
+      }
+      // 트래커에 채널 배정 자동 업데이트
+      const username = newMember.user.username.toLowerCase();
+      const nick = (newMember.nickname || "").toLowerCase().replace(/^@/, "");
+      await trackerAPI("/api/role-assign", {
+        username,
+        nickname: nick,
+        tier: t.tier,
+        discordId: newMember.user.id
+      });
+      console.log("📊 트래커 자동 업데이트: " + username + " → " + t.tier);
     }
   } catch (error) {
     console.error("❌ 에러:", error);
   }
 });
 
-// 기능 3: FAQ 슬래시 커맨드 응답
-client.on("interactionCreate", async function(interaction) {
+// 기능 3: 슬래시 커맨드
+client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  const embedMap = {
-    "guideline":     faqGuideline,
-    "campaign":      faqCampaign,
-    "reward":        faqReward,
-    "sparkcode":     faqSparkcode,
-    "samplerequest": faqSampleRequest,
-    "newproduct":    faqNewProduct,
-  };
+  // /approve 커맨드
+  if (interaction.commandName === "approve") {
+    const user = interaction.options.getUser("user");
+    const tiktok = interaction.options.getString("tiktok").toLowerCase().replace(/^@/, "");
+    const tier = interaction.options.getString("tier") || "new";
 
+    const username = user.username.toLowerCase();
+
+    try {
+      // 트래커에 매핑 저장
+      const result = await trackerAPI("/api/approve", {
+        username,
+        tiktok,
+        tier,
+        discordId: user.id
+      });
+
+      const tierEmoji = { new: "🌱", active: "👟", vip: "⭐" }[tier] || "🌱";
+      await interaction.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(0x3BA55D)
+            .setTitle("✅ 크리에이터 승인 완료!")
+            .addFields(
+              { name: "Discord", value: "@" + user.username, inline: true },
+              { name: "TikTok", value: "@" + tiktok, inline: true },
+              { name: "Tier", value: tierEmoji + " " + tier, inline: true },
+              { name: "트래커 저장", value: result.ok ? "✅ 자동 저장됨" : "⚠️ 저장 실패 (수동 확인 필요)", inline: false }
+            )
+        ],
+        ephemeral: true // 본인만 보이게
+      });
+      console.log("✅ /approve: " + username + " → @" + tiktok);
+    } catch (e) {
+      await interaction.reply({ content: "❌ 트래커 저장 실패: " + e.message, ephemeral: true });
+    }
+    return;
+  }
+
+  const embedMap = {
+    "guideline": faqGuideline, "campaign": faqCampaign, "reward": faqReward,
+    "sparkcode": faqSparkcode, "samplerequest": faqSampleRequest, "newproduct": faqNewProduct,
+  };
   const embedFn = embedMap[interaction.commandName];
   if (embedFn) {
     await interaction.reply({ embeds: [embedFn()] });
