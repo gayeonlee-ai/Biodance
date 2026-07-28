@@ -155,3 +155,79 @@ app.listen(PORT, () => {
     console.log('[Bot] Discord bot started');
   }
 });
+
+// ─── BOT API ENDPOINTS ───
+
+// /approve: Discord username ↔ TikTok handle 매핑 저장
+app.post('/api/approve', (req, res) => {
+  const { username, tiktok, tier, discordId } = req.body;
+  if (!username || !tiktok) return res.status(400).json({ ok: false, error: 'Missing fields' });
+
+  readFromGitHub((err, cur) => {
+    const next = cur || {};
+    if (!next.tracking) next.tracking = {};
+    if (!next.discMap) next.discMap = {};
+
+    // Save username ↔ tiktok mapping
+    next.discMap[username] = tiktok;
+
+    // Update tracking for this creator
+    if (!next.tracking[tiktok]) next.tracking[tiktok] = {};
+    next.tracking[tiktok].dj = true;
+    next.tracking[tiktok].uname = username;
+    if (discordId) next.tracking[tiktok].discordId = discordId;
+
+    // Set channel checkbox based on tier
+    if (tier === 'new') next.tracking[tiktok].cn = true;
+    else if (tier === 'active') next.tracking[tiktok].ca = true;
+    else if (tier === 'vip' || tier === 'vvip') next.tracking[tiktok].cv = true;
+
+    next._lastSaved = new Date().toISOString();
+    fs.writeFileSync(LOCAL_FILE, JSON.stringify(next));
+
+    writeToGitHub(next, (err2) => {
+      if (err2) {
+        console.log('[API/approve] GitHub failed, local saved');
+        return res.json({ ok: true, storage: 'local', tiktok, username });
+      }
+      console.log('[API/approve] Saved: ' + username + ' → @' + tiktok);
+      res.json({ ok: true, storage: 'github', tiktok, username });
+    });
+  });
+});
+
+// /role-assign: 역할 부여 시 채널 체크박스 자동 업데이트
+app.post('/api/role-assign', (req, res) => {
+  const { username, nickname, tier, discordId } = req.body;
+
+  readFromGitHub((err, cur) => {
+    const next = cur || {};
+    if (!next.tracking) next.tracking = {};
+    if (!next.discMap) next.discMap = {};
+
+    // Find TikTok handle via discMap or nickname
+    let tiktok = next.discMap[username] || next.discMap[nickname] || nickname;
+
+    if (tiktok && next.tracking[tiktok]) {
+      // Update channel checkbox
+      if (tier === 'new') next.tracking[tiktok].cn = true;
+      else if (tier === 'active') { next.tracking[tiktok].ca = true; next.tracking[tiktok].cn = false; }
+      else if (tier === 'vip') { next.tracking[tiktok].cv = true; next.tracking[tiktok].ca = false; }
+      else if (tier === 'vvip') next.tracking[tiktok].cv = true;
+      next.tracking[tiktok].dj = true;
+      next._lastSaved = new Date().toISOString();
+      fs.writeFileSync(LOCAL_FILE, JSON.stringify(next));
+      writeToGitHub(next, () => {});
+      console.log('[API/role-assign] ' + tiktok + ' → ' + tier);
+    }
+    res.json({ ok: true });
+  });
+});
+
+// /discord-join: 서버 입장 기록
+app.post('/api/discord-join', (req, res) => {
+  const { username, discordId } = req.body;
+  // Just log for now - no TikTok handle yet
+  console.log('[Discord Join] @' + username + ' (' + discordId + ') joined server');
+  res.json({ ok: true });
+});
