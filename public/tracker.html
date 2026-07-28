@@ -5,139 +5,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biodance Creator Tracker</title>
 <style>
-:root{--bg:#1a1b1e;--s1:#222428;--s2:#2b2d31;--s3:#35373c;--bd:#3f4147;--tx:#e0e0e6;--dim:#8b8d94;--ac:#5865f2;--ach:#4752c4;--gn:#23a559;--gnb:rgba(35,165,89,.12);--yw:#f0b232;--ywb:rgba(240,178,50,.12);--rd:#da373c;--rdb:rgba(218,55,60,.12);--or:#e67e22;--orb:rgba(230,126,34,.12);--pk:#eb459e;--pkb:rgba(235,69,158,.12);--cy:#00b4d8;--cyb:rgba(0,180,216,.12);--pp:#9b59b6;--ppb:rgba(155,89,182,.12)}
+
+:root{--bg:#1a1b1e;--s1:#222428;--s2:#2b2d31;--s3:#35373c;--bd:#3f4147;--tx:#e0e0e6;--dim:#8b8d94;--ac:#5865f2;--ach:#4752c4;--gn:#23a559;--gnb:rgba(35,165,89,.12);--yw:#f0b232;--ywb:rgba(240,178,50,.12);--rd:#da373c;--rdb:rgba(218,55,60,.12);--or:#e67e22;--orb:rgba(230,126,34,.12);--pk:#eb459e;--pkb:rgba(235,69,158,.12);--cy:#00b4d8;--cyb:rgba(0,180,216,.12);--pp:#9b59b6}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:12px}
-.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:6px}
 .hdr h1{font-size:15px;font-weight:700}.hdr h1 span{color:var(--ac)}
-.hdr-acts{display:flex;gap:5px;align-items:center}
+.hdr-r{display:flex;gap:5px;align-items:center}
 .tabs{display:flex;background:var(--s1);border-bottom:2px solid var(--bd);padding:0 16px;overflow-x:auto}
-.tab{padding:9px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;user-select:none;white-space:nowrap}
-.tab:hover{color:var(--tx);background:var(--s2)}.tab.on{color:var(--ac);border-bottom-color:var(--ac)}
+.tab{padding:9px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab:hover{color:var(--tx)}.tab.on{color:var(--ac);border-bottom-color:var(--ac)}
 .tab .bdg{background:var(--rd);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:3px;font-weight:700}
 .cnt{padding:14px;max-width:1600px;margin:0 auto}.pnl{display:none}.pnl.on{display:block}
-/* KPI */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin-bottom:12px}
 .kpi{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:8px;text-align:center}
-.kpi .val{font-size:16px;font-weight:700}.kpi .lbl{font-size:8px;color:var(--dim);margin-top:1px;text-transform:uppercase}
-/* TRACKER */
-.trk-top{display:flex;gap:6px;margin-bottom:6px;align-items:center;flex-wrap:wrap}
+.kpi .v{font-size:16px;font-weight:700}.kpi .l{font-size:8px;color:var(--dim);margin-top:1px;text-transform:uppercase}
+.fb-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.fb-label{font-size:9px;color:var(--dim);font-weight:600;margin-right:2px}
+.fb{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:4px 7px;color:var(--dim);font-size:10px;cursor:pointer;font-weight:600;white-space:nowrap}
+.fb:hover{background:var(--s3);color:var(--tx)}.fb.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.fb.rst{color:var(--rd);border-color:var(--rd)}
 .si{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:5px 8px;color:var(--tx);font-size:12px}
 .si:focus{outline:none;border-color:var(--ac)}
-.fb{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:4px 7px;color:var(--dim);font-size:10px;cursor:pointer;font-weight:600;transition:.15s;white-space:nowrap}
-.fb:hover{background:var(--s3);color:var(--tx)}.fb.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-/* TABLE */
 .tw{overflow-x:auto;border-radius:7px;border:1px solid var(--bd);max-height:60vh;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:11px}
-th{background:var(--s2);padding:6px 6px;text-align:left;font-size:9px;text-transform:uppercase;color:var(--dim);font-weight:700;border-bottom:1px solid var(--bd);position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none;z-index:2}
-th:hover{color:var(--tx)}
-/* Excel-style column filter dropdown */
-.th-wrap{display:flex;align-items:center;gap:3px;position:relative}
-.col-dd-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:8px;padding:1px 2px;border-radius:2px;line-height:1}
-.col-dd-btn:hover{background:var(--s3);color:var(--tx)}
-.col-dropdown{position:absolute;top:100%;left:0;background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:6px;z-index:100;min-width:140px;box-shadow:0 4px 12px rgba(0,0,0,.4);display:none}
-.col-dropdown.show{display:block}
-.col-dd-item{display:flex;align-items:center;gap:5px;padding:3px 4px;font-size:10px;cursor:pointer;border-radius:3px;white-space:nowrap}
-.col-dd-item:hover{background:var(--s2)}.col-dd-item input{accent-color:var(--ac);width:11px;height:11px}
-.col-dd-divider{border-top:1px solid var(--bd);margin:3px 0}
-.col-dd-label{font-size:9px;color:var(--dim);padding:2px 4px;font-weight:600}
-td{padding:4px 6px;border-bottom:1px solid var(--bd);vertical-align:middle}
+th{background:var(--s2);padding:6px;text-align:left;font-size:9px;text-transform:uppercase;color:var(--dim);font-weight:700;border-bottom:1px solid var(--bd);position:sticky;top:0;white-space:nowrap;cursor:pointer;z-index:2}
+th:hover{color:var(--tx)}td{padding:4px 6px;border-bottom:1px solid var(--bd);vertical-align:middle}
 tr:hover td{background:rgba(88,101,242,.04)}
-.h-cell{white-space:nowrap}.h-cell a{color:var(--ac);text-decoration:none;font-weight:600}.h-cell a:hover{text-decoration:underline}
-.uname{color:var(--pp);font-size:9px;margin-left:3px}
-.g-cell{font-weight:700;white-space:nowrap}.g-cell.has{color:var(--gn)}.g-cell.no{color:var(--dim)}
-.d-up{color:var(--gn);font-size:9px}.d-dn{color:var(--rd);font-size:9px}.d-flat{color:var(--dim);font-size:9px}
-.cc{text-align:center}.cc input[type=checkbox]{width:13px;height:13px;cursor:pointer;accent-color:var(--ac)}
+.hc a{color:var(--ac);text-decoration:none;font-weight:600}.hc a:hover{text-decoration:underline}
+.un{color:var(--pp);font-size:9px;margin-left:3px}
+.gc{font-weight:700;white-space:nowrap}.gc.y{color:var(--gn)}.gc.n{color:var(--dim)}
+.du{color:var(--gn);font-size:9px}.dd{color:var(--rd);font-size:9px}.df{color:var(--dim);font-size:9px}
+.cc{text-align:center}.cc input{width:13px;height:13px;cursor:pointer;accent-color:var(--ac)}
 .tb{display:inline-block;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:700}
-.t-new{background:var(--cyb);color:var(--cy)}.t-act{background:var(--gnb);color:var(--gn)}.t-vip{background:var(--ywb);color:var(--yw)}.t-vvip{background:var(--pkb);color:var(--pk)}.t-none{background:var(--s3);color:var(--dim)}
-.tier-up{background:rgba(235,69,158,.2);color:var(--pk);font-size:7px;padding:1px 3px;border-radius:3px;margin-left:2px;font-weight:700;vertical-align:middle}
-.ag-badge{display:inline-block;font-size:7px;padding:1px 3px;border-radius:2px;background:var(--orb);color:var(--or);font-weight:700;margin-left:2px}
+.t-new{background:var(--cyb);color:var(--cy)}.t-active{background:var(--gnb);color:var(--gn)}
+.t-vip{background:var(--ywb);color:var(--yw)}.t-vvip{background:var(--pkb);color:var(--pk)}.t-none{background:var(--s3);color:var(--dim)}
+.tu{background:rgba(235,69,158,.2);color:var(--pk);font-size:7px;padding:1px 3px;border-radius:3px;margin-left:2px;font-weight:700}
+.ag{display:inline-block;font-size:7px;padding:1px 3px;border-radius:2px;background:var(--orb);color:var(--or);font-weight:700;margin-left:2px}
 .ni{background:transparent;border:1px solid transparent;border-radius:3px;padding:2px 4px;color:var(--tx);font-size:10px;width:75px}
-.ni:focus{border-color:var(--ac);outline:none;background:var(--s2)}
-.ni-email{width:120px}
-.tag{display:inline-block;font-size:7px;padding:1px 3px;border-radius:2px;margin-left:2px;font-weight:700}
-/* SEGMENTS */
-.sg-section{margin-bottom:16px}
-.sg-section-hdr{font-size:10px;font-weight:700;color:var(--dim);padding:5px 8px;border-radius:5px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;background:var(--s2);border:1px solid var(--bd)}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.sc{background:var(--s1);border:1px solid var(--bd);border-radius:6px;overflow:hidden}
-.sh{padding:8px 10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.sh h3{font-size:11px;display:flex;align-items:center;gap:4px}
-.sh .ct{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700}
-.sb{padding:0 10px 10px;max-height:200px;overflow-y:auto}.sb.hide{display:none}
-.sb p.desc{font-size:9px;color:var(--dim);margin-bottom:4px}
-.si-item{display:flex;align-items:center;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd);font-size:10px}
-.si-item:last-child{border-bottom:none}.si-item .hnd{font-weight:600}.si-item .mt{color:var(--dim);font-size:9px;text-align:right}
-/* BUTTONS */
-.btn{border:none;border-radius:5px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:.15s}
-.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--ach)}
-.btn-s{background:var(--s3);color:var(--tx);border:1px solid var(--bd)}.btn-s:hover{background:var(--s2)}
-.btn-d{background:var(--rd);color:#fff}
-.snap-box{background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:11px;margin-bottom:11px}
-.snap-box h4{font-size:11px;color:var(--dim);margin-bottom:4px}
-.toast{position:fixed;bottom:14px;right:14px;background:var(--gn);color:#fff;padding:8px 14px;border-radius:6px;font-size:11px;font-weight:600;opacity:0;transform:translateY(6px);transition:.25s;pointer-events:none;z-index:9999}
-.toast.show{opacity:1;transform:translateY(0)}
-/* DISCORD */
-.disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.disc-box{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:12px}
-.disc-box h4{font-size:11px;margin-bottom:5px}
-.disc-box p.hint{font-size:10px;color:var(--dim);margin-bottom:6px;line-height:1.4}
-.disc-ta{width:100%;height:80px;background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:7px;color:var(--tx);font-size:11px;font-family:monospace;resize:vertical}
-.disc-ta:focus{outline:none;border-color:var(--ac)}
-.disc-result{margin-top:5px;max-height:120px;overflow-y:auto;font-size:10px}
-.match{color:var(--gn);padding:1px 0}.nomatch{color:var(--rd);padding:1px 0}.fuzzy{color:var(--yw);padding:1px 0}
-.map-table{width:100%;font-size:10px;border-collapse:collapse;margin-top:4px}
-.map-table td,.map-table th{padding:3px 5px;border-bottom:1px solid var(--bd);text-align:left}
-.map-table th{font-size:8px;text-transform:uppercase;color:var(--dim)}
-.disc-stat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:11px}
-.ds-card{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:7px;text-align:center}
-.ds-card .val{font-size:15px;font-weight:700}.ds-card .lbl{font-size:8px;color:var(--dim);margin-top:1px}
-/* UPLOAD */
+.ni:focus{border-color:var(--ac);outline:none;background:var(--s2)}.ni.em{width:130px}
 .up-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
 .up-card{background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:12px}
 .up-card h4{font-size:11px;color:var(--dim);margin-bottom:6px}
-.up-zone{border:2px dashed var(--bd);border-radius:6px;padding:20px 8px;text-align:center;cursor:pointer;transition:.2s;background:var(--s2)}
-.up-zone:hover,.up-zone.over{border-color:var(--ac);background:rgba(88,101,242,.05)}
-.up-zone h3{font-size:12px;margin-bottom:2px}.up-zone p{font-size:10px;color:var(--dim)}
-.up-status{margin-top:4px;font-size:11px;font-weight:600}
-.up-status.ok{color:var(--gn)}.up-status.no{color:var(--dim)}
-/* HISTORY */
-.hist-wrap{overflow:auto;border:1px solid var(--bd);border-radius:6px;max-height:520px}
-.hist-tbl{width:100%;border-collapse:collapse;font-size:10px}
-.hist-tbl th{background:var(--s2);padding:4px 6px;text-align:center;color:var(--dim);font-size:8px;text-transform:uppercase;position:sticky;top:0;white-space:nowrap;border-bottom:1px solid var(--bd)}
-.hist-tbl th:first-child{text-align:left;position:sticky;left:0;z-index:3;min-width:160px}
-.hist-tbl td{padding:3px 6px;border-bottom:1px solid var(--bd);text-align:right;vertical-align:middle}
-.hist-tbl td:first-child{text-align:left;position:sticky;left:0;background:var(--s1);z-index:1;font-size:10px}
-.hist-tbl tr:hover td{background:rgba(88,101,242,.04)}
-.hist-tbl tr:hover td:first-child{background:var(--s2)}
+.uz{border:2px dashed var(--bd);border-radius:6px;padding:18px 8px;text-align:center;cursor:pointer;background:var(--s2)}
+.uz:hover{border-color:var(--ac)}.uz h3{font-size:12px;margin-bottom:2px}.uz p{font-size:10px;color:var(--dim)}
+.us{margin-top:4px;font-size:11px;font-weight:600}.us.ok{color:var(--gn)}.us.no{color:var(--dim)}
+.sb{background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:11px;margin-bottom:11px}
+.btn{border:none;border-radius:5px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer}
+.bp{background:var(--ac);color:#fff}.bs{background:var(--s3);color:var(--tx);border:1px solid var(--bd)}
+.ta{width:100%;height:80px;background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:7px;color:var(--tx);font-size:11px;font-family:monospace;resize:vertical}
+.ta:focus{outline:none;border-color:var(--ac)}
+.sg-hdr{font-size:11px;font-weight:700;padding:5px 8px;border-radius:5px;margin-bottom:8px;text-transform:uppercase;background:var(--s2);border:1px solid var(--bd)}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sc{background:var(--s1);border:1px solid var(--bd);border-radius:6px;overflow:hidden}
+.sh{padding:8px 10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.sh h3{font-size:11px;display:flex;align-items:center;gap:4px}
+.sh .ct{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700}
+.si2{padding:0 10px 10px;max-height:200px;overflow-y:auto}
+.si2 .desc{font-size:9px;color:var(--dim);margin-bottom:4px}
+.si2 .row{display:flex;align-items:center;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd);font-size:10px}
+.si2 .row:last-child{border-bottom:none}.si2 .row .h{font-weight:600}.si2 .row .m{color:var(--dim);font-size:9px}
+.hw{overflow:auto;border:1px solid var(--bd);border-radius:6px;max-height:520px}
+.ht{width:100%;border-collapse:collapse;font-size:10px}
+.ht th{background:var(--s2);padding:4px 6px;text-align:center;color:var(--dim);font-size:8px;text-transform:uppercase;position:sticky;top:0;white-space:nowrap;border-bottom:1px solid var(--bd)}
+.ht th:first-child{text-align:left;position:sticky;left:0;z-index:3;min-width:150px}
+.ht td{padding:3px 6px;border-bottom:1px solid var(--bd);text-align:right;vertical-align:middle;min-width:60px}
+.ht td:first-child{text-align:left;position:sticky;left:0;background:var(--s1);z-index:1}
+.ht tr:hover td{background:rgba(88,101,242,.04)}.ht tr:hover td:first-child{background:var(--s2)}
+.disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dbox{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:12px}
+.dbox h4{font-size:11px;margin-bottom:5px}.dbox .hint{font-size:10px;color:var(--dim);margin-bottom:6px}
+.dstat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:11px}
+.dcard{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:7px;text-align:center}
+.dcard .v{font-size:15px;font-weight:700}.dcard .l{font-size:8px;color:var(--dim);margin-top:1px}
+.dr{margin-top:5px;max-height:120px;overflow-y:auto;font-size:10px}
+.dr .ok{color:var(--gn)}.dr .no{color:var(--rd)}.dr .fy{color:var(--yw)}
+.mt{width:100%;font-size:10px;border-collapse:collapse;margin-top:4px}
+.mt td,.mt th{padding:3px 5px;border-bottom:1px solid var(--bd);text-align:left}
+.mt th{font-size:8px;text-transform:uppercase;color:var(--dim)}
+.toast{position:fixed;bottom:14px;right:14px;background:var(--gn);color:#fff;padding:8px 14px;border-radius:6px;font-size:11px;font-weight:600;opacity:0;transform:translateY(6px);transition:.25s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1;transform:translateY(0)}
 @media(max-width:900px){.sg,.disc-grid,.up-row{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(3,1fr)}}
+
 </style>
 </head>
 <body>
 <div class="hdr">
-<h1>&#x1F421; <span>Biodance</span> Creator Tracker</h1>
-<div class="hdr-acts">
-<span id="syncSt" style="font-size:9px;color:var(--gn);margin-right:4px"></span>
-<button class="btn btn-s" onclick="syncSave()" title="서버저장">💾</button>
-<button class="btn btn-s" onclick="syncLoad()" title="새로고침">🔄</button>
-<button class="btn btn-s" onclick="expState()" title="JSON백업">📥</button>
-<button class="btn btn-s" onclick="$('impF').click()" title="복원">📂</button>
-<input type="file" id="impF" accept=".json" style="display:none" onchange="impState(event)">
-</div>
+  <h1>&#x1F421; <span>Biodance</span> Creator Tracker</h1>
+  <div class="hdr-r">
+    <span id="sst" style="font-size:9px;color:var(--gn);margin-right:4px"></span>
+    <button class="btn bs" onclick="syncSave()" title="저장">&#x1F4BE;</button>
+    <button class="btn bs" onclick="syncLoad()" title="새로고침">&#x1F504;</button>
+    <button class="btn bs" onclick="expState()" title="JSON백업">&#x1F4E5;</button>
+    <button class="btn bs" onclick="document.getElementById('impF').click()" title="복원">&#x1F4C2;</button>
+    <input type="file" id="impF" accept=".json" style="display:none" onchange="impState(event)">
+  </div>
 </div>
 <div class="tabs">
-<div class="tab on" data-t="upload" onclick="sw('upload')">&#x1F4E5; &#xB370;&#xC774;&#xD130;</div>
-<div class="tab" data-t="tracker" onclick="sw('tracker')">&#x1F4CB; &#xD2B8;&#xB798;&#xCEE4;</div>
-<div class="tab" data-t="segments" onclick="sw('segments')">&#x1F3AF; &#xC138;&#xADF8;&#xBA3C;&#xD2B8;<span class="bdg" id="sBdg" style="display:none"></span></div>
-<div class="tab" data-t="discord" onclick="sw('discord')">&#x1F7E3; Discord</div>
-<div class="tab" data-t="history" onclick="sw('history')">&#x1F4C5; &#xD788;&#xC2A4;&#xD1A0;&#xB9AC;</div>
+  <div class="tab on" data-t="upload" onclick="sw('upload')">&#x1F4E5; 데이터</div>
+  <div class="tab" data-t="tracker" onclick="sw('tracker')">&#x1F4CB; 트래커</div>
+  <div class="tab" data-t="segments" onclick="sw('segments')">&#x1F3AF; 세그먼트<span class="bdg" id="sBdg" style="display:none"></span></div>
+  <div class="tab" data-t="discord" onclick="sw('discord')">&#x1F7E3; Discord</div>
+  <div class="tab" data-t="history" onclick="sw('history')">&#x1F4C5; 히스토리</div>
 </div>
 <div class="cnt">
-<div class="pnl on" id="p-upload"><div id="upA"></div></div>
-<div class="pnl" id="p-tracker"><div id="kpiA"></div><div id="trkCtrl"></div><div id="trkTbl"></div></div>
-<div class="pnl" id="p-segments"><div id="segA"></div></div>
-<div class="pnl" id="p-discord"><div id="discA"></div></div>
-<div class="pnl" id="p-history"><div id="histA"></div></div>
+  <div class="pnl on" id="p-upload"><div id="upA"></div></div>
+  <div class="pnl" id="p-tracker"><div id="kpiA"></div><div id="trkA"></div></div>
+  <div class="pnl" id="p-segments"><div id="segA"></div></div>
+  <div class="pnl" id="p-discord"><div id="discA"></div></div>
+  <div class="pnl" id="p-history"><div id="histA"></div></div>
 </div>
 <div class="toast" id="tst"></div>
 <script>
@@ -157,506 +133,683 @@ const SAVED_DCMAP={"shhhfinds": "tucarritonaranja1", "james_blonde00": ".f.u.r.l
 
 var $=function(id){return document.getElementById(id)};
 function toast(m){var t=$('tst');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
-function sw(id){document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.t===id)});document.querySelectorAll('.pnl').forEach(function(p){p.classList.toggle('on',p.id==='p-'+id)});closeAllDropdowns()}
-function fmt(n){if(!n&&n!==0)return'-';return '$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
-function today(){
-  // KST = UTC+9
-  var d=new Date(new Date().getTime()+(9*60*60*1000));
-  return d.toISOString().slice(0,10);
+function sw(tab){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.t===tab)});
+  document.querySelectorAll('.pnl').forEach(function(p){p.classList.toggle('on',p.id==='p-'+tab)});
 }
-function parseCSV(text){var rows=[],row=[],field='',inQ=false,i=0,c;text=text.replace(/^\uFEFF/,'');
-  while(i<text.length){c=text[i];if(inQ){if(c==='"'){if(text[i+1]==='"'){field+='"';i+=2}else{inQ=false;i++}}else{field+=c;i++}}
-  else{if(c==='"'){inQ=true;i++}else if(c===','){row.push(field.trim());field='';i++}
-  else if(c==='\n'||c==='\r'){row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);row=[];field='';if(c==='\r'&&text[i+1]==='\n')i+=2;else i++}else{field+=c;i++}}}
-  row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);if(rows.length<2)return[];
-  var hdr=rows[0];return rows.slice(1).map(function(r){var o={};hdr.forEach(function(h,j){o[h]=r[j]||''});return o})}
+function fmt(n){if(!n&&n!==0)return'-';return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+function today(){var d=new Date(new Date().getTime()+(9*60*60*1000));return d.toISOString().slice(0,10)}
 function tier(g,v){return g>=1000?'vvip':g>=500?'vip':g>=1?'active':v>0?'new':'none'}
-function tierLabel(t){return t==='vvip'?'&#x1F451;VVIP':t==='vip'?'&#x2B50;VIP':t==='active'?'&#x1F45F;Active':t==='new'?'&#x1F331;New':'&#x23F8;'}
-function tierCls(t){return 't-'+t}
+function tLabel(t){return t==='vvip'?'&#x1F451;VVIP':t==='vip'?'&#x2B50;VIP':t==='active'?'&#x1F45F;Active':t==='new'?'&#x1F331;New':'&#x23F8;'}
+
+function parseCSV(text){
+  var rows=[],row=[],field='',inQ=false,i=0,c;
+  text=text.replace(/^\uFEFF/,'');
+  while(i<text.length){
+    c=text[i];
+    if(inQ){if(c==='"'){if(text[i+1]==='"'){field+='"';i+=2}else{inQ=false;i++}}else{field+=c;i++}}
+    else{if(c==='"'){inQ=true;i++}else if(c===','){row.push(field.trim());field='';i++}
+    else if(c==='\n'||c==='\r'){row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);row=[];field='';if(c==='\r'&&text[i+1]==='\n')i+=2;else i++}
+    else{field+=c;i++}}
+  }
+  row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);
+  if(rows.length<2)return[];
+  var hdr=rows[0];
+  return rows.slice(1).map(function(r){var o={};hdr.forEach(function(h,j){o[h]=r[j]||''});return o});
+}
 
 var agSet=new Set(SAVED_AG.length?SAVED_AG:RAW_AG);
 var dcSet=new Set(SAVED_DC.length?SAVED_DC:RAW_DC);
-var C={},sCol='g',sDir='desc',sq='';
-// Multi-filter: {dc: null/'y'/'n', tier: null/'new'/'active'/'vip', surge: false, other: null}
-var MF={dc:null,tier:null,surge:false,vid:false,nv:false};
 var discMap=Object.assign({},RAW_DCMAP,SAVED_DCMAP);
-var hist=JSON.parse(JSON.stringify(SAVED_HIST)); // deep copy
-// Column visibility - track which columns to show
+var hist=JSON.parse(JSON.stringify(SAVED_HIST));
+var C={};
+var sCol='g',sDir='desc',sq='';
+// Multi-filters
+var MF={tier:null,dc:null,surge:false,nv:false,vid:false};
 var CV={dc:true,cn:true,ca:true,cv:true,ct:true,rp:true,nt:true};
-var openDD=null;
-
-function closeAllDropdowns(){if(openDD){openDD.classList.remove('show');openDD=null}}
-document.addEventListener('click',function(e){if(openDD&&!openDD.contains(e.target)&&!e.target.classList.contains('col-dd-btn'))closeAllDropdowns()});
-
-function init(){
-  RAW_P.forEach(function(r){
-    var h=r[0],g=r[1],v=r[2],w=r[3],lp=r[4],s=RAW_S[h]||[0,0,0,0];
-    var dci=DC_INFO[h]||{};var ct=CONTACTS[h]||{};
-    var sv=SAVED_TRACKING[h]||{};
-    var t=sv.tier||tier(g,v);
-    C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
-      dj:sv.dj!==undefined?sv.dj:dcSet.has(h),
-      ct:sv.ct||false,rp:sv.rp||false,nt:sv.nt||'',
-      ag:agSet.has(h),cn:sv.cn||false,ca:sv.ca||false,cv:sv.cv||false,
-      uname:sv.uname||dci.u||'',drole:sv.drole||dci.r||'',
-      email:sv.email||ct.em||'',phone:sv.ph||ct.ph||'',fname:sv.fname||ct.fn||'',
-      prevTier:sv.prevTier||'',tier:t};
-  });
-  // Restore latest hist GMV
-  var dates=Object.keys(hist).sort();var latest=dates[dates.length-1];
-  if(latest&&hist[latest])Object.keys(hist[latest]).forEach(function(h){
-    if(C[h]&&hist[latest][h]){C[h].g=hist[latest][h].g;C[h].v=hist[latest][h].v;C[h].tier=tier(C[h].g,C[h].v)}});
-  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
-  // Server auto-load
-  if(API!==null){
-    setSt("...",'var(--yw)');
-    fetch('/api/state').then(function(r){return r.json()}).then(function(st){applyState(st);ctrlDone=false;render();setSt("연결")})
-    .catch(function(){ctrlDone=false;render();setSt("로컬","var(--dim)")})
-  } else {ctrlDone=false;render()}
-}
-
-function applyState(st){
-  if(st.tracking)Object.keys(st.tracking).forEach(function(h){var d=st.tracking[h];if(C[h]){
-    if(d.dj!==undefined)C[h].dj=d.dj;if(d.ct!==undefined)C[h].ct=d.ct;if(d.rp!==undefined)C[h].rp=d.rp;
-    if(d.nt!==undefined)C[h].nt=d.nt;if(d.cn!==undefined)C[h].cn=d.cn;if(d.ca!==undefined)C[h].ca=d.ca;
-    if(d.cv!==undefined)C[h].cv=d.cv;
-    if(d.uname!==undefined)C[h].uname=d.uname;
-    if(d.email!==undefined)C[h].email=d.email;  // fix: was if(d.email) which skips empty string
-    if(d.phone!==undefined)C[h].phone=d.phone;
-    if(d.prevTier!==undefined)C[h].prevTier=d.prevTier;
-    if(d.tier)C[h].tier=d.tier}});
-  // Fix: only keep last 7 days to avoid duplicate/stale dates
-  if(st.hist){
-    Object.keys(st.hist).forEach(function(d){hist[d]=st.hist[d]});
-    // Remove dates that have identical data to adjacent day (dedup)
-    var dates=Object.keys(hist).sort();
-    for(var i=1;i<dates.length;i++){
-      var a=JSON.stringify(hist[dates[i-1]]),b=JSON.stringify(hist[dates[i]]);
-      if(a===b){delete hist[dates[i-1]];} // remove older duplicate
-    }
-  }
-  if(st.discMap)Object.assign(discMap,st.discMap);
-  if(st.agList)st.agList.forEach(function(h){agSet.add(h)});
-  if(st.dcList)st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true});
-  // Restore latest GMV
-  var dates=Object.keys(hist).sort();var latest=dates[dates.length-1];
-  if(latest&&hist[latest])Object.keys(hist[latest]).forEach(function(h){
-    if(C[h]&&hist[latest][h]){C[h].g=hist[latest][h].g;C[h].v=hist[latest][h].v;C[h].tier=tier(C[h].g,C[h].v)}});
-  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
-}
-
-function render(){renderUp();renderKPI();renderTrk();renderSeg();renderDisc();renderHist()}
-
-// ===== UPLOAD =====
-function renderUp(){
-  var n=Object.keys(C).length;var djc=Object.values(C).filter(function(c){return c.dj}).length;
-  var hD=Object.keys(hist).sort();
-  $('upA').innerHTML='<div class="up-row">'+
-    '<div class="up-card"><h4>&#x1F4CA; Participants CSV</h4>'+
-    '<div class="up-zone" onclick="$(\'fileP\').click()" ondrop="hdrop(event,\'p\')" ondragover="dover(event)" ondragleave="dlv(event)"><h3>&#xD074;&#xB9AD; / &#xB4DC;&#xB798;&#xADF8;</h3><p>Euka Participants CSV</p></div>'+
-    '<input type="file" id="fileP" accept=".csv" style="display:none" onchange="lf(event,\'p\')">'+
-    '<div class="up-status ok">&#x2705; '+n+'&#xBA85; &#xB85C;&#xB4DC;&#xB428;</div></div>'+
-    '<div class="up-card"><h4>&#x1F3E2; &#xC5D0;&#xC774;&#xC804;&#xC2DC;</h4>'+
-    '<div class="up-zone" onclick="$(\'fileAG\').click()"><h3>CSV / TXT</h3><p>&#xD578;&#xB4E4; &#xBAA9;&#xB85D;</p></div>'+
-    '<input type="file" id="fileAG" accept=".csv,.txt" style="display:none" onchange="lfAG(event)">'+
-    '<div class="up-status ok">'+agSet.size+'&#xBA85;</div>'+
-    '<textarea class="disc-ta" id="agTA" style="height:36px;margin-top:4px" placeholder="&#xD578;&#xB4E4; &#xBD99;&#xC5EC;&#xB123;&#xAE30;"></textarea>'+
-    '<button class="btn btn-p" style="margin-top:3px;font-size:10px;padding:3px 7px" onclick="addAGT()">+</button></div>'+
-    '<div class="up-card"><h4>&#x1F7E3; Discord + &#xC5F0;&#xB77D;&#xCC98;</h4>'+
-    '<div class="up-zone" onclick="$(\'fileDC\').click()"><h3>Discord CSV</h3><p>&#xBA64;&#xBC84; export</p></div>'+
-    '<input type="file" id="fileDC" accept=".csv" style="display:none" onchange="lfDC(event)">'+
-    '<div class="up-status ok">'+djc+'&#xBA85; DC &#xCCB4;&#xD06C;</div>'+
-    '<div style="margin-top:6px">'+
-    '<div class="up-zone" onclick="$(\'fileMB\').click()" style="padding:12px 8px"><h3 style="font-size:11px">Euka Members CSV</h3><p>&#xC774;&#xBA54;&#xC77C;/&#xC5F0;&#xB77D;&#xCC98;</p></div>'+
-    '<input type="file" id="fileMB" accept=".csv" style="display:none" onchange="lfMB(event)">'+
-    '<div class="up-status no" id="stMB">&#xC120;&#xD0DD;</div></div></div></div>'+
-    '<div class="snap-box"><h4>&#x1F4C5; &#xD788;&#xC2A4;&#xD1A0;&#xB9AC;: <b style="color:var(--tx)">'+hD.join(' &#x2192; ')+'</b> ('+hD.length+'&#xC77C;)</h4>'+
-    '<p style="font-size:10px;color:var(--dim)">CSV &#xC5C5;&#xB85C;&#xB4DC;&#xC2DC; &#xC624;&#xB298; &#xB0A0;&#xC9DC;&#xB85C; &#xC790;&#xB3D9; &#xB204;&#xC801; | &#x1F4BE; &#xBC31;&#xC5C5; &#xAD8C;&#xC7A5;</p></div>'
-}
-function dover(e){e.preventDefault();e.currentTarget.classList.add('over')}
-function dlv(e){e.currentTarget.classList.remove('over')}
-function hdrop(e,t){e.preventDefault();e.currentTarget.classList.remove('over');var f=e.dataTransfer.files[0];if(f)pf(f,t)}
-function lf(e,t){var f=e.target.files[0];if(f)pf(f,t)}
-function lfAG(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){
-  var hs=ev.target.result.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'').replace(/"/g,'')}).filter(function(h){return h&&h.length>1&&h!=='handle'});
-  hs.forEach(function(h){agSet.add(h)});Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});ctrlDone=false;render();toast('AG +'+hs.length)};r.readAsText(file);e.target.value=''}
-function addAGT(){var text=$('agTA').value.trim();if(!text)return;var hs=text.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);hs.forEach(function(h){agSet.add(h)});Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});$('agTA').value='';ctrlDone=false;render();toast('AG +'+hs.length)}
-function lfDC(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){
-  var data=parseCSV(ev.target.result);var ok=0;
-  data.forEach(function(row){var tt=(row['TikTok Handles']||'').trim().toLowerCase().replace(/^@/,'');var du=(row['Discord Username']||'').trim().toLowerCase();var role=(row['Roles']||'').trim();
-    if(tt&&C[tt]){C[tt].dj=true;C[tt].uname=du||C[tt].uname;C[tt].drole=role||C[tt].drole;ok++;dcSet.add(tt);if(du&&du!==tt)discMap[du]=tt}});
-  ctrlDone=false;render();toast('Discord: '+ok+'&#xBA85;')};r.readAsText(file);e.target.value=''}
-function lfMB(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){
-  var data=parseCSV(ev.target.result);var ok=0;
-  data.forEach(function(row){var tt=(row['TikTok Handle']||'').trim().toLowerCase().replace(/^@/,'');var em=(row['Email']||'').trim();
-    if(tt&&C[tt]&&em){C[tt].email=em;ok++}});ctrlDone=false;render();$('stMB').textContent='&#x2705; '+ok+'&#xBA85;';$('stMB').className='up-status ok';toast('&#xC774;&#xBA54;&#xC77C; +'+ok)};r.readAsText(file);e.target.value=''}
-
-var pendingSubs=null;
-function pf(file,type){var r=new FileReader();r.onload=function(ev){
-  var data=parseCSV(ev.target.result);
-  if(type==='p'){
-    var old={};Object.values(C).forEach(function(c){old[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,uname:c.uname||'',drole:c.drole||'',email:c.email||'',phone:c.phone||'',fname:c.fname||'',prevTier:c.tier,tier:c.tier}});
-    var subs=pendingSubs||{};var td=today();
-    C={};
-    data.forEach(function(row){
-      var h=(row['Creator Handle']||'').replace('@','').trim().toLowerCase();if(!h)return;
-      var g=parseFloat((row['Total GMV']||'0').replace(/[$,]/g,''))||0;var v=parseInt(row['Videos'])||0;
-      var w=parseInt((row['Total Views']||'0').replace(/,/g,''))||0;var lp=(row['Last Post']||'-');
-      var s=subs[h]||RAW_S[h]||[0,0,0,0];var o=old[h]||{};
-      var dci=DC_INFO[h]||{};var ct=CONTACTS[h]||{};var t=tier(g,v);
-      C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
-        dj:o.dj!==undefined?o.dj:dcSet.has(h),ct:o.ct||false,rp:o.rp||false,nt:o.nt||'',ag:agSet.has(h),
-        cn:o.cn||false,ca:o.ca||false,cv:o.cv||false,
-        uname:o.uname||dci.u||'',drole:o.drole||dci.r||'',
-        email:o.email||ct.em||'',phone:o.phone||ct.ph||'',fname:o.fname||ct.fn||'',
-        prevTier:o.tier||'',tier:t};
-    });
-    // Always save today's snapshot when CSV is uploaded
-    var snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});
-    hist[td]=snap;
-    ctrlDone=false;render();setTimeout(function(){syncSave()},800);toast('&#xC5C5;&#xB85C;&#xB4DC; &#xC644;&#xB8CC; ('+Object.keys(C).length+'&#xBA85;)')
-  }else{pendingSubs={};data.forEach(function(row){var h=(row['Creator']||'').replace('@','').trim().toLowerCase();var t=row['Type']||'';
-    var sg=parseFloat((row['GMV']||'0').replace(/[$,]/g,''))||0;if(!pendingSubs[h])pendingSubs[h]=[0,0,0,0];
-    if(t==='Video'){pendingSubs[h][0]++;pendingSubs[h][2]+=sg}else{pendingSubs[h][1]++;pendingSubs[h][3]+=sg}});
-    Object.keys(pendingSubs).forEach(function(h){if(C[h]){var s=pendingSubs[h];C[h].vc=s[0];C[h].lc=s[1];C[h].vg=s[2];C[h].lg=s[3]}});render();toast('Subs &#xC5C5;&#xB85C;&#xB4DC;')}
-};r.readAsText(file)}
-
-// ===== KPI =====
-function renderKPI(){var a=Object.values(C);var tg=a.reduce(function(s,c){return s+c.g},0);
-  $('kpiA').innerHTML='<div class="kpi-row">'+
-  '<div class="kpi"><div class="val">'+a.length+'</div><div class="lbl">&#xCC38;&#xAC00;</div></div>'+
-  '<div class="kpi"><div class="val">'+fmt(tg)+'</div><div class="lbl">GMV</div></div>'+
-  '<div class="kpi"><div class="val">'+a.filter(function(c){return c.g>0}).length+'</div><div class="lbl">&#xB9E4;&#xCD9C;O</div></div>'+
-  '<div class="kpi"><div class="val">'+a.filter(function(c){return c.v>0}).length+'</div><div class="lbl">&#xC601;&#xC0C1;O</div></div>'+
-  '<div class="kpi"><div class="val" style="color:var(--ac)">'+a.filter(function(c){return c.dj}).length+'</div><div class="lbl">Discord</div></div>'+
-  '<div class="kpi"><div class="val" style="color:var(--cy)">'+a.filter(function(c){return c.tier==='new'}).length+'</div><div class="lbl">New</div></div>'+
-  '<div class="kpi"><div class="val" style="color:var(--gn)">'+a.filter(function(c){return c.tier==='active'}).length+'</div><div class="lbl">Active</div></div>'+
-  '<div class="kpi"><div class="val" style="color:var(--yw)">'+a.filter(function(c){return c.tier==='vip'||c.tier==='vvip'}).length+'</div><div class="lbl">VIP+</div></div>'+
-  '<div class="kpi"><div class="val" style="color:var(--or)">'+a.filter(function(c){return c.ag}).length+'</div><div class="lbl">AG</div></div></div>'}
-
-// ===== TRACKER =====
-var ctrlDone=false;
-function prevDay(){
-  var dates=Object.keys(hist).sort();
-  var t=today();
-  // Find most recent date strictly before today
-  for(var i=dates.length-1;i>=0;i--){
-    if(dates[i]<t)return dates[i];
-  }
-  // If no previous date, use earliest available (for delta display)
-  if(dates.length>=2)return dates[dates.length-2];
-  return null;
-}
-function getDelta(h,field){var pd=prevDay();if(!pd||!hist[pd])return null;var prev=hist[pd][h]?hist[pd][h][field]||0:null;if(prev===null)return null;return C[h][field]-prev}
-
-function renderTrk(){if(!ctrlDone){ctrlDone=true;$('trkCtrl').innerHTML='<div class="trk-top"><input class="si" id="searchIn" placeholder="&#x1F50D; &#xD578;&#xB4E4;/DC&#xBA85;" style="width:160px" oninput="sq=this.value;renderTbl()"><div id="fBtns" style="display:flex;gap:4px;flex-wrap:wrap"></div></div>'}renderTbl()}
-
-function renderTbl(){
-  var a=Object.values(C);
-  var fc=function(k){return a.filter(function(c){
-    if(k==='dj_n')return !c.dj&&!c.ag;if(k==='dj_y')return c.dj;if(k==='has_g')return c.g>0;
-    if(k==='vid_ng')return c.v>0&&c.g===0;if(k==='ag')return c.ag;if(k==='surge')return getDelta(c.h,'g')>0;
-    if(k==='nv')return getDelta(c.h,'v')>0;if(k==='tier_up')return c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none';
-    if(k==='t_new')return c.tier==='new';if(k==='t_act')return c.tier==='active';if(k==='t_vip')return c.tier==='vip'||c.tier==='vvip';
-    if(k==='ch_miss')return c.dj&&!c.ag&&((c.tier==='new'&&!c.cn)||(c.tier==='active'&&!c.ca)||((c.tier==='vip'||c.tier==='vvip')&&!c.cv));
-    return true}).length};
-  var fltrs=[['all','&#xC804;&#xCCB4;('+a.length+')'],['t_new','&#x1F331;New('+fc('t_new')+')'],['t_act','&#x1F45F;Active('+fc('t_act')+')'],
-    ['t_vip','&#x2B50;VIP+('+fc('t_vip')+')'],['tier_up','&#x1F199;Tier&#x2191;('+fc('tier_up')+')'],
-    ['ch_miss','&#x26A0;&#xCC44;&#xB110;&#xBBF8;('+fc('ch_miss')+')'],['ag','AG('+fc('ag')+')'],
-    ['dj_n','DC&#x2715;('+fc('dj_n')+')'],['surge','GMV&#x2191;('+fc('surge')+')'],
-    ['nv','&#xC601;&#xC0C1;&#x2191;('+fc('nv')+')'],['vid_ng','&#xC601;&#xC0C1;O/&#xB9E4;&#xCD9C;X('+fc('vid_ng')+')']];
-  var fb='';fltrs.forEach(function(f){fb+='<button class="fb '+(af===f[0]?'on':'')+'" onclick="af=\''+f[0]+'\';renderTbl()">'+f[1]+'</button>'});$('fBtns').innerHTML=fb;
-
-  var f=a.slice();
-  if(sq)f=f.filter(function(c){return c.h.indexOf(sq.toLowerCase())>=0||(c.uname||'').indexOf(sq.toLowerCase())>=0});
-  if(af==='dj_n')f=f.filter(function(c){return !c.dj&&!c.ag});else if(af==='dj_y')f=f.filter(function(c){return c.dj});
-  else if(af==='has_g')f=f.filter(function(c){return c.g>0});else if(af==='vid_ng')f=f.filter(function(c){return c.v>0&&c.g===0});
-  else if(af==='ag')f=f.filter(function(c){return c.ag});else if(af==='surge')f=f.filter(function(c){return getDelta(c.h,'g')>0});
-  else if(af==='nv')f=f.filter(function(c){return getDelta(c.h,'v')>0});
-  else if(af==='tier_up')f=f.filter(function(c){return c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none'});
-  else if(af==='t_new')f=f.filter(function(c){return c.tier==='new'});
-  else if(af==='t_act')f=f.filter(function(c){return c.tier==='active'});
-  else if(af==='t_vip')f=f.filter(function(c){return c.tier==='vip'||c.tier==='vvip'});
-  else if(af==='ch_miss')f=f.filter(function(c){return c.dj&&!c.ag&&((c.tier==='new'&&!c.cn)||(c.tier==='active'&&!c.ca)||((c.tier==='vip'||c.tier==='vvip')&&!c.cv))});
-  f.sort(function(a,b){var va=a[sCol],vb=b[sCol];if(typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase()}return sDir==='desc'?(va>vb?-1:va<vb?1:0):(va<vb?-1:va>vb?1:0)});
-
-  var si=function(c){return sCol===c?'<span style="font-size:8px;margin-left:1px">'+(sDir==='desc'?'&#x25BC;':'&#x25B2;')+'</span>':''};
-
-  // Column header with Excel-style dropdown filter
-  function thDD(label,col,ddId,ddContent){
-    return '<th><div class="th-wrap"><span onclick="ts(\''+col+'\')" style="flex:1">'+label+si(col)+'</span>'+
-      '<button class="col-dd-btn" onclick="toggleDD(\''+ddId+'\',event)">&#x25BE;</button>'+
-      '<div class="col-dropdown" id="'+ddId+'">'+ddContent+'</div></div></th>'}
-
-  // Build column header with filter dropdown for checkboxes
-  function chkDD(label,col,ddId){
-    return '<th class="cc"><div class="th-wrap"><span>'+label+'</span>'+
-      '<button class="col-dd-btn" onclick="toggleDD(\''+ddId+'\',event)">&#x25BE;</button>'+
-      '<div class="col-dropdown" id="'+ddId+'">'+
-      '<div class="col-dd-label">&#xD544;&#xD130;</div>'+
-      '<label class="col-dd-item"><input type=checkbox checked onchange="af=this.checked?\'all\':\''+col+'_y\';renderTbl()"> &#xCCB4;&#xD06C; O</label>'+
-      '<label class="col-dd-item"><input type=checkbox checked onchange="af=this.checked?\'all\':\''+col+'_n\';renderTbl()"> &#xCCB4;&#xD06C; X</label>'+
-      '<div class="col-dd-divider"></div>'+
-      '<label class="col-dd-item"><input type=checkbox '+(CV[col]?'checked':'')+' onchange="CV[\''+col+'\']=this.checked;renderTbl()"> &#xCF5C;&#xB7FC; &#xD45C;&#xC2DC;</label>'+
-      '</div></div></th>'}
-
-  var h='<div class="tw"><table><thead><tr>'+
-    thDD('Handle','h','dd_h','<div class="col-dd-label">&#xC815;&#xB82C;</div><label class="col-dd-item" onclick="ts(\'h\');closeAllDropdowns()">&#x2191; A-Z</label><label class="col-dd-item" onclick="ts(\'h\');closeAllDropdowns()">&#x2193; Z-A</label>')+
-    thDD('Tier','tier','dd_t','<div class="col-dd-label">&#xD544;&#xD130;</div>'+
-      '<label class="col-dd-item"><input type=checkbox '+(af==='t_new'?'':' checked')+' onchange="af=this.checked?\'all\':\'t_new\';renderTbl()"> &#x1F331; New</label>'+
-      '<label class="col-dd-item"><input type=checkbox '+(af==='t_act'?'':' checked')+' onchange="af=this.checked?\'all\':\'t_act\';renderTbl()"> &#x1F45F; Active</label>'+
-      '<label class="col-dd-item"><input type=checkbox '+(af==='t_vip'?'':' checked')+' onchange="af=this.checked?\'all\':\'t_vip\';renderTbl()"> &#x2B50; VIP+</label>')+
-    thDD('GMV','g','dd_g','<div class="col-dd-label">&#xC815;&#xB82C;</div><label class="col-dd-item" onclick="sDir=\'desc\';sCol=\'g\';renderTbl();closeAllDropdowns()">&#x2193; &#xB192;&#xC740;&#xC21C;</label><label class="col-dd-item" onclick="sDir=\'asc\';sCol=\'g\';renderTbl();closeAllDropdowns()">&#x2191; &#xB099;&#xC740;&#xC21C;</label><div class="col-dd-divider"></div><label class="col-dd-item"><input type=checkbox '+(af==='has_g'?'checked':'')+' onchange="af=this.checked?\'has_g\':\'all\';renderTbl()"> &#xB9E4;&#xCD9C;O&#xB9CC;</label>')+
-    '<th>&#x0394;GMV</th>'+
-    thDD('V','v','dd_v','<div class="col-dd-label">&#xC815;&#xB82C;</div><label class="col-dd-item" onclick="sDir=\'desc\';sCol=\'v\';renderTbl();closeAllDropdowns()">&#x2193; &#xB192;&#xC740;&#xC21C;</label>')+
-    '<th>&#x0394;V</th>'+
-    (CV.dc?chkDD('DC','dc','dd_dc'):'')+
-    (CV.cn?chkDD('&#x1F331;','cn','dd_cn'):'')+
-    (CV.ca?chkDD('&#x1F45F;','ca','dd_ca'):'')+
-    (CV.cv?chkDD('&#x2B50;','cv','dd_cv'):'')+
-    (CV.ct?chkDD('&#xC5F0;&#xB77D;','ct','dd_ct'):'')+
-    (CV.rp?chkDD('&#xC751;&#xB2F5;','rp','dd_rp'):'')+
-    (CV.nt?'<th>&#xBA54;&#xBAA8;</th>':'')+
-    '<th>&#xC774;&#xBA54;&#xC77C;</th>'+
-    '</tr></thead><tbody>';
-
-  f.forEach(function(c){
-    var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
-    var isUp=c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none';
-    h+='<tr>';
-    // Handle cell: TikTok handle + DC name + tags
-    h+='<td class="h-cell"><a href="https://www.tiktok.com/@'+c.h+'" target="_blank">@'+c.h+'</a>';
-    if(c.uname)h+='<span class="uname">'+c.uname+'</span>';
-    if(c.ag)h+='<span class="ag-badge">AG</span>';
-    h+='</td>';
-    // Tier
-    h+='<td><span class="tb '+tierCls(c.tier)+'">'+tierLabel(c.tier)+'</span>';
-    if(isUp)h+='<span class="tier-up">&#x2B06;</span>';h+='</td>';
-    // GMV
-    h+='<td class="g-cell '+(c.g>0?'has':'no')+'">'+fmt(c.g)+'</td>';
-    h+='<td class="'+(dg>0?'d-up':dg<0?'d-dn':'d-flat')+'">'+(dg===null?'-':dg>0?'+'+fmt(dg):dg<0?fmt(dg):'-')+'</td>';
-    h+='<td>'+c.v+'</td>';
-    h+='<td class="'+(dv>0?'d-up':'d-flat')+'">'+(dv===null?'-':dv>0?'+'+dv:'-')+'</td>';
-    if(CV.dc)h+='<td class="cc"><input type=checkbox '+(c.dj?'checked':'')+' onchange="upd(\''+c.h+'\',\'dj\',this.checked)"></td>';
-    if(CV.cn)h+='<td class="cc">'+(c.ag?'':'<input type=checkbox '+(c.cn?'checked':'')+' onchange="upd(\''+c.h+'\',\'cn\',this.checked)">')+'</td>';
-    if(CV.ca)h+='<td class="cc">'+(c.ag?'':'<input type=checkbox '+(c.ca?'checked':'')+' onchange="upd(\''+c.h+'\',\'ca\',this.checked)">')+'</td>';
-    if(CV.cv)h+='<td class="cc">'+(c.ag?'':'<input type=checkbox '+(c.cv?'checked':'')+' onchange="upd(\''+c.h+'\',\'cv\',this.checked)">')+'</td>';
-    if(CV.ct)h+='<td class="cc"><input type=checkbox '+(c.ct?'checked':'')+' onchange="upd(\''+c.h+'\',\'ct\',this.checked)"></td>';
-    if(CV.rp)h+='<td class="cc"><input type=checkbox '+(c.rp?'checked':'')+' onchange="upd(\''+c.h+'\',\'rp\',this.checked)"></td>';
-    if(CV.nt)h+='<td><input class="ni" value="'+(c.nt||'')+'" placeholder="..." onchange="updStr(\''+c.h+'\',\'nt\',this.value)"></td>';
-    // Email - editable
-    var em=c.email||'';
-    h+='<td><input class="ni ni-email" value="'+em.replace(/"/g,'&quot;')+'" placeholder="&#xC774;&#xBA54;&#xC77C; &#xC785;&#xB825;..." onchange="updStr(\''+c.h+'\',\'email\',this.value)"></td>';
-    h+='</tr>'});
-  h+='</tbody></table></div><p style="margin-top:5px;font-size:9px;color:var(--dim)">'+f.length+'/'+a.length+'</p>';
-  $('trkTbl').innerHTML=h;
-}
-
-function toggleDD(id,e){e.stopPropagation();var el=$(id);if(openDD&&openDD!==el){openDD.classList.remove('show');openDD=null}if(el.classList.contains('show')){el.classList.remove('show');openDD=null}else{el.classList.add('show');openDD=el}}
-function toggleMF(key,val){MF[key]=(MF[key]===val?null:val);renderTbl();}
-function toggleMFBool(key){MF[key]=!MF[key];renderTbl();}
-function resetMF(){MF={dc:null,tier:null,surge:false,nv:false,vid:false};renderTbl();}
-function ts(col){if(sCol===col)sDir=sDir==='desc'?'asc':'desc';else{sCol=col;sDir='desc'}closeAllDropdowns();renderTbl()}
-function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);autoSave();renderSeg();renderKPI()}}
-function updStr(h,f,v){if(C[h]){C[h][f]=v;autoSave()}}
+// API
+var API=(window.location.protocol==='file:')?null:'';
 var _st=null,_saving=false;
+
+function setSt(m,col){var e=$('sst');if(e){e.textContent=m;e.style.color=col||'var(--gn)'}}
+
+function buildState(){
+  var s={tracking:{},hist:hist,discMap:discMap,agList:Array.from(agSet),dcList:Array.from(dcSet)};
+  Object.values(C).forEach(function(c){
+    s.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,
+      uname:c.uname||'',email:c.email||'',phone:c.phone||'',prevTier:c.prevTier||'',tier:c.tier};
+  });
+  return s;
+}
+
 function autoSave(){
-  if(API===null){setSt('로컬모드','var(--dim)');return;}
+  if(API===null){setSt('로컬','var(--dim)');return}
   setSt('...','var(--yw)');
   if(_st)clearTimeout(_st);
   _st=setTimeout(function(){
     if(_saving)return;
     _saving=true;
-    var payload=JSON.stringify(buildState());
-    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:payload})
-      .then(function(r){
-        _saving=false;
-        return r.json();
-      })
-      .then(function(d){
-        var t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-        setSt(t+' 저장됨','var(--gn)');
-      })
-      .catch(function(e){
-        _saving=false;
-        setSt('저장실패','var(--rd)');
-        // Retry once after 2s
-        setTimeout(function(){
-          fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:payload})
-            .then(function(r){return r.json()})
-            .then(function(){setSt('재시도 저장됨','var(--gn)')})
-            .catch(function(){setSt('저장실패(재시도)','var(--rd)')});
-        },2000);
-      });
+    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
+      .then(function(r){_saving=false;return r.json()})
+      .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨')})
+      .catch(function(){_saving=false;setSt('실패','var(--rd)')});
   },1500);
 }
 
-// ===== SEGMENTS =====
+function applyState(st){
+  if(st.tracking)Object.keys(st.tracking).forEach(function(h){
+    var d=st.tracking[h];if(!C[h])return;
+    if(d.dj!==undefined)C[h].dj=d.dj;if(d.ct!==undefined)C[h].ct=d.ct;
+    if(d.rp!==undefined)C[h].rp=d.rp;if(d.nt!==undefined)C[h].nt=d.nt;
+    if(d.cn!==undefined)C[h].cn=d.cn;if(d.ca!==undefined)C[h].ca=d.ca;
+    if(d.cv!==undefined)C[h].cv=d.cv;
+    if(d.uname!==undefined)C[h].uname=d.uname;
+    if(d.email!==undefined)C[h].email=d.email;
+    if(d.phone!==undefined)C[h].phone=d.phone;
+    if(d.prevTier!==undefined)C[h].prevTier=d.prevTier;
+    if(d.tier)C[h].tier=d.tier;
+  });
+  if(st.hist)Object.keys(st.hist).forEach(function(d){hist[d]=st.hist[d]});
+  if(st.discMap)Object.assign(discMap,st.discMap);
+  if(st.agList)st.agList.forEach(function(h){agSet.add(h)});
+  if(st.dcList){st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true})}
+  // Remove duplicate dates
+  var dates=Object.keys(hist).sort();
+  for(var i=1;i<dates.length;i++){
+    if(JSON.stringify(hist[dates[i-1]])===JSON.stringify(hist[dates[i]])){delete hist[dates[i-1]];}
+  }
+  // Apply latest hist GMV
+  var dates2=Object.keys(hist).sort();
+  var latest=dates2[dates2.length-1];
+  if(latest&&hist[latest])Object.keys(hist[latest]).forEach(function(h){
+    if(C[h]&&hist[latest][h]){C[h].g=hist[latest][h].g;C[h].v=hist[latest][h].v;C[h].tier=tier(C[h].g,C[h].v)}
+  });
+  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
+}
+
+function syncSave(){
+  if(API===null)return expState();
+  setSt('저장중...','var(--yw)');
+  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
+    .then(function(r){return r.json()})
+    .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨');toast('저장 완료 ('+d.dates+'일)')})
+    .catch(function(){setSt('실패','var(--rd)')});
+}
+
+function syncLoad(){
+  if(API===null){toast('로컬 모드');return}
+  setSt('불러오는중...','var(--yw)');
+  fetch('/api/state').then(function(r){return r.json()}).then(function(st){
+    applyState(st);render();setSt('로드완료');toast('불러오기 완료')
+  }).catch(function(){setSt('실패','var(--rd)')});
+}
+
+function expState(){
+  var blob=new Blob([JSON.stringify(buildState())],{type:'application/json'});
+  var url=URL.createObjectURL(blob);var a=document.createElement('a');
+  a.href=url;a.download='biodance_backup_'+today()+'.json';a.click();URL.revokeObjectURL(url);toast('백업 저장')
+}
+
+function impState(e){
+  var file=e.target.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    try{applyState(JSON.parse(ev.target.result));render();toast('복원 완료')}
+    catch(err){toast('파일 오류')}
+  };
+  r.readAsText(file);e.target.value='';
+}
+
+function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);autoSave();renderSeg();renderKPI()}}
+function updStr(h,f,v){if(C[h]){C[h][f]=v;autoSave()}}
+
+function toggleMF(key,val){MF[key]=(MF[key]===val)?null:val;renderTrk()}
+function toggleMFb(key){MF[key]=!MF[key];renderTrk()}
+function resetMF(){MF={tier:null,dc:null,surge:false,nv:false,vid:false};renderTrk()}
+
+function prevDay(){
+  var dates=Object.keys(hist).sort(),t=today();
+  for(var i=dates.length-1;i>=0;i--){if(dates[i]<t)return dates[i]}
+  if(dates.length>=2)return dates[dates.length-2];
+  return null;
+}
+
+function getDelta(h,field){
+  var pd=prevDay();if(!pd||!hist[pd])return null;
+  var prev=hist[pd][h]?hist[pd][h][field]||0:null;
+  if(prev===null)return null;
+  return C[h][field]-prev;
+}
+
+function render(){renderUp();renderKPI();renderTrk();renderSeg();renderDisc();renderHist()}
+
+function renderKPI(){
+  var a=Object.values(C);var tg=a.reduce(function(s,c){return s+c.g},0);
+  var html='<div class="kpi-row">';
+  html+='<div class="kpi"><div class="v">'+a.length+'</div><div class="l">참가</div></div>';
+  html+='<div class="kpi"><div class="v">'+fmt(tg)+'</div><div class="l">GMV</div></div>';
+  html+='<div class="kpi"><div class="v">'+a.filter(function(c){return c.g>0}).length+'</div><div class="l">매출O</div></div>';
+  html+='<div class="kpi"><div class="v">'+a.filter(function(c){return c.v>0}).length+'</div><div class="l">영상O</div></div>';
+  html+='<div class="kpi"><div class="v" style="color:var(--ac)">'+a.filter(function(c){return c.dj}).length+'</div><div class="l">Discord</div></div>';
+  html+='<div class="kpi"><div class="v" style="color:var(--cy)">'+a.filter(function(c){return c.tier==='new'}).length+'</div><div class="l">New</div></div>';
+  html+='<div class="kpi"><div class="v" style="color:var(--gn)">'+a.filter(function(c){return c.tier==='active'}).length+'</div><div class="l">Active</div></div>';
+  html+='<div class="kpi"><div class="v" style="color:var(--yw)">'+a.filter(function(c){return c.tier==='vip'||c.tier==='vvip'}).length+'</div><div class="l">VIP+</div></div>';
+  html+='<div class="kpi"><div class="v" style="color:var(--or)">'+a.filter(function(c){return c.ag}).length+'</div><div class="l">AG</div></div>';
+  html+='</div>';
+  $('kpiA').innerHTML=html;
+}
+
+function renderUp(){
+  var n=Object.keys(C).length,djc=Object.values(C).filter(function(c){return c.dj}).length;
+  var hD=Object.keys(hist).sort();
+  var html='<div class="up-row">';
+  html+='<div class="up-card"><h4>&#x1F4CA; Participants CSV</h4>';
+  html+='<div class="uz" id="uzP"><h3>&#xD074;&#xB9AD; / &#xB4DC;&#xB798;&#xADF8;</h3><p>Euka Participants CSV</p></div>';
+  html+='<input type="file" id="fileP" accept=".csv" style="display:none">';
+  html+='<div class="us ok">&#x2705; '+n+'&#xBA85;</div></div>';
+  html+='<div class="up-card"><h4>&#x1F7E3; Discord</h4>';
+  html+='<div class="uz" id="uzDC"><h3>Discord CSV</h3><p>멤버 export</p></div>';
+  html+='<input type="file" id="fileDC" accept=".csv" style="display:none">';
+  html+='<div class="us ok">'+djc+'&#xBA85;</div>';
+  html+='<div style="margin-top:8px"><div class="uz" id="uzMB"><h3 style="font-size:11px">Euka Members CSV</h3><p>이메일/연락처</p></div>';
+  html+='<input type="file" id="fileMB" accept=".csv" style="display:none">';
+  html+='<div class="us no" id="stMB">선택</div></div></div>';
+  html+='<div class="up-card"><h4>&#x1F3E2; 에이전시</h4>';
+  html+='<div class="uz" id="uzAG"><h3>CSV/TXT</h3><p>핸들 목록</p></div>';
+  html+='<input type="file" id="fileAG" accept=".csv,.txt" style="display:none">';
+  html+='<div class="us ok">'+agSet.size+'&#xBA85;</div>';
+  html+='<textarea class="ta" id="agTA" style="height:36px;margin-top:4px" placeholder="핸들 붙여넣기"></textarea>';
+  html+='<button class="btn bp" style="margin-top:3px;font-size:10px;padding:3px 7px" onclick="addAGT()">+추가</button></div>';
+  html+='</div>';
+  html+='<div class="sb"><h4 style="font-size:11px;color:var(--dim);margin-bottom:4px">&#x1F4C5; 히스토리: <b style="color:var(--tx)">'+hD.join(' &rarr; ')+'</b> ('+hD.length+'일)</h4>';
+  html+='<p style="font-size:10px;color:var(--dim)">CSV 업로드시 오늘 날짜로 자동 저장 | 💾 백업 권장</p></div>';
+  $('upA').innerHTML=html;
+  // Attach events after innerHTML
+  $('uzP').onclick=function(){$('fileP').click()};
+  $('uzP').ondragover=function(e){e.preventDefault()};
+  $('uzP').ondrop=function(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f)pf(f,'p')};
+  $('fileP').onchange=function(e){var f=e.target.files[0];if(f)pf(f,'p');e.target.value=''};
+  $('uzDC').onclick=function(){$('fileDC').click()};
+  $('fileDC').onchange=function(e){var f=e.target.files[0];if(f)lfDC(f);e.target.value=''};
+  $('uzMB').onclick=function(){$('fileMB').click()};
+  $('fileMB').onchange=function(e){var f=e.target.files[0];if(f)lfMB(f);e.target.value=''};
+  $('uzAG').onclick=function(){$('fileAG').click()};
+  $('fileAG').onchange=function(e){var f=e.target.files[0];if(f)lfAG(f);e.target.value=''};
+}
+
+function pf(file,type){
+  var r=new FileReader();
+  r.onload=function(ev){
+    var data=parseCSV(ev.target.result);
+    if(type==='p'){
+      var old={};
+      Object.values(C).forEach(function(c){
+        old[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,
+          uname:c.uname||'',email:c.email||'',phone:c.phone||'',prevTier:c.tier,tier:c.tier};
+      });
+      C={};
+      data.forEach(function(row){
+        var h=(row['Creator Handle']||'').replace('@','').trim().toLowerCase();if(!h)return;
+        var g=parseFloat((row['Total GMV']||'0').replace(/[$,]/g,''))||0;
+        var v=parseInt(row['Videos'])||0;
+        var w=parseInt((row['Total Views']||'0').replace(/,/g,''))||0;
+        var lp=row['Last Post']||'-';
+        var s=RAW_S[h]||[0,0,0,0];var o=old[h]||{};
+        var dci=DC_INFO[h]||{};var ct=CONTACTS[h]||{};
+        var t=o.tier||tier(g,v);
+        C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
+          dj:o.dj!==undefined?o.dj:dcSet.has(h),ct:o.ct||false,rp:o.rp||false,nt:o.nt||'',
+          ag:agSet.has(h),cn:o.cn||false,ca:o.ca||false,cv:o.cv||false,
+          uname:o.uname||dci.u||'',email:o.email||ct.em||'',phone:o.phone||ct.ph||'',
+          prevTier:o.tier||'',tier:t};
+      });
+      var td=today();
+      var snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});
+      hist[td]=snap;
+      render();setTimeout(function(){syncSave()},800);
+      toast('업로드 완료 ('+Object.keys(C).length+'명)');
+    }
+  };
+  r.readAsText(file);
+}
+
+function lfDC(file){
+  var r=new FileReader();
+  r.onload=function(ev){
+    var data=parseCSV(ev.target.result);var ok=0;
+    data.forEach(function(row){
+      var tt=(row['TikTok Handles']||'').trim().toLowerCase().replace(/^@/,'');
+      var du=(row['Discord Username']||'').trim().toLowerCase();
+      var role=row['Roles']||'';
+      if(tt&&C[tt]){C[tt].dj=true;if(du){C[tt].uname=du;discMap[du]=tt}C[tt].drole=role;ok++;dcSet.add(tt)}
+    });
+    render();toast('Discord: '+ok+'명');
+  };
+  r.readAsText(file);
+}
+
+function lfMB(file){
+  var r=new FileReader();
+  r.onload=function(ev){
+    var data=parseCSV(ev.target.result);var ok=0;
+    data.forEach(function(row){
+      var tt=(row['TikTok Handle']||'').trim().toLowerCase().replace(/^@/,'');
+      var em=row['Email']||'';
+      if(tt&&C[tt]&&em){C[tt].email=em;ok++}
+    });
+    render();$('stMB').textContent='✅ '+ok+'명';$('stMB').className='us ok';toast('이메일 +'+ok);
+  };
+  r.readAsText(file);
+}
+
+function lfAG(file){
+  var r=new FileReader();
+  r.onload=function(ev){
+    var hs=ev.target.result.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'').replace(/"/g,'')}).filter(function(h){return h&&h.length>1});
+    hs.forEach(function(h){agSet.add(h)});
+    Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
+    render();toast('AG +'+hs.length);
+  };
+  r.readAsText(file);
+}
+
+function addAGT(){
+  var text=$('agTA').value.trim();if(!text)return;
+  var hs=text.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);
+  hs.forEach(function(h){agSet.add(h)});
+  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
+  $('agTA').value='';render();toast('AG +'+hs.length);
+}
+
+function renderTrk(){
+  var a=Object.values(C);
+  var n_new=a.filter(function(c){return c.tier==='new'}).length;
+  var n_act=a.filter(function(c){return c.tier==='active'}).length;
+  var n_vip=a.filter(function(c){return c.tier==='vip'||c.tier==='vvip'}).length;
+  var n_djy=a.filter(function(c){return c.dj}).length;
+  var n_djn=a.filter(function(c){return !c.dj&&!c.ag}).length;
+  var n_ag=a.filter(function(c){return c.ag}).length;
+  var n_sur=a.filter(function(c){return getDelta(c.h,'g')>0}).length;
+  var n_nv=a.filter(function(c){return getDelta(c.h,'v')>0}).length;
+  var n_vng=a.filter(function(c){return c.v>0&&c.g===0}).length;
+
+  function mb(label,key,val,cnt){
+    var on=(MF[key]===val);
+    return '<button class="fb'+(on?' on':'')+'" onclick="toggleMF(\''+key+'\',\''+val+'\')">'+label+(cnt!==undefined?' ('+cnt+')':'')+'</button>';
+  }
+  function mbb(label,key,cnt){
+    var on=MF[key];
+    return '<button class="fb'+(on?' on':'')+'" onclick="toggleMFb(\''+key+'\')">'+label+(cnt!==undefined?' ('+cnt+')':'')+'</button>';
+  }
+
+  var fbHTML='<div class="fb-row">';
+  fbHTML+='<input class="si" id="searchIn" placeholder="&#x1F50D; 핸들/DC명" style="width:150px" oninput="sq=this.value;renderTrk()">';
+  fbHTML+='<span class="fb-label" style="margin-left:6px">TIER:</span>';
+  fbHTML+=mb('&#x1F331;New','tier','new',n_new);
+  fbHTML+=mb('&#x1F45F;Active','tier','active',n_act);
+  fbHTML+=mb('&#x2B50;VIP+','tier','vip',n_vip);
+  fbHTML+='<span class="fb-label" style="margin-left:6px">DC:</span>';
+  fbHTML+=mb('DC&#x2713;','dc','y',n_djy);
+  fbHTML+=mb('DC&#x2715;','dc','n',n_djn);
+  fbHTML+=mb('AG','dc','ag',n_ag);
+  fbHTML+='<span class="fb-label" style="margin-left:6px">기타:</span>';
+  fbHTML+=mbb('GMV&#x2191;','surge',n_sur);
+  fbHTML+=mbb('&#xC601;&#xC0C1;&#x2191;','nv',n_nv);
+  fbHTML+=mbb('&#xC601;&#xC0C1;O/&#xB9E4;&#xCD9C;X','vid',n_vng);
+  if(MF.tier||MF.dc||MF.surge||MF.nv||MF.vid)fbHTML+='<button class="fb rst" onclick="resetMF()">&#x2715; 초기화</button>';
+  fbHTML+='</div>';
+
+  var f=a.slice();
+  if(sq)f=f.filter(function(c){return c.h.indexOf(sq.toLowerCase())>=0||(c.uname||'').indexOf(sq.toLowerCase())>=0});
+  if(MF.tier==='new')f=f.filter(function(c){return c.tier==='new'});
+  else if(MF.tier==='active')f=f.filter(function(c){return c.tier==='active'});
+  else if(MF.tier==='vip')f=f.filter(function(c){return c.tier==='vip'||c.tier==='vvip'});
+  if(MF.dc==='y')f=f.filter(function(c){return c.dj});
+  else if(MF.dc==='n')f=f.filter(function(c){return !c.dj&&!c.ag});
+  else if(MF.dc==='ag')f=f.filter(function(c){return c.ag});
+  if(MF.surge)f=f.filter(function(c){return getDelta(c.h,'g')>0});
+  if(MF.nv)f=f.filter(function(c){return getDelta(c.h,'v')>0});
+  if(MF.vid)f=f.filter(function(c){return c.v>0&&c.g===0});
+
+  f.sort(function(a,b){
+    var va=a[sCol],vb=b[sCol];
+    if(typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase()}
+    return sDir==='desc'?(va>vb?-1:va<vb?1:0):(va<vb?-1:va>vb?1:0);
+  });
+
+  function si(col){return sCol===col?'<span style="font-size:8px;margin-left:1px">'+(sDir==='desc'?'&#x25BC;':'&#x25B2;')+'</span>':'';}
+  function th(label,col){return '<th onclick="ts(\''+col+'\')">'+label+si(col)+'</th>';}
+
+  var tbl='<div class="tw"><table><thead><tr>'+
+    th('Handle','h')+th('Tier','tier')+th('GMV','g')+'<th>&#x0394;GMV</th>'+th('V','v')+'<th>&#x0394;V</th>'+
+    (CV.dc?'<th class="cc">DC</th>':'')+
+    (CV.cn?'<th class="cc">&#x1F331;</th>':'')+
+    (CV.ca?'<th class="cc">&#x1F45F;</th>':'')+
+    (CV.cv?'<th class="cc">&#x2B50;</th>':'')+
+    (CV.ct?'<th class="cc">연락</th>':'')+
+    (CV.rp?'<th class="cc">응답</th>':'')+
+    (CV.nt?'<th>메모</th>':'')+
+    '<th>이메일</th>'+
+    '</tr></thead><tbody>';
+
+  f.forEach(function(c){
+    var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
+    var pd=prevDay();var isN=pd&&hist[pd]&&!hist[pd][c.h];
+    var isUp=c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none';
+    var h='<tr>';
+    h+='<td class="hc"><a href="https://www.tiktok.com/@'+c.h+'" target="_blank">@'+c.h+'</a>';
+    if(c.uname)h+='<span class="un">'+c.uname+'</span>';
+    if(c.ag)h+='<span class="ag">AG</span>';
+    if(isN)h+='<span style="font-size:7px;padding:1px 3px;border-radius:2px;background:var(--cyb);color:var(--cy);margin-left:2px">NEW</span>';
+    h+='</td>';
+    h+='<td><span class="tb t-'+c.tier+'">'+tLabel(c.tier)+'</span>';
+    if(isUp)h+='<span class="tu">&#x2B06;</span>';
+    h+='</td>';
+    h+='<td class="gc '+(c.g>0?'y':'n')+'">'+fmt(c.g)+'</td>';
+    h+='<td class="'+(dg>0?'du':dg<0?'dd':'df')+'">'+(dg===null?'-':dg>0?'+'+fmt(dg):dg<0?fmt(dg):'-')+'</td>';
+    h+='<td>'+c.v+'</td>';
+    h+='<td class="'+(dv>0?'du':'df')+'">'+(dv===null?'-':dv>0?'+'+dv:'-')+'</td>';
+    if(CV.dc)h+='<td class="cc"><input type="checkbox"'+(c.dj?' checked':'')+' onchange="upd(\''+c.h+'\',\'dj\',this.checked)"></td>';
+    if(CV.cn)h+='<td class="cc">'+(c.ag?'':'<input type="checkbox"'+(c.cn?' checked':'')+' onchange="upd(\''+c.h+'\',\'cn\',this.checked)">')+'</td>';
+    if(CV.ca)h+='<td class="cc">'+(c.ag?'':'<input type="checkbox"'+(c.ca?' checked':'')+' onchange="upd(\''+c.h+'\',\'ca\',this.checked)">')+'</td>';
+    if(CV.cv)h+='<td class="cc">'+(c.ag?'':'<input type="checkbox"'+(c.cv?' checked':'')+' onchange="upd(\''+c.h+'\',\'cv\',this.checked)">')+'</td>';
+    if(CV.ct)h+='<td class="cc"><input type="checkbox"'+(c.ct?' checked':'')+' onchange="upd(\''+c.h+'\',\'ct\',this.checked)"></td>';
+    if(CV.rp)h+='<td class="cc"><input type="checkbox"'+(c.rp?' checked':'')+' onchange="upd(\''+c.h+'\',\'rp\',this.checked)"></td>';
+    if(CV.nt)h+='<td><input class="ni" value="'+(c.nt||'')+'" placeholder="..." oninput="updStr(\''+c.h+'\',\'nt\',this.value)" onblur="updStr(\''+c.h+'\',\'nt\',this.value)"></td>';
+    var em=c.email||'';
+    h+='<td><input class="ni em" value="'+em.replace(/"/g,'&quot;')+'" placeholder="이메일..." oninput="updStr(\''+c.h+'\',\'email\',this.value)" onblur="updStr(\''+c.h+'\',\'email\',this.value)"></td>';
+    h+='</tr>';
+    tbl+=h;
+  });
+
+  tbl+='</tbody></table></div><p style="margin-top:5px;font-size:9px;color:var(--dim)">'+f.length+'/'+a.length+'</p>';
+  $('trkA').innerHTML=fbHTML+tbl;
+}
+
+function ts(col){if(sCol===col)sDir=sDir==='desc'?'asc':'desc';else{sCol=col;sDir='desc'}renderTrk()}
+
 function renderSeg(){
   var a=Object.values(C);var pd=prevDay();
   var newC=a.filter(function(c){return c.tier==='new'});
   var actC=a.filter(function(c){return c.tier==='active'});
   var vipC=a.filter(function(c){return c.tier==='vip'||c.tier==='vvip'});
-  var tierUps=a.filter(function(c){return c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none'});
 
-  var segs=[
-    {grp:'common',icon:'&#x26A0;',title:'&#xCC44;&#xB110; &#xBBF8;&#xBC30;&#xC815;',color:'var(--rd)',bg:'var(--rdb)',
+  function card(seg){
+    var html='<div class="sc"><div class="sh" style="background:'+seg.bg+'" onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'block\':\'none\'">';
+    html+='<h3>'+seg.icon+' '+seg.title+'</h3><span class="ct" style="background:'+seg.color+';color:#fff">'+seg.items.length+'</span></div>';
+    html+='<div class="si2" style="'+(seg.items.length===0?'display:none':'')+'"><p class="desc">'+(seg.desc||'')+'</p>';
+    if(!seg.items.length){html+='<p style="font-size:10px;color:var(--dim);text-align:center;padding:8px">해당없음</p>'}
+    else{seg.items.slice(0,40).forEach(function(c){
+      var mt=fmt(c.g);var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
+      if(dg>0)mt+=' <b style="color:var(--gn)">+'+fmt(dg)+'</b>';
+      mt+=' · '+c.v+'개';if(dv>0)mt+=' <b style="color:var(--gn)">+'+dv+'</b>';
+      if(c.uname)mt+=' <span style="font-size:8px;color:#888">'+c.uname+'</span>';
+      if(c.email)mt+=' <span style="font-size:8px;color:var(--ac)">✉</span>';
+      html+='<div class="row"><span class="h">@'+c.h+(c.ag?'<span class="ag">AG</span>':'')+'</span><span class="m">'+mt+'</span></div>';
+    })}
+    html+='</div></div>';return html;
+  }
+
+  function section(title,col,segs){
+    var html='<div style="margin-bottom:18px"><div class="sg-hdr" style="color:'+col+'">'+title+'</div><div class="sg">';
+    segs.forEach(function(s){html+=card(s)});
+    html+='</div></div>';return html;
+  }
+
+  var segs_common=[
+    {icon:'&#x26A0;',title:'채널 미배정',color:'var(--rd)',bg:'var(--rdb)',
       items:a.filter(function(c){return c.dj&&!c.ag&&((c.tier==='new'&&!c.cn)||(c.tier==='active'&&!c.ca)||((c.tier==='vip'||c.tier==='vvip')&&!c.cv))}),
-      desc:'Discord &#xC785;&#xC7A5;O / Tier &#xCC44;&#xB110; &#xBBF8;&#xBC30;&#xC815;'},
-    {grp:'common',icon:'&#x1F199;',title:'Tier &#xC5C5; &#xC54C;&#xB9BC;',color:'var(--pk)',bg:'var(--pkb)',
-      items:tierUps.sort(function(a,b){return b.g-a.g}),desc:'&#xC804;&#xC77C; &#xB300;&#xBE44; Tier &#xC0C1;&#xC2B9;'},
-    {grp:'common',icon:'&#x1F6AA;',title:'Discord &#xBBF8;&#xC785;&#xC7A5;',color:'var(--rd)',bg:'var(--rdb)',
-      items:a.filter(function(c){return !c.dj&&!c.ct&&!c.ag}),desc:'AG &#xC81C;&#xC678;'},
-    {grp:'common',icon:'&#x1F4DE;',title:'&#xC5F0;&#xB77D;/&#xBBF8;&#xC751;&#xB2F5;',color:'var(--or)',bg:'var(--orb)',
-      items:a.filter(function(c){return c.ct&&!c.rp})},
-    {grp:'new',icon:'&#x1F389;',title:'&#xCCAB; &#xC601;&#xC0C1; &#xCD95;&#xD558;!',color:'var(--cy)',bg:'var(--cyb)',
+      desc:'Discord 입장O / Tier 채널 미배정'},
+    {icon:'&#x1F199;',title:'Tier 업 알림',color:'var(--pk)',bg:'var(--pkb)',
+      items:a.filter(function(c){return c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none'}).sort(function(a,b){return b.g-a.g}),
+      desc:'전일 대비 Tier 상승'},
+    {icon:'&#x1F6AA;',title:'Discord 미입장',color:'var(--rd)',bg:'var(--rdb)',
+      items:a.filter(function(c){return !c.dj&&!c.ct&&!c.ag}),desc:'AG 제외'},
+    {icon:'&#x1F4DE;',title:'연락/미응답',color:'var(--or)',bg:'var(--orb)',
+      items:a.filter(function(c){return c.ct&&!c.rp})}
+  ];
+
+  var segs_celebrate=[
+    {icon:'&#x1F389;',title:'첫 영상 업로드!',color:'var(--cy)',bg:'var(--cyb)',
+      items:pd?a.filter(function(c){var pv=hist[pd][c.h]?hist[pd][c.h].v:0;return pv===0&&c.v>0}):[],
+      desc:'어제 0개 → 오늘 첫 업로드 | new-creator 채널에서 멘션'},
+    {icon:'&#x1F4B0;',title:'첫 매출 발생!',color:'var(--gn)',bg:'var(--gnb)',
+      items:pd?a.filter(function(c){var pg=hist[pd][c.h]?hist[pd][c.h].g:0;return pg===0&&c.g>0}):[],
+      desc:'어제 $0 → 오늘 첫 매출 | 채널에서 멘션'},
+    {icon:'&#x1F4C8;',title:'GMV +$50 이상',color:'var(--yw)',bg:'var(--ywb)',
+      items:a.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>=50}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g')})},
+    {icon:'&#x1F3AC;',title:'영상 +2개 이상',color:'var(--pk)',bg:'var(--pkb)',
+      items:a.filter(function(c){var d=getDelta(c.h,'v');return d!==null&&d>=2}).sort(function(a,b){return getDelta(b.h,'v')-getDelta(a.h,'v')})}
+  ];
+
+  var segs_new=[
+    {icon:'&#x1F389;',title:'첫 영상!',color:'var(--cy)',bg:'var(--cyb)',
       items:pd?newC.filter(function(c){var pv=hist[pd][c.h]?hist[pd][c.h].v:0;return pv===0&&c.v>0}):[],
-      desc:'&#xC5B4;&#xC81C; 0 &#x2192; &#xC624;&#xB298; &#xCCAB; &#xC5C5;&#xB85C;&#xB4DC; | new-creator &#xCC44;&#xB110;&#xC5D0;&#xC11C; &#xCD95;&#xD558;'},
-    {grp:'new',icon:'&#x1F4B0;',title:'&#xCCAB; &#xB9E4;&#xCD9C; &#xCD95;&#xD558;!',color:'var(--gn)',bg:'var(--gnb)',
-      items:pd?newC.filter(function(c){var pg=hist[pd][c.h]?hist[pd][c.h].g:0;return pg===0&&c.g>0}):[],
-      desc:'&#xC5B4;&#xC81C; $0 &#x2192; &#xC624;&#xB298; &#xCCAB; &#xB9E4;&#xCD9C; | &#xCC44;&#xB110;&#xC5D0;&#xC11C; &#xCD95;&#xD558;'},
-    {grp:'new',icon:'&#x1F3AC;',title:'&#xC601;&#xC0C1;O / &#xB9E4;&#xCD9C;X',color:'var(--pp)',bg:'var(--ppb)',
-      items:newC.filter(function(c){return c.v>0&&c.g===0}).sort(function(a,b){return b.v-a.v}),
-      desc:'&#xB137;&#xC9D5; &#xAC00;&#xB2A5;'},
-    {grp:'new',icon:'&#x1F4A4;',title:'&#xC601;&#xC0C1;&#xB3C4; &#xB9E4;&#xCD9C;&#xB3C4; &#xC5C6;&#xC74C;',color:'var(--dim)',bg:'rgba(139,141,148,.06)',
-      items:newC.filter(function(c){return c.v===0})},
-    {grp:'active',icon:'&#x1F4C8;',title:'GMV &#xAE09;&#xB4F1;',color:'var(--yw)',bg:'var(--ywb)',
+      desc:'new-creator 채널에서 멘션'},
+    {icon:'&#x1F3AC;',title:'영상O / 매출X',color:'var(--pp)',bg:'var(--ppb)',
+      items:newC.filter(function(c){return c.v>0&&c.g===0}).sort(function(a,b){return b.v-a.v}),desc:'넛징 필요'},
+    {icon:'&#x2B50;',title:'Active 임박 ($1+)',color:'var(--gn)',bg:'var(--gnb)',
+      items:newC.filter(function(c){return c.g>0}).sort(function(a,b){return b.g-a.g})},
+    {icon:'&#x1F4A4;',title:'영상도 매출도 없음',color:'var(--dim)',bg:'rgba(139,141,148,.06)',
+      items:newC.filter(function(c){return c.v===0})}
+  ];
+
+  var segs_active=[
+    {icon:'&#x1F4C8;',title:'GMV 급등',color:'var(--yw)',bg:'var(--ywb)',
       items:actC.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>0}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g')}),
-      desc:'&#xCC44;&#xB110;&#xC5D0;&#xC11C; &#xCE6D;&#xCC2C;/&#xB137;&#xC9D5;'},
-    {grp:'active',icon:'&#x1F38A;',title:'&#xC601;&#xC0C1; 3+ &#xCE6D;&#xCC2C;',color:'var(--pk)',bg:'var(--pkb)',
+      desc:'채널에서 칭찬/넛징'},
+    {icon:'&#x1F38A;',title:'영상 3개 이상',color:'var(--pk)',bg:'var(--pkb)',
       items:actC.filter(function(c){return c.v>=3&&c.dj}).sort(function(a,b){return b.v-a.v}),
-      desc:'active-creator &#xCC44;&#xB110;&#xC5D0;&#xC11C; &#xCE6D;&#xCC2C;'},
-    {grp:'active',icon:'&#x2B50;',title:'VIP &#xC784;&#xBC15; ($300+)',color:'var(--yw)',bg:'var(--ywb)',
+      desc:'active-creator 채널에서 칭찬'},
+    {icon:'&#x2B50;',title:'VIP 임박 ($300+)',color:'var(--yw)',bg:'var(--ywb)',
       items:actC.filter(function(c){return c.g>=300}).sort(function(a,b){return b.g-a.g}),
-      desc:'$500 &#xB3C4;&#xB2EC;&#xC2DC; VIP &#xCC44;&#xB110;&#xC73C;&#xB85C; &#xC774;&#xB3D9;'},
-    {grp:'vip',icon:'&#x1F4C8;',title:'GMV &#xAE09;&#xB4F1;',color:'var(--yw)',bg:'var(--ywb)',
+      desc:'$500 도달시 VIP 채널로 이동'}
+  ];
+
+  var segs_vip=[
+    {icon:'&#x1F4C8;',title:'GMV 급등',color:'var(--yw)',bg:'var(--ywb)',
       items:vipC.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>0}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g')})},
-    {grp:'vip',icon:'&#x1F451;',title:'VVIP &#xC784;&#xBC15; ($700+)',color:'var(--pk)',bg:'var(--pkb)',
+    {icon:'&#x1F451;',title:'VVIP 임박 ($700+)',color:'var(--pk)',bg:'var(--pkb)',
       items:vipC.filter(function(c){return c.tier==='vip'&&c.g>=700}).sort(function(a,b){return b.g-a.g}),
-      desc:'$1,000 &#xB3C4;&#xB2EC;&#xC2DC; VVIP &#xCC44;&#xB110;&#xC73C;&#xB85C; &#xC774;&#xB3D9;'},
-    {grp:'vip',icon:'&#x1F3AC;',title:'&#xC601;&#xC0C1; &#xD65C;&#xB3D9;',color:'var(--gn)',bg:'var(--gnb)',
+      desc:'$1,000 도달시 VVIP'},
+    {icon:'&#x1F3AC;',title:'영상 활동',color:'var(--gn)',bg:'var(--gnb)',
       items:vipC.filter(function(c){return c.v>0}).sort(function(a,b){return b.v-a.v})}
   ];
-  var tot=segs.filter(function(s){return s.grp!=='none'}).reduce(function(s,seg){return s+seg.items.length},0);
-  var bdg=$('sBdg');if(tot>0){bdg.textContent=tot;bdg.style.display='inline'}else bdg.style.display='none';
 
-  function renderSegCard(seg){
-    var collapsed=seg.items.length===0;
-    var h='<div class="sc">';
-    h+='<div class="sh" style="background:'+seg.bg+'" onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'block\':\'none\'">';
-    h+='<h3>'+seg.icon+' '+seg.title+'</h3>';
-    h+='<span class="ct" style="background:'+seg.color+';color:#fff">'+seg.items.length+'</span>';
-    h+='</div>';
-    h+='<div style="'+(collapsed?'display:none':'')+'padding:0 12px 10px;max-height:220px;overflow-y:auto">';
-    if(seg.desc)h+='<p style="font-size:9px;color:var(--dim);margin:6px 0 4px">'+seg.desc+'</p>';
-    if(!seg.items.length){
-      h+='<p style="font-size:10px;color:var(--dim);text-align:center;padding:8px">해당없음</p>';
-    } else {
-      seg.items.slice(0,40).forEach(function(cr){
-        var mt=fmt(cr.g);
-        var dg=getDelta(cr.h,'g'),dv=getDelta(cr.h,'v');
-        if(dg>0)mt+=' <b style="color:var(--gn)">+'+fmt(dg)+'</b>';
-        mt+=' · '+cr.v+'개';
-        if(dv>0)mt+=' <b style="color:var(--gn)">+'+dv+'</b>';
-        if(cr.uname)mt+=' <span style="font-size:8px;color:#888;font-style:italic">'+cr.uname+'</span>';
-        if(cr.email)mt+=' <span style="font-size:8px;color:var(--ac)">✉</span>';
-        h+='<div class="si-item">';
-        h+='<span class="hnd">@'+cr.h+(cr.ag?'<span class="ag-badge">AG</span>':'')+'</span>';
-        h+='<span class="mt">'+mt+'</span>';
-        h+='</div>';
-      });
-    }
-    h+='</div></div>';
-    return h;
-  }
-    function renderGrp(grp,title,list){
-    var h='<div class="sg-section"><div class="sg-section-hdr">'+title+'</div><div class="sg">';
-    list.filter(function(s){return s.grp===grp}).forEach(function(seg){
-      h+='<div class="sc"><div class="sh" style="background:'+seg.bg+'" onclick="this.nextElementSibling.classList.toggle(\'hide\')"><h3>'+seg.icon+' '+seg.title+'</h3><span class="ct" style="background:'+seg.color+';color:#fff">'+seg.items.length+'</span></div>';
-      h+='<div class="sb'+(seg.items.length===0?' hide':'')+'"><p class="desc">'+(seg.desc||'')+'</p>';
-      if(!seg.items.length)h+='<p style="font-size:10px;color:var(--dim);text-align:center;padding:8px">-</p>';
-      else seg.items.slice(0,40).forEach(function(c){
-        var mt=fmt(c.g);var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
-        if(dg>0)mt+=' <span style="color:var(--gn)">+'+fmt(dg)+'</span>';mt+=' &#xB7; '+c.v+'V';if(dv>0)mt+=' <span style="color:var(--gn)">+'+dv+'</span>';
-        if(c.uname)mt+='<br><span style="font-size:8px;color:#aaa;font-style:italic">DC:'+c.uname+'</span>';
-        h+='<div class="si-item"><span class="hnd">@'+c.h+(c.ag?'<span class="ag-badge">AG</span>':'')+'</span><span class="mt">'+mt+'</span></div>'});
-      h+='</div></div>'});
-    h+='</div></div>';return h;}
+  var tot=segs_common.concat(segs_celebrate).reduce(function(s,seg){return s+seg.items.length},0);
+  var bdg=$('sBdg');if(tot>0){bdg.textContent=tot;bdg.style.display='inline'}else{bdg.style.display='none'}
 
   $('segA').innerHTML=
-    renderGrp('common','&#x1F310; &#xACF5;&#xD1B5;',segs)+
-    renderGrp('new','&#x1F331; New Creator',segs)+
-    renderGrp('active','&#x1F45F; Active Creator',segs)+
-    renderGrp('vip','&#x2B50; VIP Creator',segs);
+    section('&#x1F6A8; 지금 액션 필요','var(--rd)',segs_common)+
+    section('&#x1F389; 오늘 축하할 사람 (채널 멘션)','var(--gn)',segs_celebrate)+
+    section('&#x1F331; New Creator','var(--cy)',segs_new)+
+    section('&#x1F45F; Active Creator','var(--gn)',segs_active)+
+    section('&#x2B50; VIP Creator','var(--yw)',segs_vip);
 }
 
-// ===== HISTORY =====
 function renderHist(){
-  var dates=Object.keys(hist).sort();if(!dates.length){$('histA').innerHTML='<div class="snap-box"><p style="color:var(--dim)">CSV &#xC5C5;&#xB85C;&#xB4DC; &#xD6C4; &#xC0DD;&#xC131;&#xB429;&#xB2C8;&#xB2E4;</p></div>';return}
-  var allH=new Set();dates.forEach(function(d){Object.keys(hist[d]).forEach(function(h){if(hist[d][h].g>0||hist[d][h].v>0)allH.add(h)})});
+  var dates=Object.keys(hist).sort();
+  if(!dates.length){$('histA').innerHTML='<div class="sb"><p style="color:var(--dim)">CSV 업로드 후 생성됩니다</p></div>';return}
+  var allH=new Set();
+  dates.forEach(function(d){Object.keys(hist[d]).forEach(function(h){if(hist[d][h].g>0||hist[d][h].v>0)allH.add(h)})});
   var handles=Array.from(allH).filter(function(h){return C[h]}).sort(function(a,b){return(C[b]?C[b].g:0)-(C[a]?C[a].g:0)});
-  var h='<div class="snap-box" style="padding:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'+
-    '<h4 style="color:var(--tx)">&#x1F4C5; &#xB0A0;&#xC9DC;&#xBCC4; GMV + &#xC601;&#xC0C1;&#xC218;</h4>'+
-    '<div style="font-size:9px;color:var(--dim)">&#xB179;&#xC0C9;&#x2191; &#xC0C1;&#xC2B9; | &#xBE68;&#xAC04;&#x2193; &#xD558;&#xB77D;</div></div>'+
-    '<div class="hist-wrap"><table class="hist-tbl"><thead><tr><th>Handle</th>';
-  dates.forEach(function(d){h+='<th colspan="2" style="text-align:center;border-left:1px solid var(--bd)">'+d.slice(5)+'</th>'});
-  h+='</tr><tr><th></th>';dates.forEach(function(){h+='<th style="color:var(--gn)">GMV</th><th style="color:var(--cy);border-right:1px solid var(--bd)">V</th>'});
-  h+='</tr></thead><tbody>';
+
+  var html='<div class="sb" style="padding:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  html+='<h4 style="color:var(--tx)">&#x1F4C5; 날짜별 GMV + 영상수</h4>';
+  html+='<span style="font-size:9px;color:var(--dim)">전날 대비 변화량 | 녹색↑상승 빨간↓하락</span></div>';
+  html+='<div class="hw"><table class="ht"><thead><tr><th>Handle</th>';
+  dates.forEach(function(d){html+='<th colspan="2" style="text-align:center;border-left:1px solid var(--bd)">'+d.slice(5)+'</th>'});
+  html+='</tr><tr><th></th>';
+  dates.forEach(function(){html+='<th style="color:var(--gn)">GMV</th><th style="color:var(--cy);border-right:1px solid var(--bd)">V</th>'});
+  html+='</tr></thead><tbody>';
+
   handles.forEach(function(handle){
     var c=C[handle];var tc=c?c.tier:'none';
-    var tColor=tc==='vvip'?'var(--pk)':tc==='vip'?'var(--yw)':tc==='active'?'var(--gn)':'var(--cy)';
-    h+='<tr><td style="border-left:3px solid '+tColor+'">'+
-      '<a href="https://www.tiktok.com/@'+handle+'" target="_blank" style="color:var(--ac);text-decoration:none;font-weight:600">@'+handle+'</a>';
-    if(c&&c.uname)h+='<br><span style="font-size:8px;color:var(--pp)">'+c.uname+'</span>';
-    if(c&&c.ag)h+='<span class="ag-badge">AG</span>';h+='</td>';
+    var tcol=tc==='vvip'?'var(--pk)':tc==='vip'?'var(--yw)':tc==='active'?'var(--gn)':'var(--cy)';
+    var row='<tr><td style="border-left:3px solid '+tcol+'">';
+    row+='<a href="https://www.tiktok.com/@'+handle+'" target="_blank" style="color:var(--ac);text-decoration:none;font-weight:600">@'+handle+'</a>';
+    if(c&&c.uname)row+='<br><span style="font-size:8px;color:var(--pp)">'+c.uname+'</span>';
+    if(c&&c.ag)row+='<span class="ag">AG</span>';
+    row+='</td>';
     dates.forEach(function(d,i){
       var cur=hist[d]&&hist[d][handle]?hist[d][handle]:{g:0,v:0};
       var prev=i>0&&hist[dates[i-1]]&&hist[dates[i-1]][handle]?hist[dates[i-1]][handle]:{g:0,v:0};
       var dg=cur.g-prev.g,dv=cur.v-prev.v;
-      h+='<td style="border-left:1px solid var(--bd);color:'+(i>0&&dg>0?'var(--gn)':i>0&&dg<0?'var(--rd)':'inherit')+'">'+fmt(cur.g);
-      if(i>0&&dg!==0)h+='<br><span style="font-size:8px">'+(dg>0?'+':'')+fmt(dg)+'</span>';h+='</td>';
-      h+='<td style="border-right:1px solid var(--bd);min-width:40px">'+cur.v;
-      if(i>0&&dv!==0)h+='<br><span style="font-size:8px;color:'+(dv>0?'var(--gn)':'var(--rd)')+'"> '+(dv>0?'+':'')+dv+'</span>';h+='</td>'});
-    h+='</tr>'});
-  h+='</tbody></table></div></div>';$('histA').innerHTML=h;}
+      row+='<td style="border-left:1px solid var(--bd);color:'+(i>0&&dg>0?'var(--gn)':i>0&&dg<0?'var(--rd)':'inherit')+'">'+fmt(cur.g);
+      if(i>0&&dg!==0)row+='<br><span style="font-size:8px">'+(dg>0?'+':'')+fmt(dg)+'</span>';
+      row+='</td>';
+      row+='<td style="border-right:1px solid var(--bd);min-width:40px">'+cur.v;
+      if(i>0&&dv!==0)row+='<br><span style="font-size:8px;color:'+(dv>0?'var(--gn)':'var(--rd)')+'"> '+(dv>0?'+':'')+dv+'</span>';
+      row+='</td>';
+    });
+    row+='</tr>';
+    html+=row;
+  });
+  html+='</tbody></table></div></div>';
+  $('histA').innerHTML=html;
+}
 
-// ===== DISCORD =====
-function renderDisc(){var a=Object.values(C);var djC=a.filter(function(c){return c.dj}).length;
-  var chN=a.filter(function(c){return c.cn}).length,chA=a.filter(function(c){return c.ca}).length,chV=a.filter(function(c){return c.cv}).length;
-  $('discA').innerHTML='<div class="disc-stat"><div class="ds-card"><div class="val" style="color:var(--ac)">'+djC+'</div><div class="lbl">Discord</div></div><div class="ds-card"><div class="val" style="color:var(--cy)">'+chN+'</div><div class="lbl">&#x1F331;Ch</div></div><div class="ds-card"><div class="val" style="color:var(--gn)">'+chA+'</div><div class="lbl">&#x1F45F;Ch</div></div><div class="ds-card"><div class="val" style="color:var(--yw)">'+chV+'</div><div class="lbl">&#x2B50;Ch</div></div></div>'+
-  '<div class="disc-grid"><div><div class="disc-box"><h4>&#x1F4CB; &#xC77C;&#xAD04; Discord</h4><textarea class="disc-ta" id="bulkH" placeholder="TikTok&#xD578;&#xB4E4; &#xB610;&#xB294; Discord&#xBA85;"></textarea><div style="display:flex;gap:4px;margin-top:4px"><button class="btn btn-p" onclick="bm(\'dj\',true,\'bulkH\',\'bR\')">&#x2713; DC</button><button class="btn btn-s" onclick="bm(\'dj\',false,\'bulkH\',\'bR\')">&#x2715;</button></div><div class="disc-result" id="bR"></div></div>'+
-  '<div class="disc-box" style="margin-top:10px"><h4>&#x1F4DE; &#xC5F0;&#xB77D;/&#xC751;&#xB2F5;</h4><textarea class="disc-ta" id="bulkC" style="height:60px"></textarea><div style="display:flex;gap:4px;margin-top:4px"><button class="btn btn-p" onclick="bm(\'ct\',true,\'bulkC\',\'cR\')">&#xC5F0;&#xB77D;</button><button class="btn btn-p" onclick="bm(\'rp\',true,\'bulkC\',\'cR\')">&#xC751;&#xB2F5;</button></div><div class="disc-result" id="cR"></div></div></div>'+
-  '<div><div class="disc-box"><h4>&#x1F517; &#xB2C9;&#xB124;&#xC784; &#xB9E4;&#xD551;</h4><div style="display:flex;gap:4px;margin-bottom:4px"><input class="si" id="mDN" placeholder="Discord&#xBA85;" style="width:44%"><input class="si" id="mTT" placeholder="TikTok&#xD578;&#xB4E4;" style="width:44%"><button class="btn btn-p" onclick="addM()" style="padding:5px 8px">+</button></div><div id="mL"></div></div>'+
-  '<div class="disc-box" style="margin-top:10px"><h4>&#x1F4E5; &#xBA64;&#xBC84; &#xBAA9;&#xB85D; &#xB9E4;&#xCE6D;</h4><textarea class="disc-ta" id="dMem" style="height:70px" placeholder="Discord &#xBA64;&#xBC14;&#xB9AC; (&#xD55C; &#xC904;)"></textarea><button class="btn btn-p" style="margin-top:4px" onclick="mDisc()">&#x1F50D;</button><div class="disc-result" id="dMR"></div></div></div></div>';rML()}
-function bm(field,val,taId,resId){var text=$(taId).value.trim();if(!text)return;var hs=text.split('\n').map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);
-  var ok=0,bad=[];hs.forEach(function(h){var target=C[h]?h:(discMap[h]||null);if(target&&C[target]){C[target][field]=val;ok++}else bad.push(h)});
-  $(resId).innerHTML='<p style="color:var(--gn)">&#x2705;'+ok+'</p>'+(bad.length?'<p style="color:var(--rd)">&#x274C;'+bad.join(', ')+'</p>':'');render()}
-function addM(){var dn=$('mDN').value.trim(),tt=$('mTT').value.trim().toLowerCase().replace(/^@/,'');if(!dn||!tt)return;if(!C[tt]){toast('@'+tt+' &#xC5C6;&#xC74C;');return}discMap[dn.toLowerCase()]=tt;$('mDN').value='';$('mTT').value='';rML();toast(dn+'&#x2192;@'+tt)}
+function renderDisc(){
+  var a=Object.values(C);
+  var djC=a.filter(function(c){return c.dj}).length;
+  var chN=a.filter(function(c){return c.cn}).length;
+  var chA=a.filter(function(c){return c.ca}).length;
+  var chV=a.filter(function(c){return c.cv}).length;
+
+  var html='<div class="dstat">';
+  html+='<div class="dcard"><div class="v" style="color:var(--ac)">'+djC+'</div><div class="l">Discord</div></div>';
+  html+='<div class="dcard"><div class="v" style="color:var(--cy)">'+chN+'</div><div class="l">&#x1F331;채널</div></div>';
+  html+='<div class="dcard"><div class="v" style="color:var(--gn)">'+chA+'</div><div class="l">&#x1F45F;채널</div></div>';
+  html+='<div class="dcard"><div class="v" style="color:var(--yw)">'+chV+'</div><div class="l">&#x2B50;채널</div></div>';
+  html+='</div>';
+  html+='<div class="disc-grid">';
+  html+='<div>';
+  html+='<div class="dbox"><h4>&#x1F4CB; 일괄 Discord 체크</h4>';
+  html+='<p class="hint">TikTok 핸들 또는 Discord username (한 줄에 하나)</p>';
+  html+='<textarea class="ta" id="bulkH"></textarea>';
+  html+='<div style="display:flex;gap:4px;margin-top:4px"><button class="btn bp" onclick="bm(\'dj\',true,\'bulkH\',\'bR\')">&#x2713; DC</button><button class="btn bs" onclick="bm(\'dj\',false,\'bulkH\',\'bR\')">&#x2715;</button></div>';
+  html+='<div class="dr" id="bR"></div></div>';
+  html+='<div class="dbox" style="margin-top:10px"><h4>&#x1F4DE; 연락/응답</h4>';
+  html+='<textarea class="ta" id="bulkC" style="height:60px"></textarea>';
+  html+='<div style="display:flex;gap:4px;margin-top:4px"><button class="btn bp" onclick="bm(\'ct\',true,\'bulkC\',\'cR\')">연락</button><button class="btn bp" onclick="bm(\'rp\',true,\'bulkC\',\'cR\')">응답</button></div>';
+  html+='<div class="dr" id="cR"></div></div>';
+  html+='</div>';
+  html+='<div>';
+  html+='<div class="dbox"><h4>&#x1F517; Discord ↔ TikTok 매핑</h4>';
+  html+='<div style="display:flex;gap:4px;margin-bottom:4px">';
+  html+='<input class="si" id="mDN" placeholder="Discord명" style="width:44%">';
+  html+='<input class="si" id="mTT" placeholder="TikTok핸들" style="width:44%">';
+  html+='<button class="btn bp" onclick="addM()" style="padding:5px 8px">+</button></div>';
+  html+='<div id="mL"></div></div>';
+  html+='<div class="dbox" style="margin-top:10px"><h4>&#x1F4E5; 멤버 목록 매칭</h4>';
+  html+='<p class="hint">Discord 멤버 붙여넣기 → 자동 매칭</p>';
+  html+='<textarea class="ta" id="dMem" style="height:70px"></textarea>';
+  html+='<button class="btn bp" style="margin-top:4px" onclick="mDisc()">&#x1F50D;</button>';
+  html+='<div class="dr" id="dMR"></div></div>';
+  html+='</div>';
+  html+='</div>';
+  $('discA').innerHTML=html;
+  rML();
+}
+
+function bm(field,val,taId,resId){
+  var text=$(taId).value.trim();if(!text)return;
+  var hs=text.split('\n').map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);
+  var ok=0,bad=[];
+  hs.forEach(function(h){
+    var target=C[h]?h:(discMap[h]||null);
+    if(target&&C[target]){C[target][field]=val;ok++}else{bad.push(h)}
+  });
+  $(resId).innerHTML='<p class="ok">&#x2705;'+ok+'</p>'+(bad.length?'<p class="no">&#x274C;'+bad.join(', ')+'</p>':'');
+  render();
+}
+
+function addM(){
+  var dn=$('mDN').value.trim(),tt=$('mTT').value.trim().toLowerCase().replace(/^@/,'');
+  if(!dn||!tt)return;if(!C[tt]){toast('@'+tt+' 없음');return}
+  discMap[dn.toLowerCase()]=tt;$('mDN').value='';$('mTT').value='';rML();toast(dn+' → @'+tt);
+}
+
 function delM(k){delete discMap[k];rML()}
-function rML(){var el=$('mL');if(!el)return;var e=Object.entries(discMap).slice(0,15);if(!e.length){el.innerHTML='<p style="font-size:10px;color:var(--dim)">-</p>';return}
-  var h='<table class="map-table"><thead><tr><th>Discord</th><th>TikTok</th><th></th></tr></thead><tbody>';
-  e.forEach(function(p){h+='<tr><td>'+p[0]+'</td><td>@'+p[1]+'</td><td><button class="btn btn-d" style="padding:1px 4px;font-size:8px" onclick="delM(\''+p[0].replace(/'/g,"\\'")+'\')">x</button></td></tr>'});
-  h+='</tbody></table>';el.innerHTML=h}
-function lev(a,b){var m=a.length,n=b.length,d=[];for(var i=0;i<=m;i++){d[i]=[];for(var j=0;j<=n;j++)d[i][j]=0;d[i][0]=i}for(var j=0;j<=n;j++)d[0][j]=j;for(var i=1;i<=m;i++)for(var j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));return d[m][n]}
-function mDisc(){var text=$('dMem').value.trim();if(!text)return;var mems=text.split('\n').map(function(m){return m.trim()}).filter(Boolean);var ks=Object.keys(C);var exact=[],fuzzy=[],none=[];
-  mems.forEach(function(m){var ml=m.toLowerCase().replace(/^@/,'');if(C[ml]){C[ml].dj=true;exact.push(ml);return}if(discMap[ml]&&C[discMap[ml]]){C[discMap[ml]].dj=true;exact.push(ml+'&#x2192;'+discMap[ml]);return}
-  var cands=ks.filter(function(h){return(ml.length>=4&&h.indexOf(ml)>=0)||(ml.length>=4&&ml.indexOf(h)>=0)||(lev(ml,h)<=2&&ml.length>=4)});if(cands.length)fuzzy.push({d:m,c:cands});else none.push(m)});
-  var h='<p style="font-weight:600;font-size:10px">'+exact.length+'/'+mems.length+'</p>';
-  if(fuzzy.length){h+='<details open><summary style="cursor:pointer;color:var(--yw);font-size:10px">&#x1F7E1;'+fuzzy.length+'</summary>';fuzzy.forEach(function(e){h+='<div class="fuzzy">'+e.d+' ';e.c.forEach(function(c){h+='<button class="btn btn-p" style="padding:1px 4px;font-size:8px" onclick="cfm(\''+e.d.replace(/'/g,"\\'")+'\',\''+c+'\')">@'+c+'</button> '});h+='</div>'});h+='</details>'}
-  if(none.length){h+='<details><summary style="cursor:pointer;color:var(--rd);font-size:10px">&#x274C;'+none.length+'</summary>';none.forEach(function(n){h+='<div class="nomatch">'+n+'</div>'});h+='</details>'}
-  $('dMR').innerHTML=h;render()}
+
+function rML(){
+  var el=$('mL');if(!el)return;
+  var e=Object.entries(discMap).slice(0,15);
+  if(!e.length){el.innerHTML='<p style="font-size:10px;color:var(--dim)">-</p>';return}
+  var h='<table class="mt"><thead><tr><th>Discord</th><th>TikTok</th><th></th></tr></thead><tbody>';
+  e.forEach(function(p){
+    h+='<tr><td>'+p[0]+'</td><td>@'+p[1]+'</td>';
+    h+='<td><button class="btn" style="background:var(--rd);color:#fff;padding:1px 4px;font-size:8px" onclick="delM(\''+p[0].replace(/\'/g,"\\'")+'\')" >x</button></td></tr>';
+  });
+  h+='</tbody></table>';el.innerHTML=h;
+}
+
+function lev(a,b){
+  var m=a.length,n=b.length,d=[];
+  for(var i=0;i<=m;i++){d[i]=[];for(var j=0;j<=n;j++)d[i][j]=0;d[i][0]=i}
+  for(var j=0;j<=n;j++)d[0][j]=j;
+  for(var i=1;i<=m;i++)for(var j=1;j<=n;j++)
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));
+  return d[m][n];
+}
+
+function mDisc(){
+  var text=$('dMem').value.trim();if(!text)return;
+  var mems=text.split('\n').map(function(m){return m.trim()}).filter(Boolean);
+  var ks=Object.keys(C);var exact=[],fuzzy=[],none=[];
+  mems.forEach(function(m){
+    var ml=m.toLowerCase().replace(/^@/,'');
+    if(C[ml]){C[ml].dj=true;exact.push(ml);return}
+    if(discMap[ml]&&C[discMap[ml]]){C[discMap[ml]].dj=true;exact.push(ml+'→'+discMap[ml]);return}
+    var cands=ks.filter(function(h){return(ml.length>=4&&h.indexOf(ml)>=0)||(lev(ml,h)<=2&&ml.length>=4)});
+    if(cands.length)fuzzy.push({d:m,c:cands});else none.push(m);
+  });
+  var h='<p style="font-weight:600;font-size:10px">'+(exact.length)+'/'+mems.length+'</p>';
+  if(fuzzy.length){
+    h+='<details open><summary style="cursor:pointer;color:var(--yw);font-size:10px">&#x1F7E1;후보('+fuzzy.length+')</summary>';
+    fuzzy.forEach(function(e){
+      h+='<div class="fy">'+e.d+' ';
+      e.c.forEach(function(c){h+='<button class="btn bp" style="padding:1px 4px;font-size:8px" onclick="cfm(\''+e.d.replace(/\'/g,"\\'")+'\',\''+c+'\')">@'+c+'</button> '});
+      h+='</div>';
+    });
+    h+='</details>';
+  }
+  $('dMR').innerHTML=h;render();
+}
+
 function cfm(dn,tt){discMap[dn.toLowerCase()]=tt;if(C[tt])C[tt].dj=true;rML();mDisc()}
 
-// ===== API =====
-var API=window.location.protocol==='file:'?null:'';
-function setSt(m,c){var el=$('syncSt');if(el){el.textContent=m;el.style.color=c||'var(--gn)'}}
-function buildState(){var st={tracking:{},hist:hist,discMap:discMap,agList:Array.from(agSet),dcList:Array.from(dcSet)};
-  Object.values(C).forEach(function(c){st.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,uname:c.uname||'',drole:c.drole||'',email:c.email||'',phone:c.phone||'',fname:c.fname||'',prevTier:c.prevTier||'',tier:c.tier}});return st}
-function syncSave(){if(API===null)return expState();setSt("...",'var(--yw)');fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())}).then(function(r){return r.json()}).then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장');toast('저장 ('+d.dates+'&#xC77C;)')}).catch(function(){setSt("실패","var(--rd)")})}
-function syncLoad(){if(API===null)return;setSt("...",'var(--yw)');fetch('/api/state').then(function(r){return r.json()}).then(function(st){applyState(st);ctrlDone=false;render();setSt("로드완료");toast(Object.keys(hist).length+'&#xC77C;')}).catch(function(){setSt("실패","var(--rd)")})}
-function trackAPI(h,f,v){autoSave();}
-function expState(){var blob=new Blob([JSON.stringify(buildState())],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='biodance_backup_'+today()+'.json';a.click();URL.revokeObjectURL(url);toast('백업 저장')}
-function impState(e){var file=e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(ev){try{applyState(JSON.parse(ev.target.result));ctrlDone=false;render();toast('복원 완료')}catch(err){toast('&#xC624;&#xB958;')}};r.readAsText(file);e.target.value=''}
+function init(){
+  RAW_P.forEach(function(r){
+    var h=r[0],g=r[1],v=r[2],w=r[3],lp=r[4];
+    var s=RAW_S[h]||[0,0,0,0];
+    var sv=SAVED_TRACKING[h]||{};
+    var dci=DC_INFO[h]||{};var ct=CONTACTS[h]||{};
+    var t=sv.tier||tier(g,v);
+    C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
+      dj:sv.dj!==undefined?sv.dj:dcSet.has(h),
+      ct:sv.ct||false,rp:sv.rp||false,nt:sv.nt||'',ag:agSet.has(h),
+      cn:sv.cn||false,ca:sv.ca||false,cv:sv.cv||false,
+      uname:sv.uname||dci.u||'',email:sv.email||ct.em||'',
+      phone:sv.phone||ct.ph||'',prevTier:sv.prevTier||'',tier:t};
+  });
+  // Apply latest hist GMV
+  var dates=Object.keys(hist).sort();var latest=dates[dates.length-1];
+  if(latest&&hist[latest])Object.keys(hist[latest]).forEach(function(h){
+    if(C[h]&&hist[latest][h]){C[h].g=hist[latest][h].g;C[h].v=hist[latest][h].v;C[h].tier=tier(C[h].g,C[h].v)}
+  });
+  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
+  // Auto-load from server
+  if(API!==null){
+    setSt('연결중...','var(--yw)');
+    fetch('/api/state').then(function(r){return r.json()}).then(function(st){
+      applyState(st);render();setSt('서버 연결됨');
+    }).catch(function(){render();setSt('로컬 모드','var(--dim)')});
+  } else {render()}
+}
 
 init();
-</script></body></html>
+
+</script>
+</body>
+</html>
