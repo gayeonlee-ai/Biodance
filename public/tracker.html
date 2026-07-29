@@ -134,6 +134,10 @@ function toast(m) { var t = $('tst'); t.textContent = m; t.classList.add('show')
 function sw(tab) {
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('on', t.dataset.t === tab); });
   document.querySelectorAll('.pnl').forEach(function(p) { p.classList.toggle('on', p.id === 'p-' + tab); });
+  if (tab === 'tracker') renderTrk();
+  if (tab === 'segments') renderSeg();
+  if (tab === 'history') renderHist();
+  if (tab === 'discord') renderDisc();
 }
 function fmt(n) { if (!n && n !== 0) return '-'; return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}); }
 function today() { var d = new Date(new Date().getTime() + (9 * 60 * 60 * 1000)); return d.toISOString().slice(0, 10); }
@@ -473,7 +477,7 @@ function renderTrk() {
   }
 
   var fbHTML = '<div class="fbrow">';
-  fbHTML += '<input class="si" id="srch" placeholder="&#x1F50D; &#xD578;&#xB4E4;/DC&#xBA85;" style="width:150px" oninput="sq=this.value;renderTrk()">';
+  fbHTML += '<input class="si" id="srch" placeholder="&#x1F50D; &#xD578;&#xB4E4;/DC&#xBA85;" style="width:150px" oninput="sq=this.value;renderTrk()" onkeyup="sq=this.value;renderTrk()">';
   fbHTML += '<span class="fblabel">TIER:</span>';
   fbHTML += mb('&#x1F331;New', 'tier', 'new', n_new);
   fbHTML += mb('&#x1F45F;Active', 'tier', 'active', n_act);
@@ -760,8 +764,13 @@ function bm(field, val, taId, resId) {
 
 function addM() {
   var dn = $('mDN').value.trim(), tt = $('mTT').value.trim().toLowerCase().replace(/^@/, '');
-  if (!dn || !tt) return; if (!C[tt]) { toast('@' + tt + ' 없음'); return; }
-  discMap[dn.toLowerCase()] = tt; $('mDN').value = ''; $('mTT').value = ''; rML(); toast(dn + ' → @' + tt);
+  if (!dn || !tt) return;
+  // Allow mapping even if not in Euka (for Discord-only members)
+  discMap[dn.toLowerCase()] = tt;
+  // If in Euka, also mark as Discord joined
+  if (C[tt]) { C[tt].dj = true; C[tt].uname = dn.toLowerCase(); }
+  $('mDN').value = ''; $('mTT').value = ''; rML(); autoSave();
+  toast(dn + ' → @' + tt + (C[tt] ? ' ✅' : ' (Euka 미참가)'));
 }
 function delM(k) { delete discMap[k]; rML(); }
 function rML() {
