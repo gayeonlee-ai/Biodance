@@ -769,10 +769,25 @@ function addM() {
   discMap[dn.toLowerCase()] = tt;
   // If in Euka, also mark as Discord joined
   if (C[tt]) { C[tt].dj = true; C[tt].uname = dn.toLowerCase(); }
-  $('mDN').value = ''; $('mTT').value = ''; rML(); autoSave();
+  $('mDN').value = ''; $('mTT').value = ''; rML(); 
+  // Force immediate save (not debounced)
+  if (API !== null) {
+    fetch('/api/state', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(buildState())})
+      .then(function(r){return r.json()})
+      .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨');})
+      .catch(function(){setSt('실패','var(--rd)')});
+  }
   toast(dn + ' → @' + tt + (C[tt] ? ' ✅' : ' (Euka 미참가)'));
 }
-function delM(k) { delete discMap[k]; rML(); }
+function delM(k) { 
+  delete discMap[k]; rML();
+  if (API !== null) {
+    fetch('/api/state', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(buildState())})
+      .then(function(r){return r.json()})
+      .then(function(){setSt('삭제됨')})
+      .catch(function(){setSt('실패','var(--rd)')});
+  }
+}
 function rML() {
   var el = $('mL'); if (!el) return;
   var e = Object.entries(discMap).slice(0, 15);
