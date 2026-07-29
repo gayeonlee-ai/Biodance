@@ -111,7 +111,7 @@ tr:hover td{background:rgba(88,101,242,.04)}
 </div>
 <div class="cnt">
   <div class="pnl on" id="p-upload"><div id="upA"></div></div>
-  <div class="pnl" id="p-tracker"><div id="kpiA"></div><div id="trkA"></div></div>
+  <div class="pnl" id="p-tracker"><div id="kpiA"></div><div style="padding:6px 0"><input id="srchBox" class="si" placeholder="🔍 핸들/DC명 검색" style="width:200px;cursor:text" oninput="sq=this.value;renderTrk()"></div><div id="trkA"></div></div>
   <div class="pnl" id="p-segments"><div id="segA"></div></div>
   <div class="pnl" id="p-discord"><div id="discA"></div></div>
   <div class="pnl" id="p-history"><div id="histA"></div></div>
@@ -505,7 +505,7 @@ function renderTrk() {
   }
 
   var fbHTML = '<div class="fbrow">';
-  fbHTML += '<input class="si" id="srch" placeholder="&#x1F50D; &#xD578;&#xB4E4;/DC&#xBA85;" style="width:150px;cursor:text;pointer-events:all;position:relative;z-index:10" oninput="sq=this.value;renderTrk()" onkeyup="sq=this.value;renderTrk()" onclick="this.focus();event.stopPropagation()">';
+  // search in HTML
   fbHTML += '<span class="fblabel">TIER:</span>';
   fbHTML += mb('&#x1F331;New', 'tier', 'new', n_new);
   fbHTML += mb('&#x1F45F;Active', 'tier', 'active', n_act);
