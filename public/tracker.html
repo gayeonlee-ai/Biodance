@@ -185,7 +185,7 @@ var discMap = Object.assign({}, RAW_DCMAP, SAVED_DCMAP);
 var hist = JSON.parse(JSON.stringify(SAVED_HIST));
 var C = {};
 var sCol = 'g', sDir = 'desc', sq = '';
-var MF = {tier: null, dc: null, surge: false, nv: false, vid: false, live: false};
+var MF = {tier: null, dc: null, surge: false, nv: false, vid: false, live: false, cn: null, ca: null, cv: null, ct: null, rp: null};
 var CV = {dc: true, cn: true, ca: true, cv: true, ct: true, rp: true, nt: true};
 var API = (window.location.protocol === 'file:') ? null : '';
 var _saveTimer = null, _saving = false;
@@ -301,7 +301,7 @@ function updStr(h, f, v) { if (C[h]) { C[h][f] = v; autoSave(); } }
 
 function toggleMF(key, val) { MF[key] = (MF[key] === val) ? null : val; renderTrk(); }
 function toggleMFb(key) { MF[key] = !MF[key]; renderTrk(); }
-function resetMF() { MF = {tier: null, dc: null, surge: false, nv: false, vid: false, live: false}; renderTrk(); }
+function resetMF() { MF = {tier: null, dc: null, surge: false, nv: false, vid: false, live: false, cn: null, ca: null, cv: null, ct: null, rp: null}; renderTrk(); }
 
 function prevDay() {
   var dates = Object.keys(hist).sort(), t = today();
@@ -380,45 +380,69 @@ function pf(file, type) {
   r.onload = function(ev) {
     var data = parseCSV(ev.target.result);
     if (type === 'p') {
-      var old = {};
-      Object.values(C).forEach(function(c) {
-        old[c.h] = {dj: c.dj, ct: c.ct, rp: c.rp, nt: c.nt, cn: c.cn, ca: c.ca, cv: c.cv,
-          uname: c.uname || '', email: c.email || '', phone: c.phone || '', prevTier: c.tier, tier: c.tier,
-          video_gmv: c.video_gmv || 0, video_count: c.video_count || 0, live_gmv: c.live_gmv || 0, live_count: c.live_count || 0};
-      });
-      C = {};
-      data.forEach(function(row) {
-        var h = (row['Creator Handle'] || '').replace('@', '').trim().toLowerCase(); if (!h) return;
-        var g = parseFloat((row['Total GMV'] || '0').replace(/[$,]/g, '')) || 0;
-        var v = parseInt(row['Videos']) || 0;
-        var w = parseInt((row['Total Views'] || '0').replace(/,/g, '')) || 0;
-        var o = old[h] || {};
-        var dci = DC_INFO[h] || {}; var ct = CONTACTS[h] || {};
-        var sb = SUBS_DATA[h] || {vg: 0, vc: 0, lg: 0, lc: 0};
-        var t = o.tier || tier(g, v);
-        C[h] = {h: h, g: g, v: v, w: w,
-          dj: o.dj !== undefined ? o.dj : dcSet.has(h),
-          ct: o.ct || false, rp: o.rp || false, nt: o.nt || '', ag: agSet.has(h),
-          cn: o.cn || false, ca: o.ca || false, cv: o.cv || false,
-          uname: o.uname || dci.u || '', email: o.email || ct.em || '',
-          phone: o.phone || ct.ph || '', prevTier: o.tier || '', tier: t,
-          video_gmv: o.video_gmv || sb.vg, video_count: o.video_count || sb.vc,
-          live_gmv: o.live_gmv || sb.lg, live_count: o.live_count || sb.lc};
-      });
-      var td = today();
-      var snap = {}; Object.values(C).forEach(function(c) { snap[c.h] = {g: c.g, v: c.v}; });
-      hist[td] = snap;
-      render(); setTimeout(function() { syncSave(); }, 800);
-      toast('업로드 완료 (' + Object.keys(C).length + '명)');
+      // Fetch latest server state first, then rebuild to preserve checkboxes
+      function doRebuild(serverTracking, serverDiscMap, serverHist) {
+        // Merge current C state with server state (server wins)
+        var saved = {};
+        Object.values(C).forEach(function(c) {
+          saved[c.h] = {dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,
+            uname:c.uname||'',email:c.email||'',phone:c.phone||'',tier:c.tier,
+            video_gmv:c.video_gmv||0,live_gmv:c.live_gmv||0};
+        });
+        // Server state overrides local
+        if (serverTracking) {
+          Object.keys(serverTracking).forEach(function(h) {
+            var d = serverTracking[h];
+            if (!saved[h]) saved[h] = {};
+            ['dj','ct','rp','nt','cn','ca','cv','uname','email','phone','tier'].forEach(function(k) {
+              if (d[k] !== undefined) saved[h][k] = d[k];
+            });
+          });
+        }
+        if (serverDiscMap) Object.assign(discMap, serverDiscMap);
+        if (serverHist) Object.keys(serverHist).forEach(function(d) { if (!hist[d]) hist[d] = serverHist[d]; });
+        C = {};
+        data.forEach(function(row) {
+          var h = (row['Creator Handle']||'').replace('@','').trim().toLowerCase(); if(!h)return;
+          var g = parseFloat((row['Total GMV']||'0').replace(/[$,]/g,''))||0;
+          var v = parseInt(row['Videos'])||0;
+          var w = parseInt((row['Total Views']||'0').replace(/,/g,''))||0;
+          var o = saved[h]||{};
+          var dci = DC_INFO[h]||{}; var ct = CONTACTS[h]||{};
+          var sb = SUBS_DATA[h]||{vg:0,vc:0,lg:0,lc:0};
+          C[h] = {h:h,g:g,v:v,w:w,
+            dj:o.dj!==undefined?o.dj:dcSet.has(h),
+            ct:o.ct||false,rp:o.rp||false,nt:o.nt||'',ag:agSet.has(h),
+            cn:o.cn||false,ca:o.ca||false,cv:o.cv||false,
+            uname:o.uname||dci.u||'',email:o.email||ct.em||'',
+            phone:o.phone||ct.ph||'',prevTier:o.tier||'',tier:o.tier||tier(g,v),
+            video_gmv:o.video_gmv||sb.vg||0,video_count:sb.vc||0,
+            live_gmv:o.live_gmv||sb.lg||0,live_count:sb.lc||0};
+        });
+        var td = today();
+        var snap = {}; Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v};});
+        hist[td] = snap;
+        Object.values(C).forEach(function(c){c.ag=agSet.has(c.h);});
+        render();
+        setTimeout(function(){syncSave();},800);
+        toast('업로드 완료 ('+Object.keys(C).length+'명)');
+      }
+      if (API !== null) {
+        fetch('/api/state')
+          .then(function(r){return r.json();})
+          .then(function(st){doRebuild(st.tracking,st.discMap,st.hist);})
+          .catch(function(){doRebuild(null,null,null);});
+      } else {
+        doRebuild(null,null,null);
+      }
     } else if (type === 's') {
-      // Submissions: live vs video breakdown
       data.forEach(function(row) {
-        var h = (row['Creator'] || '').trim().toLowerCase().replace(/^@/, '');
-        var t = row['Type'] || '';
-        var g = parseFloat((row['GMV'] || '0').replace(/[$,]/g, '')) || 0;
+        var h = (row['Creator']||'').trim().toLowerCase().replace(/^@/,'');
+        var t = row['Type']||'';
+        var g = parseFloat((row['GMV']||'0').replace(/[$,]/g,''))||0;
         if (C[h]) {
-          if (t === 'Video') { C[h].video_gmv = (C[h].video_gmv || 0) + g; C[h].video_count = (C[h].video_count || 0) + 1; }
-          else if (t === 'Livestream') { C[h].live_gmv = (C[h].live_gmv || 0) + g; C[h].live_count = (C[h].live_count || 0) + 1; }
+          if (t==='Video'){C[h].video_gmv=(C[h].video_gmv||0)+g;C[h].video_count=(C[h].video_count||0)+1;}
+          else if (t==='Livestream'){C[h].live_gmv=(C[h].live_gmv||0)+g;C[h].live_count=(C[h].live_count||0)+1;}
         }
       });
       render(); toast('Submissions 로드됨');
@@ -427,6 +451,7 @@ function pf(file, type) {
   };
   r.readAsText(file);
 }
+
 
 function lfDC(file) {
   var r = new FileReader();
@@ -511,6 +536,19 @@ function renderTrk() {
   if (MF.nv) f = f.filter(function(c) { return getDelta(c.h, 'v') > 0; });
   if (MF.vid) f = f.filter(function(c) { return c.v > 0 && c.g === 0; });
   if (MF.live) f = f.filter(function(c) { return c.live_gmv > 0; });
+  // Column header checkbox filters
+  if (MF.dc === 'y') f = f.filter(function(c) { return c.dj; });
+  else if (MF.dc === 'n') f = f.filter(function(c) { return !c.dj; });
+  if (MF.cn === 'y') f = f.filter(function(c) { return c.cn; });
+  else if (MF.cn === 'n') f = f.filter(function(c) { return !c.cn; });
+  if (MF.ca === 'y') f = f.filter(function(c) { return c.ca; });
+  else if (MF.ca === 'n') f = f.filter(function(c) { return !c.ca; });
+  if (MF.cv === 'y') f = f.filter(function(c) { return c.cv; });
+  else if (MF.cv === 'n') f = f.filter(function(c) { return !c.cv; });
+  if (MF.ct === 'y') f = f.filter(function(c) { return c.ct; });
+  else if (MF.ct === 'n') f = f.filter(function(c) { return !c.ct; });
+  if (MF.rp === 'y') f = f.filter(function(c) { return c.rp; });
+  else if (MF.rp === 'n') f = f.filter(function(c) { return !c.rp; });
 
   f.sort(function(a, b) {
     var va = a[sCol], vb = b[sCol];
@@ -519,18 +557,40 @@ function renderTrk() {
   });
 
   function si(col) { return sCol === col ? '<span style="font-size:8px;margin-left:1px">' + (sDir === 'desc' ? '&#x25BC;' : '&#x25B2;') + '</span>' : ''; }
-  function th(lbl, col) { return '<th onclick="ts(\'' + col + '\')">' + lbl + si(col) + '</th>'; }
+  function th(lbl, col) { return '<th onclick="ts(\'' + col + '\')" style="cursor:pointer">' + lbl + si(col) + '</th>'; }
+
+  // Column dropdown filter
+  function mkDD(id, opts) {
+    var dd = '<div id="' + id + '" class="col-dd" style="display:none;position:absolute;top:100%;left:0;min-width:130px;background:var(--s1);border:1px solid var(--bd);border-radius:5px;padding:6px;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.5)">';
+    opts.forEach(function(o) {
+      dd += '<div onclick="setColF(\'' + id + '\',\'' + o[1] + '\');event.stopPropagation()" style="padding:4px 6px;cursor:pointer;font-size:10px;border-radius:3px;font-weight:normal" onmouseover="this.style.background=\'rgba(88,101,242,.2)\'" onmouseout="this.style.background=\'transparent\'">' + o[0] + '</div>';
+    });
+    dd += '</div>';
+    return dd;
+  }
+  function thDD(lbl, col, opts) {
+    return '<th style="position:relative;cursor:pointer"><span onclick="ts(\'' + col + '\')">' + lbl + si(col) + '</span>' +
+      ' <span onclick="event.stopPropagation();toggleColDD(\'' + col + '_dd\')" style="cursor:pointer;opacity:.6;font-size:9px">&#x25BE;</span>' +
+      mkDD(col + '_dd', opts) + '</th>';
+  }
+  function thCkDD(lbl, col) {
+    return '<th class="cc" style="position:relative">' + lbl +
+      '<span onclick="event.stopPropagation();toggleColDD(\'' + col + '_dd\')" style="cursor:pointer;opacity:.6;font-size:8px;display:block">&#x25BE;</span>' +
+      mkDD(col + '_dd', [['전체','__all__'],['✓ 체크O','y'],['✗ 체크X','n']]) + '</th>';
+  }
 
   var tbl = '<div class="tw"><table><thead><tr>' +
-    th('Handle', 'h') + th('Tier', 'tier') + th('GMV', 'g') + '<th>&#x0394;GMV</th>' +
+    thDD('Handle', 'h', [['전체','__all__']]) +
+    thDD('Tier', 'tier', [['전체','__all__'],['🌱 New','new'],['👟 Active','active'],['⭐ VIP+','vip']]) +
+    th('GMV', 'g') + '<th>&#x0394;GMV</th>' +
     th('V', 'v') + '<th>&#x0394;V</th>' +
-    '<th title="Shoppable Video GMV">&#x1F3AC;GMV</th><th title="Livestream GMV">&#x1F4FA;GMV</th>' +
-    (CV.dc ? '<th class="cc">DC</th>' : '') +
-    (CV.cn ? '<th class="cc">&#x1F331;</th>' : '') +
-    (CV.ca ? '<th class="cc">&#x1F45F;</th>' : '') +
-    (CV.cv ? '<th class="cc">&#x2B50;</th>' : '') +
-    (CV.ct ? '<th class="cc">&#xC5F0;&#xB77D;</th>' : '') +
-    (CV.rp ? '<th class="cc">&#xC751;&#xB2F5;</th>' : '') +
+    '<th>&#x1F3AC;GMV</th><th>&#x1F4FA;GMV</th>' +
+    (CV.dc ? thCkDD('DC','dc') : '') +
+    (CV.cn ? thCkDD('&#x1F331;','cn') : '') +
+    (CV.ca ? thCkDD('&#x1F45F;','ca') : '') +
+    (CV.cv ? thCkDD('&#x2B50;','cv') : '') +
+    (CV.ct ? thCkDD('&#xC5F0;&#xB77D;','ct') : '') +
+    (CV.rp ? thCkDD('&#xC751;&#xB2F5;','rp') : '') +
     (CV.nt ? '<th>&#xBA54;&#xBAA8;</th>' : '') +
     '<th>&#xC774;&#xBA54;&#xC77C;</th>' +
     '</tr></thead><tbody>';
@@ -573,6 +633,33 @@ function renderTrk() {
 }
 
 function ts(col) { if (sCol === col) sDir = sDir === 'desc' ? 'asc' : 'desc'; else { sCol = col; sDir = 'desc'; } renderTrk(); }
+function toggleColDD(id) {
+  document.querySelectorAll('.col-dd').forEach(function(d) { if (d.id !== id) d.style.display='none'; });
+  var el = document.getElementById(id);
+  if (el) el.style.display = (el.style.display === 'none' ? 'block' : 'none');
+}
+function setColF(ddId, val) {
+  var col = ddId.replace('_dd','');
+  MF[col] = (val === '__all__') ? null : val;
+  document.querySelectorAll('.col-dd').forEach(function(d){d.style.display='none';});
+  renderTrk();
+}
+document.addEventListener('click', function() {
+  document.querySelectorAll('.col-dd').forEach(function(d){d.style.display='none';});
+});
+function toggleDD(id) {
+  document.querySelectorAll('.col-dd').forEach(function(d) { if (d.id !== id) d.style.display = 'none'; });
+  var el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+function setMF(key, val) { MF[key] = val; document.querySelectorAll('.col-dd').forEach(function(d){d.style.display='none';}); renderTrk(); }
+function setMFck(key, val) {
+  // checkbox column filter: y=checked only, n=unchecked only, null=all
+  MF[key] = val; document.querySelectorAll('.col-dd').forEach(function(d){d.style.display='none';}); renderTrk();
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('th')) document.querySelectorAll('.col-dd').forEach(function(d){d.style.display='none';});
+});
 
 function renderSeg() {
   var a = Object.values(C); var pd = prevDay();
