@@ -5,31 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biodance Creator Tracker</title>
 <style>
-
 :root{--bg:#1a1b1e;--s1:#222428;--s2:#2b2d31;--s3:#35373c;--bd:#3f4147;--tx:#e0e0e6;--dim:#8b8d94;--ac:#5865f2;--ach:#4752c4;--gn:#23a559;--gnb:rgba(35,165,89,.12);--yw:#f0b232;--ywb:rgba(240,178,50,.12);--rd:#da373c;--rdb:rgba(218,55,60,.12);--or:#e67e22;--orb:rgba(230,126,34,.12);--pk:#eb459e;--pkb:rgba(235,69,158,.12);--cy:#00b4d8;--cyb:rgba(0,180,216,.12);--pp:#9b59b6}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:12px}
-.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
 .hdr h1{font-size:15px;font-weight:700}.hdr h1 span{color:var(--ac)}
 .hdr-r{display:flex;gap:5px;align-items:center}
 .tabs{display:flex;background:var(--s1);border-bottom:2px solid var(--bd);padding:0 16px;overflow-x:auto}
-.tab{padding:9px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab{padding:9px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--dim);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--tx)}.tab.on{color:var(--ac);border-bottom-color:var(--ac)}
 .tab .bdg{background:var(--rd);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:3px;font-weight:700}
 .cnt{padding:14px;max-width:1600px;margin:0 auto}.pnl{display:none}.pnl.on{display:block}
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;margin-bottom:12px}
+.krow{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px;margin-bottom:12px}
 .kpi{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:8px;text-align:center}
 .kpi .v{font-size:16px;font-weight:700}.kpi .l{font-size:8px;color:var(--dim);margin-top:1px;text-transform:uppercase}
-.fb-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
-.fb-label{font-size:9px;color:var(--dim);font-weight:600;margin-right:2px}
-.fb{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:4px 7px;color:var(--dim);font-size:10px;cursor:pointer;font-weight:600;white-space:nowrap}
-.fb:hover{background:var(--s3);color:var(--tx)}.fb.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-.fb.rst{color:var(--rd);border-color:var(--rd)}
+.fbrow{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.fblabel{font-size:9px;color:var(--dim);font-weight:600;margin-right:2px;margin-left:6px}
+.fb{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:4px 7px;color:var(--dim);font-size:10px;cursor:pointer;font-weight:600;white-space:nowrap;user-select:none}
+.fb:hover{background:var(--s3);color:var(--tx)}.fb.on{background:var(--ac);color:#fff;border-color:var(--ac)}.fb.rst{color:var(--rd);border-color:var(--rd)}
 .si{background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:5px 8px;color:var(--tx);font-size:12px}
 .si:focus{outline:none;border-color:var(--ac)}
 .tw{overflow-x:auto;border-radius:7px;border:1px solid var(--bd);max-height:60vh;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:11px}
-th{background:var(--s2);padding:6px;text-align:left;font-size:9px;text-transform:uppercase;color:var(--dim);font-weight:700;border-bottom:1px solid var(--bd);position:sticky;top:0;white-space:nowrap;cursor:pointer;z-index:2}
+th{background:var(--s2);padding:6px;text-align:left;font-size:9px;text-transform:uppercase;color:var(--dim);font-weight:700;border-bottom:1px solid var(--bd);position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none;z-index:2}
 th:hover{color:var(--tx)}td{padding:4px 6px;border-bottom:1px solid var(--bd);vertical-align:middle}
 tr:hover td{background:rgba(88,101,242,.04)}
 .hc a{color:var(--ac);text-decoration:none;font-weight:600}.hc a:hover{text-decoration:underline}
@@ -42,8 +40,9 @@ tr:hover td{background:rgba(88,101,242,.04)}
 .t-vip{background:var(--ywb);color:var(--yw)}.t-vvip{background:var(--pkb);color:var(--pk)}.t-none{background:var(--s3);color:var(--dim)}
 .tu{background:rgba(235,69,158,.2);color:var(--pk);font-size:7px;padding:1px 3px;border-radius:3px;margin-left:2px;font-weight:700}
 .ag{display:inline-block;font-size:7px;padding:1px 3px;border-radius:2px;background:var(--orb);color:var(--or);font-weight:700;margin-left:2px}
-.ni{background:transparent;border:1px solid transparent;border-radius:3px;padding:2px 4px;color:var(--tx);font-size:10px;width:75px}
-.ni:focus{border-color:var(--ac);outline:none;background:var(--s2)}.ni.em{width:130px}
+.lv{display:inline-block;font-size:7px;padding:1px 3px;border-radius:2px;background:rgba(155,89,182,.15);color:var(--pp);font-weight:700;margin-left:2px}
+.ni{background:transparent;border:1px solid transparent;border-radius:3px;padding:2px 4px;color:var(--tx);font-size:10px;width:70px}
+.ni:focus{border-color:var(--ac);outline:none;background:var(--s2)}.ni.em{width:120px}
 .up-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
 .up-card{background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:12px}
 .up-card h4{font-size:11px;color:var(--dim);margin-bottom:6px}
@@ -55,7 +54,7 @@ tr:hover td{background:rgba(88,101,242,.04)}
 .bp{background:var(--ac);color:#fff}.bs{background:var(--s3);color:var(--tx);border:1px solid var(--bd)}
 .ta{width:100%;height:80px;background:var(--s2);border:1px solid var(--bd);border-radius:5px;padding:7px;color:var(--tx);font-size:11px;font-family:monospace;resize:vertical}
 .ta:focus{outline:none;border-color:var(--ac)}
-.sg-hdr{font-size:11px;font-weight:700;padding:5px 8px;border-radius:5px;margin-bottom:8px;text-transform:uppercase;background:var(--s2);border:1px solid var(--bd)}
+.sg-hdr{font-size:11px;font-weight:700;padding:5px 8px;border-radius:5px;margin-bottom:8px;background:var(--s2);border:1px solid var(--bd)}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
 .sc{background:var(--s1);border:1px solid var(--bd);border-radius:6px;overflow:hidden}
 .sh{padding:8px 10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
@@ -64,17 +63,17 @@ tr:hover td{background:rgba(88,101,242,.04)}
 .si2{padding:0 10px 10px;max-height:200px;overflow-y:auto}
 .si2 .desc{font-size:9px;color:var(--dim);margin-bottom:4px}
 .si2 .row{display:flex;align-items:center;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd);font-size:10px}
-.si2 .row:last-child{border-bottom:none}.si2 .row .h{font-weight:600}.si2 .row .m{color:var(--dim);font-size:9px}
+.si2 .row:last-child{border-bottom:none}.si2 .row .h{font-weight:600}.si2 .row .m{color:var(--dim);font-size:9px;text-align:right}
 .hw{overflow:auto;border:1px solid var(--bd);border-radius:6px;max-height:520px}
 .ht{width:100%;border-collapse:collapse;font-size:10px}
 .ht th{background:var(--s2);padding:4px 6px;text-align:center;color:var(--dim);font-size:8px;text-transform:uppercase;position:sticky;top:0;white-space:nowrap;border-bottom:1px solid var(--bd)}
-.ht th:first-child{text-align:left;position:sticky;left:0;z-index:3;min-width:150px}
-.ht td{padding:3px 6px;border-bottom:1px solid var(--bd);text-align:right;vertical-align:middle;min-width:60px}
-.ht td:first-child{text-align:left;position:sticky;left:0;background:var(--s1);z-index:1}
+.ht th:first-child,.ht td:first-child{text-align:left;position:sticky;left:0;min-width:150px;background:var(--s2);z-index:2}
+.ht td{padding:3px 6px;border-bottom:1px solid var(--bd);text-align:right;vertical-align:middle;min-width:55px}
+.ht td:first-child{background:var(--s1);z-index:1}
 .ht tr:hover td{background:rgba(88,101,242,.04)}.ht tr:hover td:first-child{background:var(--s2)}
 .disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .dbox{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:12px}
-.dbox h4{font-size:11px;margin-bottom:5px}.dbox .hint{font-size:10px;color:var(--dim);margin-bottom:6px}
+.dbox h4{font-size:11px;margin-bottom:5px}.dbox .hint{font-size:10px;color:var(--dim);margin-bottom:6px;line-height:1.4}
 .dstat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:11px}
 .dcard{background:var(--s1);border:1px solid var(--bd);border-radius:6px;padding:7px;text-align:center}
 .dcard .v{font-size:15px;font-weight:700}.dcard .l{font-size:8px;color:var(--dim);margin-top:1px}
@@ -85,8 +84,7 @@ tr:hover td{background:rgba(88,101,242,.04)}
 .mt th{font-size:8px;text-transform:uppercase;color:var(--dim)}
 .toast{position:fixed;bottom:14px;right:14px;background:var(--gn);color:#fff;padding:8px 14px;border-radius:6px;font-size:11px;font-weight:600;opacity:0;transform:translateY(6px);transition:.25s;pointer-events:none;z-index:9999}
 .toast.show{opacity:1;transform:translateY(0)}
-@media(max-width:900px){.sg,.disc-grid,.up-row{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(3,1fr)}}
-
+@media(max-width:900px){.sg,.disc-grid,.up-row{grid-template-columns:1fr}.krow{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
@@ -119,6 +117,7 @@ tr:hover td{background:rgba(88,101,242,.04)}
 <script>
 const RAW_P=[["lisabender567",0,5,121,"7h"],["yovi_bella",0,1,5,"7h"],["lilia.geovana.bus",0,3,435,"8h"],["mendyh_",7,7,492,"8h"],["tucarritonaranja1",215,10,10637,"9h"],["clarahyee",10,4,3934,"9h"],["jpjpleeee",161,3,5025,"10h"],["estybestieshopfinds",192,18,12265,"10h"],["christy_jacob1",16,10,1223,"11h"],["ida_entiktokshop",0,2,13,"13h"],["mskayladrew",86,5,2718,"13h"],["somethinggood341",0,2,687,"13h"],["shopapproved",7,4,9609,"14h"],["kamichuru98",0,1,5,"16h"],["darciky5",0,3,148,"18h"],["mel84journey",1081,11,2168,"ad"],["ememcbride",0,3,31,"ad"],["casalacsamana",0,1,69,"ad"],["islandbeauty1216",0,1,236,"ad"],["savvysoulsisters",88,5,1436,"ad"],["logannremington",0,8,1037,"ad"],["katetee002",0,3,397,"ad"],["anajutorquetti.da",716,8,88,"ad"],["curlyglamma",9,18,814,"ad"],["lindsaytuckerofficial",0,5,1075,"ad"],["andrean.rubio",0,1,178,"ad"],["kbeautymom75",0,3,634,"ad"],["blondyinsider",48,16,3925,"ad"],["johatobon3",0,5,4233,"ad"],["nathanwangg",0,8,3017,"2d"],["yarysrosa",0,1,16,"2d"],["glitznglam.chardye",0,6,283,"2d"],["dra.arletty",0,2,217,"2d"],["thatssomailyn",31,5,2378,"2d"],["tuti.fit",145,3,13258,"2d"],["fierceangellb",0,1,15,"2d"],["luxebylaura0",0,12,5193,"2d"],["keepupwiththejones5",0,1,363,"2d"],["amandamassengale3",0,1,37,"2d"],["33dailyfinds",0,3,74,"2d"],["laurameraki41",0,2,511,"2d"],["aly_sanchezofficial",0,1,29538,"2d"],["mandsmarie95",0,3,189,"2d"],["_jessandthefrenchies",344,16,0,"2d"],["soyarianna.resto",0,1,301,"2d"],["cassie.allen",0,1,18,"2d"],["ailene00007",0,1,36,"2d"],["nomukaugc",0,2,3070,"2d"],["marismyxx",39,7,2860,"2d"],["guerragigi18",0,1,19,"2d"],["addisontts",0,3,24,"2d"],["simstitches",0,1,68,"2d"],["definedhands1",0,1,533,"2d"],["glowingupwithvicki",13,6,31,"2d"],["musicaltheatreprincess",9,2,170,"2d"],["hehehohoxd",49,5,4482,"2d"],["andreasglowxo",0,1,43,"3d"],["maehni",0,1,354,"3d"],["sunnys_find",0,1,41,"3d"],["blu3skiiboohottie",0,2,0,"3d"],["natireels",29,6,121,"3d"],["samantha.schinder",0,1,121,"3d"],["kimberly78raern",73,3,2897,"3d"],["purple_passion18",0,1,125,"3d"],["sarcastickarla",0,3,1393,"3d"],["natik4s",0,2,93,"3d"],["shadowblast757",0,15,0,"3d"],["tristintranquilityspa",0,2,67,"3d"],["skindeepmegan",0,2,526,"3d"],["his.sweetgirl13",0,7,0,"3d"],["amy_centenos",0,1,215,"3d"],["tulipsandtarragon",9,2,137,"3d"],["tee.unfiltered",0,1,229,"3d"],["heymegco",15,2,664,"3d"],["thebeautycontrarian",0,5,2851,"4d"],["thismamasonamission",0,3,355,"4d"],["zarinascart",0,1,644,"4d"],["stephbeautyfinds",0,2,525,"4d"],["heyitskatieortega",0,2,703,"4d"],["monikareviews2",0,5,1022,"4d"],["amanunez_",0,1,73,"4d"],["breawnarenee",8,3,2331,"4d"],["golden.goosie",8,1,741,"4d"],["jeanienguyen8899",0,1,16,"4d"],["theselfcarediary",17,7,1711,"4d"],["sobermama82383",8,1,605,"4d"],["i.america8",13,1,568,"4d"],["jaxneedsahero",0,1,3,"4d"],["steffierenee",0,3,958,"4d"],["imranfinds",0,1,72,"4d"],["whatms.sungwears",0,1,352,"4d"],["gemini_amy",0,1,94,"4d"],["haul.yeah.idaho",0,1,402,"4d"],["slinkard_farms",0,1,349,"4d"],["nourishingnaturals",7,4,489,"4d"],["farm2glam",0,1,621,"4d"],["twinmama28",0,1,432,"4d"],["thatdotspotgirl",0,1,56,"4d"],["michaelas_mb",0,1,112,"4d"],["yowmahmah",0,1,33,"4d"],["usuariom66",0,1,132,"4d"],["amigas.valientes",0,3,0,"4d"],["time_bestill",0,1,0,"4d"],["mindyfeatherstone",31,1,45,"4d"],["shoplikejcc",0,1,121,"4d"],["skincarewithmonica",0,1,0,"4d"],["crissyauthenticallyme",0,3,0,"5d"],["alaina.jpg",0,2,0,"5d"],["rossymara0706",0,9,0,"5d"],["ca785208",0,1,0,"16d"],["shopwithviolet",0,1,0,"16d"],["_kristytaylornguyen",0,0,0,"-"],["addictedtocart",0,0,0,"-"],["addisonwellness",0,0,0,"-"],["andreaalucena",0,0,0,"-"],["araglows",0,0,0,"-"],["asiasfavfinds",0,0,0,"-"],["askmims",0,0,0,"-"],["aurasaltiktokshop",0,0,0,"-"],["aurearivera83",0,0,0,"-"],["barbieluvsbeauty",0,0,0,"-"],["bedau18tuoine",0,0,0,"-"],["beingromay",0,0,0,"-"],["best_tiktokfindsss",0,0,0,"-"],["boujee.on.pennies",0,0,0,"-"],["brigittesan5",0,0,0,"-"],["britthankin",0,0,0,"-"],["brucehustles",0,0,0,"-"],["candyymdr",0,0,0,"-"],["carmonaclan",0,0,0,"-"],["carolinavegaoficial",0,0,0,"-"],["catawellness",0,0,0,"-"],["catchinupwithtammy",0,0,0,"-"],["chivasharrisfnp",0,0,0,"-"],["christinelomakeup",0,0,0,"-"],["cjaetravels",0,0,0,"-"],["claudiavalenzuelaoficial",0,0,0,"-"],["dailybeautyinspo",0,0,0,"-"],["damaristorquetti2",0,0,0,"-"],["definitelyneededthat",0,0,0,"-"],["dessikafrouni",0,0,0,"-"],["docmisterios",0,0,0,"-"],["elianyiturralde",0,0,0,"-"],["emilywynn1321",0,0,0,"-"],["erikadesenard",0,0,0,"-"],["evolvewiththeresa",0,0,0,"-"],["foodmilkyway",0,0,0,"-"],["forevr.may",0,0,0,"-"],["gee.v.1019",0,0,0,"-"],["genxfavfinds",0,0,0,"-"],["ginaenidahovlogs",0,0,0,"-"],["glamwithnerissa",0,0,0,"-"],["glqmmultiiss",0,0,0,"-"],["godigitalwithdee",0,0,0,"-"],["grace6t1",0,0,0,"-"],["havanasmommy2",0,0,0,"-"],["hellobunky",0,0,0,"-"],["hubbywifeycaplan",0,0,0,"-"],["itsalievans",0,0,0,"-"],["itssaileyva",0,0,0,"-"],["jaebirdieee",0,0,0,"-"],["jencollective",0,0,0,"-"],["jennygurung140",0,0,0,"-"],["joereignsss",0,0,0,"-"],["johatomu",0,0,0,"-"],["johnandroviefinds",0,0,0,"-"],["julisepblog",0,0,0,"-"],["junior_rush",0,0,0,"-"],["just_kayaaa",0,0,0,"-"],["kaicee.jones",0,0,0,"-"],["kcfinds",0,0,0,"-"],["kellyclemence27",0,0,0,"-"],["kelseymarty23",0,0,0,"-"],["keybabyskin",0,0,0,"-"],["kikkit",0,0,0,"-"],["kim_berrrrr",0,0,0,"-"],["kimberlyanne_xoxox",0,0,0,"-"],["ladiibugglovesbeauty",0,0,0,"-"],["lapao1111",0,0,0,"-"],["lifewithlaurenmaries",0,0,0,"-"],["lifewithnerissa",0,0,0,"-"],["live.love.ur.mom",0,0,0,"-"],["liz_urquiacape",0,0,0,"-"],["llora157",0,0,0,"-"],["maggiebecrazy",0,0,0,"-"],["mama2tolleys",0,0,0,"-"],["maryamawan921",0,0,0,"-"],["melissanorman2.0",0,0,0,"-"],["mirandacorneliusbeauty",0,0,0,"-"],["misssnat",0,0,0,"-"],["myttsfindsss",0,0,0,"-"],["naomilslife_",0,0,0,"-"],["ofertasrelampago25",0,0,0,"-"],["ohkrista",0,0,0,"-"],["ohsnap_itsjchap",0,0,0,"-"],["parkercolleen",0,0,0,"-"],["recommendedbyangie",0,0,0,"-"],["rhicuvas",0,0,0,"-"],["richteradventures",0,0,0,"-"],["savvycass",0,0,0,"-"],["selfcareshero",0,0,0,"-"],["seyanurali",0,0,0,"-"],["shelene.beauty",0,0,0,"-"],["shiftchangefinds",0,0,0,"-"],["shopapproved.by.angie",0,0,0,"-"],["shopwithbellla",0,0,0,"-"],["siana_far",0,0,0,"-"],["sindy_selects",0,0,0,"-"],["skin_alchemist",0,0,0,"-"],["slayathomemomvibes",0,0,0,"-"],["spacasero",0,0,0,"-"],["swancrystalbeautyqueen",0,0,0,"-"],["thebostonang",0,0,0,"-"],["theulylopez",0,0,0,"-"],["tiktokshopdealss",0,0,0,"-"],["tink0478",0,0,0,"-"],["ultimaoferta1",0,0,0,"-"],["unbrokenmind",0,0,0,"-"],["w0nda5",0,0,0,"-"],["wecangotospace",0,0,0,"-"],["wisteriacreekdesigns",0,0,0,"-"],["xineakt",0,0,0,"-"],["xoxjoellenxox",0,0,0,"-"],["zahra__afg",0,0,0,"-"],["zaza420x0",0,0,0,"-"]];
 const RAW_S={"natik4s":[2,0,0,0],"breawnarenee":[3,0,8,0],"twinmama28":[1,0,0,0],"laurameraki41":[1,0,0,0],"kimberly78raern":[3,0,73,0],"gemini_amy":[1,0,0,0],"luxebylaura0":[4,6,0,0],"hehehohoxd":[5,0,0,0],"sarcastickarla":[3,0,0,0],"mendyh_":[5,0,0,0],"darciky5":[1,0,0,0],"steffierenee":[3,0,0,0],"tee.unfiltered":[1,0,0,0],"yowmahmah":[1,0,0,0],"simstitches":[1,0,0,0],"mel84journey":[3,7,32,1027],"natireels":[4,2,16,13],"musicaltheatreprincess":[1,0,0,0],"tuti.fit":[2,0,0,0],"purple_passion18":[1,0,0,0],"sunnys_find":[1,0,0,0],"thatssomailyn":[4,0,31,0],"mskayladrew":[3,0,0,0],"michaelas_mb":[1,0,0,0],"sobermama82383":[1,0,8,0],"skindeepmegan":[2,0,0,0],"jpjpleeee":[2,0,33,0],"heyitskatieortega":[2,0,0,0],"theselfcarediary":[7,0,0,0],"clarahyee":[2,0,0,0],"blondyinsider":[15,0,40,0],"tristintranquilityspa":[2,0,0,0],"marismyxx":[6,0,17,0],"glowingupwithvicki":[1,4,0,13],"somethinggood341":[1,0,0,0],"amanunez_":[1,0,0,0],"anajutorquetti.da":[2,4,0,464],"samantha.schinder":[1,0,0,0],"estybestieshopfinds":[12,0,59,0],"shopapproved":[2,0,0,0],"lisabender567":[2,2,0,0],"jaxneedsahero":[1,0,0,0],"golden.goosie":[1,0,8,0],"slinkard_farms":[1,0,0,0],"johatobon3":[4,0,0,0],"definedhands1":[1,0,0,0],"usuariom66":[1,0,0,0],"amy_centenos":[1,0,0,0],"dra.arletty":[1,0,0,0],"maehni":[1,0,0,0],"glitznglam.chardye":[1,3,0,0],"lindsaytuckerofficial":[2,0,0,0],"imranfinds":[1,0,0,0],"nomukaugc":[1,0,0,0],"farm2glam":[1,0,0,0],"whatms.sungwears":[1,0,0,0],"savvysoulsisters":[2,1,0,28],"jeanienguyen8899":[1,0,0,0],"monikareviews2":[5,0,0,0],"thebeautycontrarian":[5,0,0,0],"andreasglowxo":[1,0,0,0],"tulipsandtarragon":[2,0,9,0],"i.america8":[1,0,13,0],"addisontts":[3,0,0,0],"stephbeautyfinds":[2,0,0,0],"thismamasonamission":[2,1,0,0],"haul.yeah.idaho":[1,0,0,0],"zarinascart":[1,0,0,0],"tucarritonaranja1":[6,0,114,0],"heymegco":[2,0,0,0],"thatdotspotgirl":[1,0,0,0],"33dailyfinds":[2,0,0,0],"curlyglamma":[1,16,9,0],"_jessandthefrenchies":[0,15,0,329],"shadowblast757":[0,15,0,0],"his.sweetgirl13":[0,7,0,0],"amigas.valientes":[0,3,0,0],"skincarewithmonica":[0,1,0,0],"crissyauthenticallyme":[0,3,0,0],"alaina.jpg":[0,2,0,0],"rossymara0706":[0,9,0,0],"ca785208":[0,1,0,0],"shopwithviolet":[0,1,0,0]};
+const SUBS_DATA={"natik4s":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"breawnarenee":{"vg":8.00,"vc":3,"lg":0.00,"lc":0},"twinmama28":{"vg":13.00,"vc":2,"lg":0.00,"lc":0},"guerragigi18":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"laurameraki41":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"tinaczarina":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"kimberly78raern":{"vg":73.00,"vc":4,"lg":0.00,"lc":0},"gemini_amy":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"luxebylaura0":{"vg":11.00,"vc":5,"lg":0.00,"lc":8},"islandbeauty1216":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"mandsmarie95":{"vg":0.00,"vc":5,"lg":0.00,"lc":0},"ememcbride":{"vg":0.00,"vc":3,"lg":0.00,"lc":2},"hehehohoxd":{"vg":94.00,"vc":5,"lg":0.00,"lc":0},"andrean.rubio":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"sarcastickarla":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"mendyh_":{"vg":28.00,"vc":11,"lg":0.00,"lc":0},"darciky5":{"vg":16.00,"vc":2,"lg":0.00,"lc":3},"mindyfeatherstone":{"vg":31.00,"vc":1,"lg":0.00,"lc":0},"steffierenee":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"tee.unfiltered":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"yowmahmah":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"amandamassengale3":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"simstitches":{"vg":0.00,"vc":1,"lg":0.00,"lc":1},"mel84journey":{"vg":102.00,"vc":4,"lg":1657.00,"lc":9},"natireels":{"vg":31.00,"vc":5,"lg":13.00,"lc":2},"musicaltheatreprincess":{"vg":9.00,"vc":1,"lg":0.00,"lc":2},"tuti.fit":{"vg":340.00,"vc":4,"lg":0.00,"lc":0},"myhotsax":{"vg":0.00,"vc":1,"lg":0.00,"lc":1},"purple_passion18":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"aly_sanchezofficial":{"vg":1700.00,"vc":1,"lg":0.00,"lc":0},"sunnys_find":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"keepupwiththejones5":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"thatssomailyn":{"vg":31.00,"vc":6,"lg":0.00,"lc":0},"mskayladrew":{"vg":157.00,"vc":5,"lg":0.00,"lc":0},"michaelas_mb":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"sobermama82383":{"vg":8.00,"vc":1,"lg":0.00,"lc":0},"nourishingnaturals":{"vg":7.00,"vc":2,"lg":0.00,"lc":3},"skindeepmegan":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"nathanwangg":{"vg":0.00,"vc":11,"lg":0.00,"lc":0},"fierceangellb":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"jpjpleeee":{"vg":182.00,"vc":3,"lg":0.00,"lc":0},"heyitskatieortega":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"ailene00007":{"vg":17.00,"vc":1,"lg":0.00,"lc":0},"theselfcarediary":{"vg":17.00,"vc":8,"lg":0.00,"lc":0},"cassie.allen":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"yolianaconde":{"vg":0.00,"vc":4,"lg":0.00,"lc":1},"clarahyee":{"vg":250.00,"vc":7,"lg":0.00,"lc":0},"blondyinsider":{"vg":63.00,"vc":16,"lg":0.00,"lc":0},"tristintranquilityspa":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"marismyxx":{"vg":71.00,"vc":7,"lg":0.00,"lc":0},"asiasfavfinds":{"vg":8.00,"vc":5,"lg":0.00,"lc":0},"glowingupwithvicki":{"vg":0.00,"vc":1,"lg":22.00,"lc":6},"brittney.babii":{"vg":0.00,"vc":7,"lg":0.00,"lc":0},"somethinggood341":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"amanunez_":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"alaina.jpg":{"vg":0.00,"vc":1,"lg":31.00,"lc":3},"yarysrosa":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"anajutorquetti.da":{"vg":0.00,"vc":2,"lg":1322.00,"lc":13},"samantha.schinder":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"logannremington":{"vg":11.00,"vc":8,"lg":0.00,"lc":0},"rossymara0706":{"vg":0.00,"vc":1,"lg":0.00,"lc":10},"estybestieshopfinds":{"vg":857.00,"vc":27,"lg":0.00,"lc":0},"shopapproved":{"vg":76.00,"vc":5,"lg":0.00,"lc":0},"ida_entiktokshop":{"vg":0.00,"vc":3,"lg":0.00,"lc":1},"lisabender567":{"vg":0.00,"vc":3,"lg":0.00,"lc":3},"jaxneedsahero":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"tink0478":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"golden.goosie":{"vg":16.00,"vc":1,"lg":0.00,"lc":0},"slinkard_farms":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"yovi_bella":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"johatobon3":{"vg":163.00,"vc":6,"lg":0.00,"lc":0},"christy_jacob1":{"vg":40.00,"vc":14,"lg":0.00,"lc":0},"kamichuru98":{"vg":17.00,"vc":1,"lg":0.00,"lc":0},"definedhands1":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"usuariom66":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"elianyiturralde":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"amy_centenos":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"dra.arletty":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"casalacsamana":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"maehni":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"glitznglam.chardye":{"vg":0.00,"vc":1,"lg":0.00,"lc":6},"lindsaytuckerofficial":{"vg":0.00,"vc":6,"lg":0.00,"lc":0},"kbeautymom75":{"vg":24.00,"vc":3,"lg":0.00,"lc":0},"wisteriacreekdesigns":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"hubbywifeycaplan":{"vg":0.00,"vc":2,"lg":0.00,"lc":0},"imranfinds":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"nomukaugc":{"vg":73.00,"vc":2,"lg":0.00,"lc":0},"soyarianna.resto":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"kely6941":{"vg":0.00,"vc":1,"lg":0.00,"lc":3},"farm2glam":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"lifewithlaurenmaries":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"amigas.valientes":{"vg":7.00,"vc":5,"lg":0.00,"lc":5},"whatms.sungwears":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"shoplikejcc":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"savvysoulsisters":{"vg":0.00,"vc":4,"lg":88.00,"lc":3},"jeanienguyen8899":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"mjvillafradez":{"vg":141.00,"vc":3,"lg":0.00,"lc":0},"monikareviews2":{"vg":0.00,"vc":5,"lg":0.00,"lc":0},"thebeautycontrarian":{"vg":0.00,"vc":5,"lg":0.00,"lc":0},"katetee002":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"jennygurung140":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"lilia.geovana.bus":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"andreasglowxo":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"myttsfindsss":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"tulipsandtarragon":{"vg":19.00,"vc":2,"lg":0.00,"lc":0},"askmims":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"i.america8":{"vg":13.00,"vc":1,"lg":0.00,"lc":0},"addisontts":{"vg":0.00,"vc":3,"lg":0.00,"lc":0},"aurora.naos":{"vg":8.00,"vc":1,"lg":0.00,"lc":0},"stephbeautyfinds":{"vg":16.00,"vc":2,"lg":0.00,"lc":0},"aurearivera83":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"thismamasonamission":{"vg":0.00,"vc":2,"lg":0.00,"lc":2},"haul.yeah.idaho":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"itsmeyolandab":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"zarinascart":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"tucarritonaranja1":{"vg":399.00,"vc":11,"lg":0.00,"lc":0},"heymegco":{"vg":15.00,"vc":2,"lg":0.00,"lc":0},"thatdotspotgirl":{"vg":0.00,"vc":1,"lg":0.00,"lc":0},"33dailyfinds":{"vg":0.00,"vc":4,"lg":0.00,"lc":0},"curlyglamma":{"vg":9.00,"vc":1,"lg":0.00,"lc":21},"blu3skiiboohottie":{"vg":0.00,"vc":0,"lg":0.00,"lc":7},"_jessandthefrenchies":{"vg":0.00,"vc":0,"lg":389.00,"lc":17},"nontoxicmillionaire":{"vg":0.00,"vc":0,"lg":0.00,"lc":2},"shadowblast757":{"vg":0.00,"vc":0,"lg":0.00,"lc":17},"skincarewithmonica":{"vg":0.00,"vc":0,"lg":0.00,"lc":2},"julietduncan23rn":{"vg":0.00,"vc":0,"lg":0.00,"lc":4},"jencollective":{"vg":0.00,"vc":0,"lg":0.00,"lc":1},"simplysprinkled":{"vg":0.00,"vc":0,"lg":0.00,"lc":5},"christinelomakeup":{"vg":0.00,"vc":0,"lg":0.00,"lc":2},"his.sweetgirl13":{"vg":0.00,"vc":0,"lg":0.00,"lc":7},"time_bestill":{"vg":0.00,"vc":0,"lg":0.00,"lc":1},"crissyauthenticallyme":{"vg":0.00,"vc":0,"lg":0.00,"lc":3},"goldenandglowing":{"vg":0.00,"vc":0,"lg":0.00,"lc":1},"thatangelavibe":{"vg":0.00,"vc":0,"lg":0.00,"lc":1},"ca785208":{"vg":0.00,"vc":0,"lg":0.00,"lc":1},"mommau5":{"vg":0.00,"vc":0,"lg":0.00,"lc":1},"shopwithviolet":{"vg":0.00,"vc":0,"lg":0.00,"lc":1}};
 const RAW_AG=["_barbiejean","beautyinitself","sarcastickarla","kokoterashop","lindsaytuckerofficial","thatssomailyn","monisvida","mytopwellnesspicks","blondevixen59","queenlashay91","ericap884","fashminee","asiasfavfinds","pure.lee","alexissnoelle","chanel.cookxo","confettiletsgo1","andreamejia_ugc","health.nut4","makalaverde21","savvytexasginger","nathalysantosv_","estefanyrecomineda","thattallwonderwomanhttps","glowbestieco","herestheweirdpart","allyshopsalot","blossom.bonds","ashton.schwartzman4","asiasfavfindsasiasfavorites","mrsbryan27","candyymdr","ladyrosepromos","nurse.laneymamamarie3","graciestiktokcloset","hlynngarrett","fashminebeauty","sadiejonesuploading","curvefitacademy","estybestieshopfinds","lilia.geovana.bus","loganwalter05","moreniketyi","natausme","dashofdaysh","heycillaa","yannnique","the.beauty.bond","katshopsalot","ohdearabby","aliyah_gallardo","nurse.laney","hannahleigh143","quetoxica","__kristina__marie__","richteradventures","monisapproved","simplysprinkled","julisepblog","taraontop","shopthesales1","shopthesales","alissasdeals","shopthesales3","my-gen-x-life","agallen22","its_ashleyyyb","savvycass","stalnakeracres03","cassymedwards_","elishalovesdeals","dealswithlish","islandbeauty1216","jessiebestiegirl","katetee002","luxebylaura0","leila_ugc3","mellymelfinds","mendyh_","thebeautygirlsarah","the_ss_lifestyle","ss_on_zep","love_shena_xoxo","ashleyjdawson22","brittneymfredericks","britthomeedit","christy_jacob1","danikafinds","ememcbride","nikkyttshop","irina.ocoro","izzyshops","bellytts","glowwwithjana","jennifermruk_","kayse_lynn","spunkyhomeschoolmama","brillaconangela"];
 const RAW_DC=["tucarritonaranja1",".f.u.r.l.o.v.e.s","tuti.fit","alemaryn","kbeautymom75","hehehohoxd","tiktokshopdealss","denverskindoc","nomukaugc","danikafinds","herbestdeals","catfinds4","getdealstoday","tara.elizabeth.official","nursemamanikki","mel84journey","_jessandthefrenchies","jennymontiel1530","asiasfavfinds","anajutorquetti.da","destiney.lucero","bedau18tuoine","dashofdaysh","theselfcarediary","richteradventures","itsmeyolandab","alaina.jpg","queenlashay91","nia228800","luxebylaura0","emilyirlbeck","krisis.tan","stephbeautyfinds","jpjpleeee","brookehotmomhustle","lifewithnerissa","curlyglamma","andrea28soto","kreativeu","daa.momster","gabrielaacalzadilla","veritas.julezop","nikki.ruston","paawlishedlife","golden.goosie","christianbeautyfinds","rochelyl","mindyfeatherstone","jesuisbienbien","heymegco","maricelisquiles","glowingupwithvicki","liv04020","yukie.ng999","janleeshopping","ailene00007","mg5885","jeenalimbu","somethinggood341","heyitskatieortega","tristintranquilityspa","ashleenarvaez","jennathome","lizzie.fregoso","tulipsandtarragon","ibeth_dmgz","jennygurung140","cjaetravels","dariana.ok","liettica","chanel.cookxo","fullbloomletters","_mrs.bryan2.0_","rhicuvas","paige.registerednurse","feddybaby","ktrose.xo","thismamasonamission","arose.christa","mckaylaashlyn","lilyybluu","shopcareyselfcare","findsandvogue","shainarai1989","live.love.ur.mom","maria..theresa","carolynxshop","caitlinwithconfidence13","usuariom66","jperti","affiliatecatmom","bunnyyyieee_","yashodachhetri01","natglow.luxe","shelene.beauty","babyfr3saa","lenaxrsrio","shevycake","domyenn","pajhuabtsabb","carliadiaz","thequietlaurel","wendyidlebird","dabossyaries","lisabender567","imdaenarodriguez","aaravs_mom123","vibewithmiiimiii","sburns2012","shanzfaves","taylortraywickisrad0","esmelatinalove83","trapmulan","becomingico","smilingrn","mackkosborne",".zahranicole","guerragigi18","natty_1998x","mentalcypher","jackie_just_","samierabrown","tricia.g.rutledge","afterhourmeals","trendydeal","bymarialab","tink0478","ryanalexa777","ericasthought","itsmecandice68","omegiee","helensaysyes","stickbyfaith","bethhill_18","spoiledsel","lorraineehrhardt","jeanie_nette","agathalimm","barbieluvsbeauty","marianaberg","ginawow_","ca785208","life_withlindsey","daniellemcarver","gorlmomx2","urstruly_prathyusha","glqmmultiiss","xio_finds","skincarelifewithale","charmainelouisecreates","erika.krystelle","lapao1111","thekarnes","gigiiirennn","jessicaleemcgrath","eeveeochoa27","carejohnston","whatms.sungwears","ayushab05","genobskii","lleilaann","oltyanes","seven.finds2","jencollective","xoash311","yadisantana_","biodance_global","daphnemndoza","askmims","elainadunn","stefanipico","natbee27","josselynpamela8","x","sherytorres0705","unique.love297","claudiavalenzuelaoficial","angelivansolorzano_","glitznglamour94","dr.basssma","madison_owens","fatimaescobar77","amanunez_","mynameissskiz","gee.v.1019","andrean.rubio","lizbettehdzz","xx","wildly_georgina","dannamavss","neenanosimone","devii.khadka24","purple_passion18","desdav_ugc","_kristytaylornguyen","wisteriacreekdesigns","milky.time1","saemiii7","dazi990","tee.unfiltered","lazymxchi","kass0719","boujee.on.pennies","kebaby02","skincarewithmihlee","billieinar","anjlipancake","llora157","jkbzz.esp","palinda333","donnaroseedwards","addisontts, addisonwellness","ashleynu27","baruscape","natexisting","keepupwiththejones5","__night_knight__","lu_sotuff","kamichuru98","kerry.grey","samantha.schinder","elizabeth.drebin","kris_hna_patel","debbuys","nananails732","abbbs83","su.honeyyy","devynashleamiller","wooitscherilyn","alishaariess","komalkariatanna","xoxjoellenxox","k.beautywellness","kelliecrowther","heyits.jennnn, home.withjenn","becominglisa","valeriabarronv","swt.kwon","tinkersparkle7","strongluxe","pookieemac","nora.lullababe","missrubierose","msmarisoljimenez","analouab","ty_cox22","andreasglowxo","genxfavfinds","glitznglam.chardye","b.eauty_b.east","chidinmasworld","quietconfidence.co","_authenticsoul","nicole.brianna_","marcieafter40","officiallyshweta","lizglowandtell","kiaralatina_","formerfatgirlonabike","mamakat_4","live2lovekim","mamiiraquell","kim.randolph86","charityjthecreator","maggiebecrazy","simplyjojo10","cashycustomz_","coupons_xoxo","venus_ttshop_reviews","path2healthy","carmonaclan","odettegarate","kaly_nicole","kimberlyanne_xoxox","i_am3lla","kangaryu12","itslysadizzle","jacqueline_wheeler","agallen22","ayleenmorenougc","sfami.us","katie_rosee_","lorithompson76","bobbie.novak","josi.happiness","itsmebethc","jazziescozycorner","nikiandco","skindeepmegan","amandawifey","carolinarodriguez184","foodmilkyway","blu3skiiboohottie","moryviral","helloevadinexx","nanayjessz","lawonda_","amarilysbloom","aria04440","haul.yeah.idaho","dawnmariecurates","dreamy.glow.with","lupita_recommends","kellyshops3093","junebirdiee","time_bestill"];
 const RAW_DCMAP={"shhhfinds":"tucarritonaranja1","james_blonde00":".f.u.r.l.o.v.e.s","tutifit":"tuti.fit","alexmarbustillos":"alemaryn","yumi_75":"kbeautymom75","allthingsfoodandcute":"tiktokshopdealss","danikahilmer":"danikafinds","taishatts":"herbestdeals","naane2060":"catfinds4","hiyepthatsme":"getdealstoday","taraelizabethofficial_60612":"tara.elizabeth.official","mellylo84":"mel84journey","jessandfrenchies":"_jessandthefrenchies","asialea08":"asiasfavfinds","anajutorquetti":"anajutorquetti.da","destineylucero.":"destiney.lucero","nbtr0909":"bedau18tuoine","alainanw":"alaina.jpg","vicki084293":"queenlashay91","stephanie89777":"stephbeautyfinds","chrisgarrisonsellsmiami":"curlyglamma","paula111424":"daa.momster","veritas.julez.op":"veritas.julezop","nikkirae151":"nikki.ruston","lexithebestee":"golden.goosie","junel_96487":"christianbeautyfinds","rochelylebron":"rochelyl","maricelisqg":"maricelisquiles","7262890020":"glowingupwithvicki","oliveblooms":"liv04020","janleedirect":"janleeshopping","mg5885mg5885":"mg5885","katieortega.":"heyitskatieortega","triseliz":"tristintranquilityspa","ashlee06995":"ashleenarvaez","jenn.athome":"jennathome","lizbeth01001":"lizzie.fregoso","pids8906":"tulipsandtarragon","ibeth0492":"ibeth_dmgz","cbugggs":"cjaetravels","darianakang":"dariana.ok","ladelentes_49034":"liettica","venousluxury":"chanel.cookxo","claudia08626":"fullbloomletters","sarfed":"feddybaby","katy08677":"ktrose.xo","arosechrista":"arose.christa","sevibluu":"lilyybluu","careyselfcare":"shopcareyselfcare","magnolia_o7":"shainarai1989","dannacamp.":"live.love.ur.mom","theresa.signo":"maria..theresa","aliniurka":"usuariom66","nattooeasyy":"natglow.luxe","mommidom":"domyenn","carla110419":"carliadiaz","7917290079":"wendyidlebird","avadabossyaries":"dabossyaries","lisab.567":"lisabender567","iamdaenarodriguez":"imdaenarodriguez","ichchhagiri123":"aaravs_mom123","taylor041749":"taylortraywickisrad0","kreahtions":"trapmulan","becomingico_51227":"becomingico","smilingrn_":"smilingrn","natty27__":"natty_1998x","jackiemama_just_":"jackie_just_","triciarut":"tricia.g.rutledge","hannah._.an":"afterhourmeals","athenatts":"trendydeal","tink0478tts":"tink0478","itsmecandice68_14454":"itsmecandice68","hellsonwheels84":"helensaysyes","jadoresaint_26284":"spoiledsel","lorraineehrhardt5":"lorraineehrhardt","jeany09033":"jeanie_nette","ginamedrano.":"ginawow_","momlifedisneymagic":"ca785208","linds_10323":"life_withlindsey","daniellethepopoftheparty_43231":"daniellemcarver","gocryaboutit.":"gorlmomx2","xiomaravargas33":"xio_finds","clshelton":"charmainelouisecreates","erikakrystelle_50837":"erika.krystelle","michalkarne":"thekarnes","jessicawellness":"jessicaleemcgrath","ms.sung":"whatms.sungwears","ayushabhandari.":"ayushab05","lleilaann_81561":"lleilaann","sevenfinds":"seven.finds2","jencollective_82310":"jencollective","ashxo12":"xoash311","biodance":"biodance_global","daphnemendoza__44378":"daphnemndoza","elainadunnn":"elainadunn","stefanip_":"stefanipico","natbee27_62572":"natbee27","zealous_monkey_48219":"x","sheryliansanchez":"sherytorres0705","tasha018950":"unique.love297","clau0367_71319":"claudiavalenzuelaoficial","dr.basssma_64933":"dr.basssma","madison_owens23":"madison_owens","fatima_25045":"fatimaescobar77","kizzyugc":"mynameissskiz","rubio08905":"andrean.rubio","claire_22712":"xx","danamavs":"dannamavss","neenanosiomone":"neenanosimone","devi043542":"devii.khadka24","kcup_goddess":"purple_passion18","des1253":"desdav_ugc","ktn1866":"_kristytaylornguyen","gypsyv666":"wisteriacreekdesigns","bunnymiku":"milky.time1","koifishda":"saemiii7","jntz0810":"dazi990","kass108":"kass0719","hatsinlove":"skincarewithmihlee","billiehillier":"billieinar","anjlipana":"anjlipancake","bellahadid2001":"jkbzz.esp","madampnw":"addisontts, addisonwellness","ashleynu276499":"ashleynu27","simran0724":"baruscape","nat.mayy":"natexisting","dawifey83020":"keepupwiththejones5","__nightknight__":"__night_knight__","itz.lu":"lu_sotuff","kamichuru":"kamichuru98","kerrygrey2004":"kerry.grey","eed__8":"elizabeth.drebin","meredithgreyyy":"kris_hna_patel","bacashouse":"debbuys","nana050150":"nananails732","dachsgal":"devynashleamiller","ugcbycheryl":"wooitscherilyn","alishaaries":"alishaariess","komaltanna":"komalkariatanna","joellen8211":"xoxjoellenxox","kayl58397":"k.beautywellness","jennifermruk":"heyits.jennnn, home.withjenn","valeriabarron":"valeriabarronv","chilleee":"swt.kwon","pookiem_":"pookieemac","phatpharmgirl":"missrubierose","ms.mari.j":"msmarisoljimenez","analoran":"analouab","mochagem0222":"ty_cox22","starsapphirex":"andreasglowxo","selina_75":"genxfavfinds","chardyethecraftqueen":"glitznglam.chardye","inrussswetrust":"b.eauty_b.east","chichi_naomi":"chidinmasworld","natasha0092":"_authenticsoul","nicolebrianna__":"nicole.brianna_","marciemeadows":"marcieafter40","shwetapandey":"officiallyshweta","kiaralatina_10985":"kiaralatina_","toastmagoatz":"formerfatgirlonabike","kat04644":"mamakat_4","kimlovetro":"live2lovekim","gorggirl.":"mamiiraquell","kimrandolph":"kim.randolph86","ttsimplyjojo10":"simplyjojo10","cashycustomz":"cashycustomz_","couponsxo":"coupons_xoxo","venus_reviews":"venus_ttshop_reviews","vcarmona08":"carmonaclan","kalynicoleswann":"kaly_nicole","luciferskat":"i_am3lla","kangaryuu":"kangaryu12","lysadizzle":"itslysadizzle","almaallen1":"agallen22","ayleenmoreno_":"ayleenmorenougc","b.booyang":"sfami.us","lori06847":"lorithompson76","bobbien188":"bobbie.novak","josi.happiness_04985":"josi.happiness","coloringwithjas":"jazziescozycorner","nikiandcompany":"nikiandco","akoof01":"amandawifey","aurasalgado25":"carolinarodriguez184","sara_loves_popups":"foodmilkyway","evadinexx":"helloevadinexx","nicolem0494":"lawonda_","nay242":"aria04440","ash1613.":"haul.yeah.idaho","dawnmarie7676":"dawnmariecurates","lupita.recommends":"lupita_recommends","itsmekellyp_37979":"kellyshops3093","rchung6":"junebirdiee"};
@@ -130,684 +129,715 @@ const SAVED_AG=["danikafinds", "ladyrosepromos", "izzyshops", "agallen22", "pure
 const SAVED_DC=["dawnmariecurates", "andrea28soto", "becomingico", "kangaryu12", "shainarai1989", "tuti.fit", "maria..theresa", "tara.elizabeth.official", "tiktokshopdealss", "denverskindoc", "kaly_nicole", "ktrose.xo", "kass0719", "erika.krystelle", "nikiandco", "natik4s", "dr.basssma", "jperti", "debbuys", "curlyglamma", "jencollective", "ericasthought", "formerfatgirlonabike", "natbee27", "coupons_xoxo", "ginawow_", "lisabender567", "usuariom66", "donnaroseedwards", "destiney.lucero", "_mrs.bryan2.0_", "xio_finds", "kris_hna_patel", "tricia.g.rutledge", "vibewithmiiimiii", "kreativeu", "dariana.ok", "natglow.luxe", "boujee.on.pennies", "ryanalexa777", "wooitscherilyn", "lilyybluu", "becominglisa", "feddybaby", "jennymontiel1530", "lorithompson76", "unique.love297", "neenanosimone", "purple_passion18", "sobermama82383", "lupita_recommends", "sherytorres0705", "mamakat_4", "rhicuvas", "bunnyyyieee_", "natireels", "maricelisquiles", "claudiavalenzuelaoficial", "alemaryn", "catfinds4", "kbeautymom75", "thequietlaurel", "yashodachhetri01", "nourishingnaturals", "tinkersparkle7", "eeveeochoa27", "dabossyaries", "wisteriacreekdesigns", "dashofdaysh", "emilyirlbeck", "ayushab05", "josselynpamela8", "ty_cox22", "kellyshops3093", "tucarritonaranja1", "biodance_global", "rochelyl", "agallen22", "quietconfidence.co", "nikki.ruston", "oltyanes", "itslysadizzle", "marismyxx", "saemiii7", "mentalcypher", "itsmecandice68", "genxfavfinds", "josi.happiness", "strongluxe", "farm2glam", "glowingupwithvicki", "wendyidlebird", "brookehotmomhustle", "askmims", "path2healthy", "sunnys_find", "kerry.grey", "daniellemcarver", "carolinarodriguez184", "madison_owens", "queenlashay91", "somethinggood341", "paawlishedlife", "haul.yeah.idaho", "samierabrown", "yukie.ng999", "lawonda_", "nicole.brianna_", "stickbyfaith", "stefanipico", "kim.randolph86", "richteradventures", "jkbzz.esp", "helloevadinexx", "itsmeyolandab", "foodmilkyway", "lizbettehdzz", "officiallyshweta", "cashycustomz_", "komalkariatanna", "babyfr3saa", "sburns2012", "marcieafter40", "charityjthecreator", "lenaxrsrio", "_jessandthefrenchies", "carmonaclan", "abbbs83", "wildly_georgina", "findsandvogue", "live.love.ur.mom", "gorlmomx2", "pookieemac", "blondyinsider", "nanayjessz", "amandawifey", "natty_1998x", "fullbloomletters", "gabrielaacalzadilla", "su.honeyyy", "nananails732", "tristintranquilityspa", "luxebylaura0", "desdav_ugc", "musicaltheatreprincess", "__night_knight__", "analouab", "lazymxchi", "tee.unfiltered", "nora.lullababe", "taylortraywickisrad0", "ayleenmorenougc", "palinda333", "nursemamanikki", "baruscape", "lleilaann", "skincarewithmihlee", "andrean.rubio", "daphnemndoza", "carolynxshop", "glqmmultiiss", "steffierenee", "yovi_bella", "keepupwiththejones5", ".f.u.r.l.o.v.e.s", "danikafinds", "bethhill_18", "gigiiirennn", "charmainelouisecreates", "ashleenarvaez", "x", "chidinmasworld", "llora157", "time_bestill", "kebaby02", "liv04020", "jennygurung140", "thekarnes", "alishaariess", "skindeepmegan", "liettica", "devynashleamiller", "i_am3lla", "milky.time1", "lifewithnerissa", "paige.registerednurse", "asiasfavfinds", "golden.goosie", "kiaralatina_", "dannamavss", "shelene.beauty", "stephbeautyfinds", "amarilysbloom", "mamiiraquell", "herbestdeals", "angelivansolorzano_", "lapao1111", "_authenticsoul", "twinmama28", "arose.christa", "samantha.schinder", "kelliecrowther", "glitznglamour94", "aaravs_mom123", "jeenalimbu", "devii.khadka24", "urstruly_prathyusha", "janleeshopping", "yadisantana_", "bymarialab", "carliadiaz", "venus_ttshop_reviews", "heyitskatieortega", "dazi990", "mel84journey", "kimberlyanne_xoxox", "cjaetravels", "barbieluvsbeauty", "veritas.julezop", "nomukaugc", "daa.momster", "elizabeth.drebin", "jessicaleemcgrath", "krisis.tan", "heymegco", "ailene00007", "billieinar", "mackkosborne", "christianbeautyfinds", "jacqueline_wheeler", "andreasglowxo", "msmarisoljimenez", "lorraineehrhardt", "whatms.sungwears", "seven.finds2", "jackie_just_", "shanzfaves", "shevycake", "agathalimm", "spoiledsel", "glitznglam.chardye", "imdaenarodriguez", "dra.arletty", "itsmebethc", "tulipsandtarragon", "natexisting", "lu_sotuff", "theselfcarediary", "b.eauty_b.east", "k.beautywellness", "mg5885", "dreamy.glow.with", "_kristytaylornguyen", "domyenn", "mynameissskiz", "elainadunn", "jennathome", "afterhourmeals", "life_withlindsey", ".zahranicole", "affiliatecatmom", "omegiee", "valeriabarronv", "maggiebecrazy", "jpjpleeee", "alaina.jpg", "helensaysyes", "thismamasonamission", "anjlipancake", "kimberly78raern", "chanel.cookxo", "genobskii", "skincarelifewithale", "esmelatinalove83", "blu3skiiboohottie", "missrubierose", "caitlinwithconfidence13", "lizglowandtell", "amanunez_", "trapmulan", "shopcareyselfcare", "swt.kwon", "gee.v.1019", "pajhuabtsabb", "guerragigi18", "jazziescozycorner", "fatimaescobar77", "sfami.us", "xoxjoellenxox", "mindyfeatherstone", "odettegarate", "moryviral", "ibeth_dmgz", "addisontts, addisonwellness", "getdealstoday", "live2lovekim", "smilingrn", "heyits.jennnn, home.withjenn", "bobbie.novak", "aria04440", "junebirdiee", "carejohnston", "xx", "jesuisbienbien", "xoash311", "kamichuru98", "ca785208", "marianaberg", "hehehohoxd", "mckaylaashlyn", "trendydeal", "nia228800", "ashleynu27", "simplyjojo10", "anajutorquetti.da", "bedau18tuoine", "lizzie.fregoso", "katie_rosee_", "tink0478", "jeanie_nette"];
 const SAVED_DCMAP={"shhhfinds": "tucarritonaranja1", "james_blonde00": ".f.u.r.l.o.v.e.s", "tutifit": "tuti.fit", "alexmarbustillos": "alemaryn", "yumi_75": "kbeautymom75", "allthingsfoodandcute": "tiktokshopdealss", "danikahilmer": "danikafinds", "taishatts": "herbestdeals", "naane2060": "catfinds4", "hiyepthatsme": "getdealstoday", "taraelizabethofficial_60612": "tara.elizabeth.official", "mellylo84": "mel84journey", "jessandfrenchies": "_jessandthefrenchies", "asialea08": "asiasfavfinds", "anajutorquetti": "anajutorquetti.da", "destineylucero.": "destiney.lucero", "nbtr0909": "bedau18tuoine", "alainanw": "alaina.jpg", "vicki084293": "queenlashay91", "stephanie89777": "stephbeautyfinds", "chrisgarrisonsellsmiami": "curlyglamma", "paula111424": "daa.momster", "veritas.julez.op": "veritas.julezop", "nikkirae151": "nikki.ruston", "lexithebestee": "golden.goosie", "junel_96487": "christianbeautyfinds", "rochelylebron": "rochelyl", "maricelisqg": "maricelisquiles", "7262890020": "glowingupwithvicki", "oliveblooms": "liv04020", "janleedirect": "janleeshopping", "mg5885mg5885": "mg5885", "katieortega.": "heyitskatieortega", "triseliz": "tristintranquilityspa", "ashlee06995": "ashleenarvaez", "jenn.athome": "jennathome", "lizbeth01001": "lizzie.fregoso", "pids8906": "tulipsandtarragon", "ibeth0492": "ibeth_dmgz", "cbugggs": "cjaetravels", "darianakang": "dariana.ok", "ladelentes_49034": "liettica", "venousluxury": "chanel.cookxo", "claudia08626": "fullbloomletters", "sarfed": "feddybaby", "katy08677": "ktrose.xo", "arosechrista": "arose.christa", "sevibluu": "lilyybluu", "careyselfcare": "shopcareyselfcare", "magnolia_o7": "shainarai1989", "dannacamp.": "live.love.ur.mom", "theresa.signo": "maria..theresa", "aliniurka": "usuariom66", "nattooeasyy": "natglow.luxe", "mommidom": "domyenn", "carla110419": "carliadiaz", "7917290079": "wendyidlebird", "avadabossyaries": "dabossyaries", "lisab.567": "lisabender567", "iamdaenarodriguez": "imdaenarodriguez", "ichchhagiri123": "aaravs_mom123", "taylor041749": "taylortraywickisrad0", "kreahtions": "trapmulan", "becomingico_51227": "becomingico", "smilingrn_": "smilingrn", "natty27__": "natty_1998x", "jackiemama_just_": "jackie_just_", "triciarut": "tricia.g.rutledge", "hannah._.an": "afterhourmeals", "athenatts": "trendydeal", "tink0478tts": "tink0478", "itsmecandice68_14454": "itsmecandice68", "hellsonwheels84": "helensaysyes", "jadoresaint_26284": "spoiledsel", "lorraineehrhardt5": "lorraineehrhardt", "jeany09033": "jeanie_nette", "ginamedrano.": "ginawow_", "momlifedisneymagic": "ca785208", "linds_10323": "life_withlindsey", "daniellethepopoftheparty_43231": "daniellemcarver", "gocryaboutit.": "gorlmomx2", "xiomaravargas33": "xio_finds", "clshelton": "charmainelouisecreates", "erikakrystelle_50837": "erika.krystelle", "michalkarne": "thekarnes", "jessicawellness": "jessicaleemcgrath", "ms.sung": "whatms.sungwears", "ayushabhandari.": "ayushab05", "lleilaann_81561": "lleilaann", "sevenfinds": "seven.finds2", "jencollective_82310": "jencollective", "ashxo12": "xoash311", "biodance": "biodance_global", "daphnemendoza__44378": "daphnemndoza", "elainadunnn": "elainadunn", "stefanip_": "stefanipico", "natbee27_62572": "natbee27", "zealous_monkey_48219": "x", "sheryliansanchez": "sherytorres0705", "tasha018950": "unique.love297", "clau0367_71319": "claudiavalenzuelaoficial", "dr.basssma_64933": "dr.basssma", "madison_owens23": "madison_owens", "fatima_25045": "fatimaescobar77", "kizzyugc": "mynameissskiz", "rubio08905": "andrean.rubio", "claire_22712": "xx", "danamavs": "dannamavss", "neenanosiomone": "neenanosimone", "devi043542": "devii.khadka24", "kcup_goddess": "purple_passion18", "des1253": "desdav_ugc", "ktn1866": "_kristytaylornguyen", "gypsyv666": "wisteriacreekdesigns", "bunnymiku": "milky.time1", "koifishda": "saemiii7", "jntz0810": "dazi990", "kass108": "kass0719", "hatsinlove": "skincarewithmihlee", "billiehillier": "billieinar", "anjlipana": "anjlipancake", "bellahadid2001": "jkbzz.esp", "madampnw": "addisontts, addisonwellness", "ashleynu276499": "ashleynu27", "simran0724": "baruscape", "nat.mayy": "natexisting", "dawifey83020": "keepupwiththejones5", "__nightknight__": "__night_knight__", "itz.lu": "lu_sotuff", "kamichuru": "kamichuru98", "kerrygrey2004": "kerry.grey", "eed__8": "elizabeth.drebin", "meredithgreyyy": "kris_hna_patel", "bacashouse": "debbuys", "nana050150": "nananails732", "dachsgal": "devynashleamiller", "ugcbycheryl": "wooitscherilyn", "alishaaries": "alishaariess", "komaltanna": "komalkariatanna", "joellen8211": "xoxjoellenxox", "kayl58397": "k.beautywellness", "jennifermruk": "heyits.jennnn, home.withjenn", "valeriabarron": "valeriabarronv", "chilleee": "swt.kwon", "pookiem_": "pookieemac", "phatpharmgirl": "missrubierose", "ms.mari.j": "msmarisoljimenez", "analoran": "analouab", "mochagem0222": "ty_cox22", "starsapphirex": "andreasglowxo", "selina_75": "genxfavfinds", "chardyethecraftqueen": "glitznglam.chardye", "inrussswetrust": "b.eauty_b.east", "chichi_naomi": "chidinmasworld", "natasha0092": "_authenticsoul", "nicolebrianna__": "nicole.brianna_", "marciemeadows": "marcieafter40", "shwetapandey": "officiallyshweta", "kiaralatina_10985": "kiaralatina_", "toastmagoatz": "formerfatgirlonabike", "kat04644": "mamakat_4", "kimlovetro": "live2lovekim", "gorggirl.": "mamiiraquell", "kimrandolph": "kim.randolph86", "ttsimplyjojo10": "simplyjojo10", "cashycustomz": "cashycustomz_", "couponsxo": "coupons_xoxo", "venus_reviews": "venus_ttshop_reviews", "vcarmona08": "carmonaclan", "kalynicoleswann": "kaly_nicole", "luciferskat": "i_am3lla", "kangaryuu": "kangaryu12", "lysadizzle": "itslysadizzle", "almaallen1": "agallen22", "ayleenmoreno_": "ayleenmorenougc", "b.booyang": "sfami.us", "lori06847": "lorithompson76", "bobbien188": "bobbie.novak", "josi.happiness_04985": "josi.happiness", "coloringwithjas": "jazziescozycorner", "nikiandcompany": "nikiandco", "akoof01": "amandawifey", "aurasalgado25": "carolinarodriguez184", "sara_loves_popups": "foodmilkyway", "evadinexx": "helloevadinexx", "nicolem0494": "lawonda_", "nay242": "aria04440", "ash1613.": "haul.yeah.idaho", "dawnmarie7676": "dawnmariecurates", "lupita.recommends": "lupita_recommends", "itsmekellyp_37979": "kellyshops3093", "rchung6": "junebirdiee"};
 
-
-var $=function(id){return document.getElementById(id)};
-function toast(m){var t=$('tst');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
-function sw(tab){
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.t===tab)});
-  document.querySelectorAll('.pnl').forEach(function(p){p.classList.toggle('on',p.id==='p-'+tab)});
+var $ = function(id) { return document.getElementById(id); };
+function toast(m) { var t = $('tst'); t.textContent = m; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2500); }
+function sw(tab) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.toggle('on', t.dataset.t === tab); });
+  document.querySelectorAll('.pnl').forEach(function(p) { p.classList.toggle('on', p.id === 'p-' + tab); });
 }
-function fmt(n){if(!n&&n!==0)return'-';return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
-function today(){var d=new Date(new Date().getTime()+(9*60*60*1000));return d.toISOString().slice(0,10)}
-function tier(g,v){return g>=1000?'vvip':g>=500?'vip':g>=1?'active':v>0?'new':'none'}
-function tLabel(t){return t==='vvip'?'&#x1F451;VVIP':t==='vip'?'&#x2B50;VIP':t==='active'?'&#x1F45F;Active':t==='new'?'&#x1F331;New':'&#x23F8;'}
+function fmt(n) { if (!n && n !== 0) return '-'; return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}); }
+function today() { var d = new Date(new Date().getTime() + (9 * 60 * 60 * 1000)); return d.toISOString().slice(0, 10); }
+function tier(g, v) { return g >= 1000 ? 'vvip' : g >= 500 ? 'vip' : g >= 1 ? 'active' : v > 0 ? 'new' : 'none'; }
+function tLabel(t) {
+  if (t === 'vvip') return '&#x1F451;VVIP';
+  if (t === 'vip') return '&#x2B50;VIP';
+  if (t === 'active') return '&#x1F45F;Active';
+  if (t === 'new') return '&#x1F331;New';
+  return '&#x23F8;';
+}
 
-function parseCSV(text){
-  var rows=[],row=[],field='',inQ=false,i=0,c;
-  text=text.replace(/^\uFEFF/,'');
-  while(i<text.length){
-    c=text[i];
-    if(inQ){if(c==='"'){if(text[i+1]==='"'){field+='"';i+=2}else{inQ=false;i++}}else{field+=c;i++}}
-    else{if(c==='"'){inQ=true;i++}else if(c===','){row.push(field.trim());field='';i++}
-    else if(c==='\n'||c==='\r'){row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);row=[];field='';if(c==='\r'&&text[i+1]==='\n')i+=2;else i++}
-    else{field+=c;i++}}
+function parseCSV(text) {
+  var rows = [], row = [], field = '', inQ = false, i = 0, c;
+  text = text.replace(/^\uFEFF/, '');
+  while (i < text.length) {
+    c = text[i];
+    if (inQ) {
+      if (c === '"') { if (text[i+1] === '"') { field += '"'; i += 2; } else { inQ = false; i++; } }
+      else { field += c; i++; }
+    } else {
+      if (c === '"') { inQ = true; i++; }
+      else if (c === ',') { row.push(field.trim()); field = ''; i++; }
+      else if (c === '\n' || c === '\r') {
+        row.push(field.trim());
+        if (row.some(function(x) { return x !== ''; })) rows.push(row);
+        row = []; field = '';
+        if (c === '\r' && text[i+1] === '\n') i += 2; else i++;
+      } else { field += c; i++; }
+    }
   }
-  row.push(field.trim());if(row.some(function(x){return x!==''}))rows.push(row);
-  if(rows.length<2)return[];
-  var hdr=rows[0];
-  return rows.slice(1).map(function(r){var o={};hdr.forEach(function(h,j){o[h]=r[j]||''});return o});
+  row.push(field.trim());
+  if (row.some(function(x) { return x !== ''; })) rows.push(row);
+  if (rows.length < 2) return [];
+  var hdr = rows[0];
+  return rows.slice(1).map(function(r) { var o = {}; hdr.forEach(function(h, j) { o[h] = r[j] || ''; }); return o; });
 }
 
-var agSet=new Set(SAVED_AG.length?SAVED_AG:RAW_AG);
-var dcSet=new Set(SAVED_DC.length?SAVED_DC:RAW_DC);
-var discMap=Object.assign({},RAW_DCMAP,SAVED_DCMAP);
-var hist=JSON.parse(JSON.stringify(SAVED_HIST));
-var C={};
-var sCol='g',sDir='desc',sq='';
-// Multi-filters
-var MF={tier:null,dc:null,surge:false,nv:false,vid:false};
-var CV={dc:true,cn:true,ca:true,cv:true,ct:true,rp:true,nt:true};
-// API
-var API=(window.location.protocol==='file:')?null:'';
-var _st=null,_saving=false;
+var agSet = new Set(SAVED_AG.length ? SAVED_AG : RAW_AG);
+var dcSet = new Set(SAVED_DC.length ? SAVED_DC : RAW_DC);
+var discMap = Object.assign({}, RAW_DCMAP, SAVED_DCMAP);
+var hist = JSON.parse(JSON.stringify(SAVED_HIST));
+var C = {};
+var sCol = 'g', sDir = 'desc', sq = '';
+var MF = {tier: null, dc: null, surge: false, nv: false, vid: false, live: false};
+var CV = {dc: true, cn: true, ca: true, cv: true, ct: true, rp: true, nt: true};
+var API = (window.location.protocol === 'file:') ? null : '';
+var _saveTimer = null, _saving = false;
 
-function setSt(m,col){var e=$('sst');if(e){e.textContent=m;e.style.color=col||'var(--gn)'}}
+function setSt(m, col) { var e = $('sst'); if (e) { e.textContent = m; e.style.color = col || 'var(--gn)'; } }
 
-function buildState(){
-  var s={tracking:{},hist:hist,discMap:discMap,agList:Array.from(agSet),dcList:Array.from(dcSet)};
-  Object.values(C).forEach(function(c){
-    s.tracking[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,
-      uname:c.uname||'',email:c.email||'',phone:c.phone||'',prevTier:c.prevTier||'',tier:c.tier};
+function buildState() {
+  var s = {tracking: {}, hist: hist, discMap: discMap, agList: Array.from(agSet), dcList: Array.from(dcSet)};
+  Object.values(C).forEach(function(c) {
+    s.tracking[c.h] = {dj: c.dj, ct: c.ct, rp: c.rp, nt: c.nt, cn: c.cn, ca: c.ca, cv: c.cv,
+      uname: c.uname || '', email: c.email || '', phone: c.phone || '', prevTier: c.prevTier || '', tier: c.tier};
   });
   return s;
 }
 
-function autoSave(){
-  if(API===null){setSt('로컬','var(--dim)');return}
-  setSt('...','var(--yw)');
-  if(_st)clearTimeout(_st);
-  _st=setTimeout(function(){
-    if(_saving)return;
-    _saving=true;
-    fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
-      .then(function(r){_saving=false;return r.json()})
-      .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨')})
-      .catch(function(){_saving=false;setSt('실패','var(--rd)')});
-  },1500);
+function autoSave() {
+  if (API === null) { setSt('로컬', 'var(--dim)'); return; }
+  setSt('...', 'var(--yw)');
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(function() {
+    if (_saving) return;
+    _saving = true;
+    fetch('/api/state', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(buildState())})
+      .then(function(r) { _saving = false; return r.json(); })
+      .then(function(d) { setSt(new Date().toLocaleTimeString('ko-KR', {hour: '2-digit', minute: '2-digit'}) + ' 저장됨'); })
+      .catch(function() { _saving = false; setSt('실패', 'var(--rd)'); });
+  }, 1500);
 }
 
-function applyState(st){
-  if(st.tracking)Object.keys(st.tracking).forEach(function(h){
-    var d=st.tracking[h];if(!C[h])return;
-    if(d.dj!==undefined)C[h].dj=d.dj;if(d.ct!==undefined)C[h].ct=d.ct;
-    if(d.rp!==undefined)C[h].rp=d.rp;if(d.nt!==undefined)C[h].nt=d.nt;
-    if(d.cn!==undefined)C[h].cn=d.cn;if(d.ca!==undefined)C[h].ca=d.ca;
-    if(d.cv!==undefined)C[h].cv=d.cv;
-    if(d.uname!==undefined)C[h].uname=d.uname;
-    if(d.email!==undefined)C[h].email=d.email;
-    if(d.phone!==undefined)C[h].phone=d.phone;
-    if(d.prevTier!==undefined)C[h].prevTier=d.prevTier;
-    if(d.tier)C[h].tier=d.tier;
-  });
-  if(st.hist)Object.keys(st.hist).forEach(function(d){hist[d]=st.hist[d]});
-  if(st.discMap)Object.assign(discMap,st.discMap);
-  if(st.agList)st.agList.forEach(function(h){agSet.add(h)});
-  if(st.dcList){st.dcList.forEach(function(h){dcSet.add(h);if(C[h])C[h].dj=true})}
-  // Remove duplicate dates
-  var dates=Object.keys(hist).sort();
-  for(var i=1;i<dates.length;i++){
-    if(JSON.stringify(hist[dates[i-1]])===JSON.stringify(hist[dates[i]])){delete hist[dates[i-1]];}
+function applyState(st) {
+  if (st.tracking) {
+    Object.keys(st.tracking).forEach(function(h) {
+      var d = st.tracking[h]; if (!C[h]) return;
+      if (d.dj !== undefined) C[h].dj = d.dj;
+      if (d.ct !== undefined) C[h].ct = d.ct;
+      if (d.rp !== undefined) C[h].rp = d.rp;
+      if (d.nt !== undefined) C[h].nt = d.nt;
+      if (d.cn !== undefined) C[h].cn = d.cn;
+      if (d.ca !== undefined) C[h].ca = d.ca;
+      if (d.cv !== undefined) C[h].cv = d.cv;
+      if (d.uname !== undefined) C[h].uname = d.uname;
+      if (d.email !== undefined) C[h].email = d.email;
+      if (d.phone !== undefined) C[h].phone = d.phone;
+      if (d.prevTier !== undefined) C[h].prevTier = d.prevTier;
+      if (d.tier) C[h].tier = d.tier;
+    });
   }
+  if (st.hist) {
+    Object.keys(st.hist).forEach(function(d) { hist[d] = st.hist[d]; });
+    // Remove duplicate adjacent dates
+    var dates = Object.keys(hist).sort();
+    for (var i = 1; i < dates.length; i++) {
+      if (JSON.stringify(hist[dates[i-1]]) === JSON.stringify(hist[dates[i]])) {
+        delete hist[dates[i-1]];
+      }
+    }
+  }
+  if (st.discMap) Object.assign(discMap, st.discMap);
+  if (st.agList) st.agList.forEach(function(h) { agSet.add(h); });
+  if (st.dcList) { st.dcList.forEach(function(h) { dcSet.add(h); if (C[h]) C[h].dj = true; }); }
   // Apply latest hist GMV
-  var dates2=Object.keys(hist).sort();
-  var latest=dates2[dates2.length-1];
-  if(latest&&hist[latest])Object.keys(hist[latest]).forEach(function(h){
-    if(C[h]&&hist[latest][h]){C[h].g=hist[latest][h].g;C[h].v=hist[latest][h].v;C[h].tier=tier(C[h].g,C[h].v)}
-  });
-  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
+  var dates2 = Object.keys(hist).sort();
+  var latest = dates2[dates2.length - 1];
+  if (latest && hist[latest]) {
+    Object.keys(hist[latest]).forEach(function(h) {
+      if (C[h] && hist[latest][h]) {
+        C[h].g = hist[latest][h].g;
+        C[h].v = hist[latest][h].v;
+        C[h].tier = tier(C[h].g, C[h].v);
+      }
+    });
+  }
+  Object.values(C).forEach(function(c) { c.ag = agSet.has(c.h); });
 }
 
-function syncSave(){
-  if(API===null)return expState();
-  setSt('저장중...','var(--yw)');
-  fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildState())})
-    .then(function(r){return r.json()})
-    .then(function(d){setSt(new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' 저장됨');toast('저장 완료 ('+d.dates+'일)')})
-    .catch(function(){setSt('실패','var(--rd)')});
+function syncSave() {
+  if (API === null) return expState();
+  setSt('저장중...', 'var(--yw)');
+  fetch('/api/state', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(buildState())})
+    .then(function(r) { return r.json(); })
+    .then(function(d) { setSt(new Date().toLocaleTimeString('ko-KR', {hour: '2-digit', minute: '2-digit'}) + ' 저장됨'); toast('저장 완료 (' + d.dates + '일)'); })
+    .catch(function() { setSt('실패', 'var(--rd)'); });
 }
 
-function syncLoad(){
-  if(API===null){toast('로컬 모드');return}
-  setSt('불러오는중...','var(--yw)');
-  fetch('/api/state').then(function(r){return r.json()}).then(function(st){
-    applyState(st);render();setSt('로드완료');toast('불러오기 완료')
-  }).catch(function(){setSt('실패','var(--rd)')});
+function syncLoad() {
+  if (API === null) { toast('로컬 모드'); return; }
+  setSt('불러오는중...', 'var(--yw)');
+  fetch('/api/state')
+    .then(function(r) { return r.json(); })
+    .then(function(st) { applyState(st); render(); setSt('로드완료'); toast('불러오기 완료'); })
+    .catch(function() { setSt('실패', 'var(--rd)'); });
 }
 
-function expState(){
-  var blob=new Blob([JSON.stringify(buildState())],{type:'application/json'});
-  var url=URL.createObjectURL(blob);var a=document.createElement('a');
-  a.href=url;a.download='biodance_backup_'+today()+'.json';a.click();URL.revokeObjectURL(url);toast('백업 저장')
+function expState() {
+  var blob = new Blob([JSON.stringify(buildState())], {type: 'application/json'});
+  var url = URL.createObjectURL(blob); var a = document.createElement('a');
+  a.href = url; a.download = 'biodance_backup_' + today() + '.json'; a.click(); URL.revokeObjectURL(url);
+  toast('백업 저장');
 }
 
-function impState(e){
-  var file=e.target.files[0];if(!file)return;
-  var r=new FileReader();
-  r.onload=function(ev){
-    try{applyState(JSON.parse(ev.target.result));render();toast('복원 완료')}
-    catch(err){toast('파일 오류')}
+function impState(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    try { applyState(JSON.parse(ev.target.result)); render(); toast('복원 완료'); }
+    catch(err) { toast('파일 오류'); }
   };
-  r.readAsText(file);e.target.value='';
+  r.readAsText(file); e.target.value = '';
 }
 
-function upd(h,f,v){if(C[h]){C[h][f]=v;if(f==='dj'&&v)dcSet.add(h);autoSave();renderSeg();renderKPI()}}
-function updStr(h,f,v){if(C[h]){C[h][f]=v;autoSave()}}
+function upd(h, f, v) { if (C[h]) { C[h][f] = v; if (f === 'dj' && v) dcSet.add(h); autoSave(); renderSeg(); renderKPI(); } }
+function updStr(h, f, v) { if (C[h]) { C[h][f] = v; autoSave(); } }
 
-function toggleMF(key,val){MF[key]=(MF[key]===val)?null:val;renderTrk()}
-function toggleMFb(key){MF[key]=!MF[key];renderTrk()}
-function resetMF(){MF={tier:null,dc:null,surge:false,nv:false,vid:false};renderTrk()}
+function toggleMF(key, val) { MF[key] = (MF[key] === val) ? null : val; renderTrk(); }
+function toggleMFb(key) { MF[key] = !MF[key]; renderTrk(); }
+function resetMF() { MF = {tier: null, dc: null, surge: false, nv: false, vid: false, live: false}; renderTrk(); }
 
-function prevDay(){
-  var dates=Object.keys(hist).sort(),t=today();
-  for(var i=dates.length-1;i>=0;i--){if(dates[i]<t)return dates[i]}
-  if(dates.length>=2)return dates[dates.length-2];
+function prevDay() {
+  var dates = Object.keys(hist).sort(), t = today();
+  for (var i = dates.length - 1; i >= 0; i--) { if (dates[i] < t) return dates[i]; }
+  if (dates.length >= 2) return dates[dates.length - 2];
   return null;
 }
 
-function getDelta(h,field){
-  var pd=prevDay();if(!pd||!hist[pd])return null;
-  var prev=hist[pd][h]?hist[pd][h][field]||0:null;
-  if(prev===null)return null;
-  return C[h][field]-prev;
+function getDelta(h, field) {
+  var pd = prevDay(); if (!pd || !hist[pd]) return null;
+  var prev = hist[pd][h] ? hist[pd][h][field] || 0 : null;
+  if (prev === null) return null;
+  return C[h][field] - prev;
 }
 
-function render(){renderUp();renderKPI();renderTrk();renderSeg();renderDisc();renderHist()}
+function render() { renderUp(); renderKPI(); renderTrk(); renderSeg(); renderDisc(); renderHist(); }
 
-function renderKPI(){
-  var a=Object.values(C);var tg=a.reduce(function(s,c){return s+c.g},0);
-  var html='<div class="kpi-row">';
-  html+='<div class="kpi"><div class="v">'+a.length+'</div><div class="l">참가</div></div>';
-  html+='<div class="kpi"><div class="v">'+fmt(tg)+'</div><div class="l">GMV</div></div>';
-  html+='<div class="kpi"><div class="v">'+a.filter(function(c){return c.g>0}).length+'</div><div class="l">매출O</div></div>';
-  html+='<div class="kpi"><div class="v">'+a.filter(function(c){return c.v>0}).length+'</div><div class="l">영상O</div></div>';
-  html+='<div class="kpi"><div class="v" style="color:var(--ac)">'+a.filter(function(c){return c.dj}).length+'</div><div class="l">Discord</div></div>';
-  html+='<div class="kpi"><div class="v" style="color:var(--cy)">'+a.filter(function(c){return c.tier==='new'}).length+'</div><div class="l">New</div></div>';
-  html+='<div class="kpi"><div class="v" style="color:var(--gn)">'+a.filter(function(c){return c.tier==='active'}).length+'</div><div class="l">Active</div></div>';
-  html+='<div class="kpi"><div class="v" style="color:var(--yw)">'+a.filter(function(c){return c.tier==='vip'||c.tier==='vvip'}).length+'</div><div class="l">VIP+</div></div>';
-  html+='<div class="kpi"><div class="v" style="color:var(--or)">'+a.filter(function(c){return c.ag}).length+'</div><div class="l">AG</div></div>';
-  html+='</div>';
-  $('kpiA').innerHTML=html;
+function renderKPI() {
+  var a = Object.values(C);
+  var tg = a.reduce(function(s, c) { return s + c.g; }, 0);
+  var html = '<div class="krow">';
+  html += '<div class="kpi"><div class="v">' + a.length + '</div><div class="l">참가</div></div>';
+  html += '<div class="kpi"><div class="v">' + fmt(tg) + '</div><div class="l">GMV</div></div>';
+  html += '<div class="kpi"><div class="v">' + a.filter(function(c) { return c.g > 0; }).length + '</div><div class="l">매출O</div></div>';
+  html += '<div class="kpi"><div class="v">' + a.filter(function(c) { return c.v > 0; }).length + '</div><div class="l">영상O</div></div>';
+  html += '<div class="kpi"><div class="v" style="color:var(--ac)">' + a.filter(function(c) { return c.dj; }).length + '</div><div class="l">Discord</div></div>';
+  html += '<div class="kpi"><div class="v" style="color:var(--cy)">' + a.filter(function(c) { return c.tier === 'new'; }).length + '</div><div class="l">New</div></div>';
+  html += '<div class="kpi"><div class="v" style="color:var(--gn)">' + a.filter(function(c) { return c.tier === 'active'; }).length + '</div><div class="l">Active</div></div>';
+  html += '<div class="kpi"><div class="v" style="color:var(--yw)">' + a.filter(function(c) { return c.tier === 'vip' || c.tier === 'vvip'; }).length + '</div><div class="l">VIP+</div></div>';
+  html += '<div class="kpi"><div class="v" style="color:var(--pp)">' + a.filter(function(c) { return c.live_gmv > 0; }).length + '</div><div class="l">라이브O</div></div>';
+  html += '<div class="kpi"><div class="v" style="color:var(--or)">' + a.filter(function(c) { return c.ag; }).length + '</div><div class="l">AG</div></div>';
+  html += '</div>';
+  $('kpiA').innerHTML = html;
 }
 
-function renderUp(){
-  var n=Object.keys(C).length,djc=Object.values(C).filter(function(c){return c.dj}).length;
-  var hD=Object.keys(hist).sort();
-  var html='<div class="up-row">';
-  html+='<div class="up-card"><h4>&#x1F4CA; Participants CSV</h4>';
-  html+='<div class="uz" id="uzP"><h3>&#xD074;&#xB9AD; / &#xB4DC;&#xB798;&#xADF8;</h3><p>Euka Participants CSV</p></div>';
-  html+='<input type="file" id="fileP" accept=".csv" style="display:none">';
-  html+='<div class="us ok">&#x2705; '+n+'&#xBA85;</div></div>';
-  html+='<div class="up-card"><h4>&#x1F7E3; Discord</h4>';
-  html+='<div class="uz" id="uzDC"><h3>Discord CSV</h3><p>멤버 export</p></div>';
-  html+='<input type="file" id="fileDC" accept=".csv" style="display:none">';
-  html+='<div class="us ok">'+djc+'&#xBA85;</div>';
-  html+='<div style="margin-top:8px"><div class="uz" id="uzMB"><h3 style="font-size:11px">Euka Members CSV</h3><p>이메일/연락처</p></div>';
-  html+='<input type="file" id="fileMB" accept=".csv" style="display:none">';
-  html+='<div class="us no" id="stMB">선택</div></div></div>';
-  html+='<div class="up-card"><h4>&#x1F3E2; 에이전시</h4>';
-  html+='<div class="uz" id="uzAG"><h3>CSV/TXT</h3><p>핸들 목록</p></div>';
-  html+='<input type="file" id="fileAG" accept=".csv,.txt" style="display:none">';
-  html+='<div class="us ok">'+agSet.size+'&#xBA85;</div>';
-  html+='<textarea class="ta" id="agTA" style="height:36px;margin-top:4px" placeholder="핸들 붙여넣기"></textarea>';
-  html+='<button class="btn bp" style="margin-top:3px;font-size:10px;padding:3px 7px" onclick="addAGT()">+추가</button></div>';
-  html+='</div>';
-  html+='<div class="sb"><h4 style="font-size:11px;color:var(--dim);margin-bottom:4px">&#x1F4C5; 히스토리: <b style="color:var(--tx)">'+hD.join(' &rarr; ')+'</b> ('+hD.length+'일)</h4>';
-  html+='<p style="font-size:10px;color:var(--dim)">CSV 업로드시 오늘 날짜로 자동 저장 | 💾 백업 권장</p></div>';
-  $('upA').innerHTML=html;
-  // Attach events after innerHTML
-  $('uzP').onclick=function(){$('fileP').click()};
-  $('uzP').ondragover=function(e){e.preventDefault()};
-  $('uzP').ondrop=function(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f)pf(f,'p')};
-  $('fileP').onchange=function(e){var f=e.target.files[0];if(f)pf(f,'p');e.target.value=''};
-  $('uzDC').onclick=function(){$('fileDC').click()};
-  $('fileDC').onchange=function(e){var f=e.target.files[0];if(f)lfDC(f);e.target.value=''};
-  $('uzMB').onclick=function(){$('fileMB').click()};
-  $('fileMB').onchange=function(e){var f=e.target.files[0];if(f)lfMB(f);e.target.value=''};
-  $('uzAG').onclick=function(){$('fileAG').click()};
-  $('fileAG').onchange=function(e){var f=e.target.files[0];if(f)lfAG(f);e.target.value=''};
+function renderUp() {
+  var n = Object.keys(C).length, djc = Object.values(C).filter(function(c) { return c.dj; }).length;
+  var hD = Object.keys(hist).sort();
+  var html = '<div class="up-row">';
+  html += '<div class="up-card"><h4>&#x1F4CA; Participants CSV</h4>';
+  html += '<div class="uz" id="uzP"><h3>&#xD074;&#xB9AD; / &#xB4DC;&#xB798;&#xADF8;</h3><p>Euka Participants CSV</p></div>';
+  html += '<input type="file" id="fileP" accept=".csv" style="display:none">';
+  html += '<div class="us ok">&#x2705; ' + n + '&#xBA85;</div></div>';
+  html += '<div class="up-card"><h4>&#x1F3AC; Submissions CSV (&#xB77C;&#xC774;&#xBE0C;/&#xBE44;&#xB514;&#xC624; &#xAD6C;&#xBD84;)</h4>';
+  html += '<div class="uz" id="uzS"><h3>&#xD074;&#xB9AD; / &#xB4DC;&#xB798;&#xADF8;</h3><p>Euka Submissions CSV</p></div>';
+  html += '<input type="file" id="fileS" accept=".csv" style="display:none">';
+  html += '<div class="us ok" id="stS">&#x2705; ' + Object.values(C).filter(function(c){return c.video_gmv > 0 || c.live_gmv > 0;}).length + '&#xBA85; &#xB370;&#xC774;&#xD130;</div></div>';
+  html += '<div class="up-card"><h4>&#x1F7E3; Discord + &#xC5F0;&#xB77D;&#xCC98;</h4>';
+  html += '<div class="uz" id="uzDC"><h3>Discord CSV</h3><p>&#xBA64;&#xBC84; export</p></div>';
+  html += '<input type="file" id="fileDC" accept=".csv" style="display:none">';
+  html += '<div class="us ok">' + djc + '&#xBA85; DC</div>';
+  html += '<div style="margin-top:8px"><div class="uz" id="uzMB"><h3 style="font-size:11px">Euka Members CSV</h3><p>&#xC774;&#xBA54;&#xC77C;/&#xC5F0;&#xB77D;&#xCC98;</p></div>';
+  html += '<input type="file" id="fileMB" accept=".csv" style="display:none">';
+  html += '<div class="us no" id="stMB">&#xC120;&#xD0DD;</div></div></div>';
+  html += '</div>';
+  html += '<div class="sb"><h4 style="font-size:11px;color:var(--dim);margin-bottom:4px">&#x1F4C5; &#xD788;&#xC2A4;&#xD1A0;&#xB9AC;: <b style="color:var(--tx)">' + hD.join(' &rarr; ') + '</b> (' + hD.length + '&#xC77C;)</h4>';
+  html += '<p style="font-size:10px;color:var(--dim)">CSV &#xC5C5;&#xB85C;&#xB4DC;&#xC2DC; &#xC624;&#xB298; &#xB0A0;&#xC9DC;&#xB85C; &#xC790;&#xB3D9; &#xC800;&#xC7A5; | &#x1F4BE; &#xBC31;&#xC5C5; &#xAD8C;&#xC7A5;</p></div>';
+  $('upA').innerHTML = html;
+  // Attach file events
+  $('uzP').onclick = function() { $('fileP').click(); };
+  $('uzP').ondragover = function(e) { e.preventDefault(); };
+  $('uzP').ondrop = function(e) { e.preventDefault(); var f = e.dataTransfer.files[0]; if (f) pf(f, 'p'); };
+  $('fileP').onchange = function(e) { var f = e.target.files[0]; if (f) pf(f, 'p'); e.target.value = ''; };
+  $('uzS').onclick = function() { $('fileS').click(); };
+  $('uzS').ondragover = function(e) { e.preventDefault(); };
+  $('uzS').ondrop = function(e) { e.preventDefault(); var f = e.dataTransfer.files[0]; if (f) pf(f, 's'); };
+  $('fileS').onchange = function(e) { var f = e.target.files[0]; if (f) pf(f, 's'); e.target.value = ''; };
+  $('uzDC').onclick = function() { $('fileDC').click(); };
+  $('fileDC').onchange = function(e) { var f = e.target.files[0]; if (f) lfDC(f); e.target.value = ''; };
+  $('uzMB').onclick = function() { $('fileMB').click(); };
+  $('fileMB').onchange = function(e) { var f = e.target.files[0]; if (f) lfMB(f); e.target.value = ''; };
 }
 
-function pf(file,type){
-  var r=new FileReader();
-  r.onload=function(ev){
-    var data=parseCSV(ev.target.result);
-    if(type==='p'){
-      var old={};
-      Object.values(C).forEach(function(c){
-        old[c.h]={dj:c.dj,ct:c.ct,rp:c.rp,nt:c.nt,cn:c.cn,ca:c.ca,cv:c.cv,
-          uname:c.uname||'',email:c.email||'',phone:c.phone||'',prevTier:c.tier,tier:c.tier};
+function pf(file, type) {
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var data = parseCSV(ev.target.result);
+    if (type === 'p') {
+      var old = {};
+      Object.values(C).forEach(function(c) {
+        old[c.h] = {dj: c.dj, ct: c.ct, rp: c.rp, nt: c.nt, cn: c.cn, ca: c.ca, cv: c.cv,
+          uname: c.uname || '', email: c.email || '', phone: c.phone || '', prevTier: c.tier, tier: c.tier,
+          video_gmv: c.video_gmv || 0, video_count: c.video_count || 0, live_gmv: c.live_gmv || 0, live_count: c.live_count || 0};
       });
-      C={};
-      data.forEach(function(row){
-        var h=(row['Creator Handle']||'').replace('@','').trim().toLowerCase();if(!h)return;
-        var g=parseFloat((row['Total GMV']||'0').replace(/[$,]/g,''))||0;
-        var v=parseInt(row['Videos'])||0;
-        var w=parseInt((row['Total Views']||'0').replace(/,/g,''))||0;
-        var lp=row['Last Post']||'-';
-        var s=RAW_S[h]||[0,0,0,0];var o=old[h]||{};
-        var dci=DC_INFO[h]||{};var ct=CONTACTS[h]||{};
-        var t=o.tier||tier(g,v);
-        C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
-          dj:o.dj!==undefined?o.dj:dcSet.has(h),ct:o.ct||false,rp:o.rp||false,nt:o.nt||'',
-          ag:agSet.has(h),cn:o.cn||false,ca:o.ca||false,cv:o.cv||false,
-          uname:o.uname||dci.u||'',email:o.email||ct.em||'',phone:o.phone||ct.ph||'',
-          prevTier:o.tier||'',tier:t};
+      C = {};
+      data.forEach(function(row) {
+        var h = (row['Creator Handle'] || '').replace('@', '').trim().toLowerCase(); if (!h) return;
+        var g = parseFloat((row['Total GMV'] || '0').replace(/[$,]/g, '')) || 0;
+        var v = parseInt(row['Videos']) || 0;
+        var w = parseInt((row['Total Views'] || '0').replace(/,/g, '')) || 0;
+        var o = old[h] || {};
+        var dci = DC_INFO[h] || {}; var ct = CONTACTS[h] || {};
+        var sb = SUBS_DATA[h] || {vg: 0, vc: 0, lg: 0, lc: 0};
+        var t = o.tier || tier(g, v);
+        C[h] = {h: h, g: g, v: v, w: w,
+          dj: o.dj !== undefined ? o.dj : dcSet.has(h),
+          ct: o.ct || false, rp: o.rp || false, nt: o.nt || '', ag: agSet.has(h),
+          cn: o.cn || false, ca: o.ca || false, cv: o.cv || false,
+          uname: o.uname || dci.u || '', email: o.email || ct.em || '',
+          phone: o.phone || ct.ph || '', prevTier: o.tier || '', tier: t,
+          video_gmv: o.video_gmv || sb.vg, video_count: o.video_count || sb.vc,
+          live_gmv: o.live_gmv || sb.lg, live_count: o.live_count || sb.lc};
       });
-      var td=today();
-      var snap={};Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v}});
-      hist[td]=snap;
-      render();setTimeout(function(){syncSave()},800);
-      toast('업로드 완료 ('+Object.keys(C).length+'명)');
+      var td = today();
+      var snap = {}; Object.values(C).forEach(function(c) { snap[c.h] = {g: c.g, v: c.v}; });
+      hist[td] = snap;
+      render(); setTimeout(function() { syncSave(); }, 800);
+      toast('업로드 완료 (' + Object.keys(C).length + '명)');
+    } else if (type === 's') {
+      // Submissions: live vs video breakdown
+      data.forEach(function(row) {
+        var h = (row['Creator'] || '').trim().toLowerCase().replace(/^@/, '');
+        var t = row['Type'] || '';
+        var g = parseFloat((row['GMV'] || '0').replace(/[$,]/g, '')) || 0;
+        if (C[h]) {
+          if (t === 'Video') { C[h].video_gmv = (C[h].video_gmv || 0) + g; C[h].video_count = (C[h].video_count || 0) + 1; }
+          else if (t === 'Livestream') { C[h].live_gmv = (C[h].live_gmv || 0) + g; C[h].live_count = (C[h].live_count || 0) + 1; }
+        }
+      });
+      render(); toast('Submissions 로드됨');
+      if ($('stS')) $('stS').textContent = '✅ 로드됨';
     }
   };
   r.readAsText(file);
 }
 
-function lfDC(file){
-  var r=new FileReader();
-  r.onload=function(ev){
-    var data=parseCSV(ev.target.result);var ok=0;
-    data.forEach(function(row){
-      var tt=(row['TikTok Handles']||'').trim().toLowerCase().replace(/^@/,'');
-      var du=(row['Discord Username']||'').trim().toLowerCase();
-      var role=row['Roles']||'';
-      if(tt&&C[tt]){C[tt].dj=true;if(du){C[tt].uname=du;discMap[du]=tt}C[tt].drole=role;ok++;dcSet.add(tt)}
+function lfDC(file) {
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var data = parseCSV(ev.target.result); var ok = 0;
+    data.forEach(function(row) {
+      var tt = (row['TikTok Handles'] || '').trim().toLowerCase().replace(/^@/, '');
+      var du = (row['Discord Username'] || '').trim().toLowerCase();
+      if (tt && C[tt]) { C[tt].dj = true; if (du) { C[tt].uname = du; discMap[du] = tt; } ok++; dcSet.add(tt); }
     });
-    render();toast('Discord: '+ok+'명');
+    render(); toast('Discord: ' + ok + '명');
   };
   r.readAsText(file);
 }
 
-function lfMB(file){
-  var r=new FileReader();
-  r.onload=function(ev){
-    var data=parseCSV(ev.target.result);var ok=0;
-    data.forEach(function(row){
-      var tt=(row['TikTok Handle']||'').trim().toLowerCase().replace(/^@/,'');
-      var em=row['Email']||'';
-      if(tt&&C[tt]&&em){C[tt].email=em;ok++}
+function lfMB(file) {
+  var r = new FileReader();
+  r.onload = function(ev) {
+    var data = parseCSV(ev.target.result); var ok = 0;
+    data.forEach(function(row) {
+      var tt = (row['TikTok Handle'] || '').trim().toLowerCase().replace(/^@/, '');
+      var em = row['Email'] || '';
+      if (tt && C[tt] && em) { C[tt].email = em; ok++; }
     });
-    render();$('stMB').textContent='✅ '+ok+'명';$('stMB').className='us ok';toast('이메일 +'+ok);
+    render(); if ($('stMB')) { $('stMB').textContent = '✅ ' + ok + '명'; $('stMB').className = 'us ok'; }
+    toast('이메일 +' + ok);
   };
   r.readAsText(file);
 }
 
-function lfAG(file){
-  var r=new FileReader();
-  r.onload=function(ev){
-    var hs=ev.target.result.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'').replace(/"/g,'')}).filter(function(h){return h&&h.length>1});
-    hs.forEach(function(h){agSet.add(h)});
-    Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
-    render();toast('AG +'+hs.length);
-  };
-  r.readAsText(file);
-}
+function renderTrk() {
+  var a = Object.values(C);
+  var n_new = a.filter(function(c) { return c.tier === 'new'; }).length;
+  var n_act = a.filter(function(c) { return c.tier === 'active'; }).length;
+  var n_vip = a.filter(function(c) { return c.tier === 'vip' || c.tier === 'vvip'; }).length;
+  var n_djy = a.filter(function(c) { return c.dj; }).length;
+  var n_djn = a.filter(function(c) { return !c.dj && !c.ag; }).length;
+  var n_ag  = a.filter(function(c) { return c.ag; }).length;
+  var n_sur = a.filter(function(c) { return getDelta(c.h, 'g') > 0; }).length;
+  var n_nv  = a.filter(function(c) { return getDelta(c.h, 'v') > 0; }).length;
+  var n_vng = a.filter(function(c) { return c.v > 0 && c.g === 0; }).length;
+  var n_lv  = a.filter(function(c) { return c.live_gmv > 0; }).length;
 
-function addAGT(){
-  var text=$('agTA').value.trim();if(!text)return;
-  var hs=text.split(/[\n\r,]+/).map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);
-  hs.forEach(function(h){agSet.add(h)});
-  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
-  $('agTA').value='';render();toast('AG +'+hs.length);
-}
-
-function renderTrk(){
-  var a=Object.values(C);
-  var n_new=a.filter(function(c){return c.tier==='new'}).length;
-  var n_act=a.filter(function(c){return c.tier==='active'}).length;
-  var n_vip=a.filter(function(c){return c.tier==='vip'||c.tier==='vvip'}).length;
-  var n_djy=a.filter(function(c){return c.dj}).length;
-  var n_djn=a.filter(function(c){return !c.dj&&!c.ag}).length;
-  var n_ag=a.filter(function(c){return c.ag}).length;
-  var n_sur=a.filter(function(c){return getDelta(c.h,'g')>0}).length;
-  var n_nv=a.filter(function(c){return getDelta(c.h,'v')>0}).length;
-  var n_vng=a.filter(function(c){return c.v>0&&c.g===0}).length;
-
-  function mb(label,key,val,cnt){
-    var on=(MF[key]===val);
-    return '<button class="fb'+(on?' on':'')+'" onclick="toggleMF(\''+key+'\',\''+val+'\')">'+label+(cnt!==undefined?' ('+cnt+')':'')+'</button>';
+  function mb(label, key, val, cnt) {
+    var on = (MF[key] === val);
+    return '<button class="fb' + (on ? ' on' : '') + '" onclick="toggleMF(\'' + key + '\',\'' + val + '\')">' + label + (cnt !== undefined ? ' (' + cnt + ')' : '') + '</button>';
   }
-  function mbb(label,key,cnt){
-    var on=MF[key];
-    return '<button class="fb'+(on?' on':'')+'" onclick="toggleMFb(\''+key+'\')">'+label+(cnt!==undefined?' ('+cnt+')':'')+'</button>';
+  function mbb(label, key, cnt) {
+    var on = MF[key];
+    return '<button class="fb' + (on ? ' on' : '') + '" onclick="toggleMFb(\'' + key + '\')">' + label + (cnt !== undefined ? ' (' + cnt + ')' : '') + '</button>';
   }
 
-  var fbHTML='<div class="fb-row">';
-  fbHTML+='<input class="si" id="searchIn" placeholder="&#x1F50D; 핸들/DC명" style="width:150px" oninput="sq=this.value;renderTrk()">';
-  fbHTML+='<span class="fb-label" style="margin-left:6px">TIER:</span>';
-  fbHTML+=mb('&#x1F331;New','tier','new',n_new);
-  fbHTML+=mb('&#x1F45F;Active','tier','active',n_act);
-  fbHTML+=mb('&#x2B50;VIP+','tier','vip',n_vip);
-  fbHTML+='<span class="fb-label" style="margin-left:6px">DC:</span>';
-  fbHTML+=mb('DC&#x2713;','dc','y',n_djy);
-  fbHTML+=mb('DC&#x2715;','dc','n',n_djn);
-  fbHTML+=mb('AG','dc','ag',n_ag);
-  fbHTML+='<span class="fb-label" style="margin-left:6px">기타:</span>';
-  fbHTML+=mbb('GMV&#x2191;','surge',n_sur);
-  fbHTML+=mbb('&#xC601;&#xC0C1;&#x2191;','nv',n_nv);
-  fbHTML+=mbb('&#xC601;&#xC0C1;O/&#xB9E4;&#xCD9C;X','vid',n_vng);
-  if(MF.tier||MF.dc||MF.surge||MF.nv||MF.vid)fbHTML+='<button class="fb rst" onclick="resetMF()">&#x2715; 초기화</button>';
-  fbHTML+='</div>';
+  var fbHTML = '<div class="fbrow">';
+  fbHTML += '<input class="si" id="srch" placeholder="&#x1F50D; &#xD578;&#xB4E4;/DC&#xBA85;" style="width:150px" oninput="sq=this.value;renderTrk()">';
+  fbHTML += '<span class="fblabel">TIER:</span>';
+  fbHTML += mb('&#x1F331;New', 'tier', 'new', n_new);
+  fbHTML += mb('&#x1F45F;Active', 'tier', 'active', n_act);
+  fbHTML += mb('&#x2B50;VIP+', 'tier', 'vip', n_vip);
+  fbHTML += '<span class="fblabel">DC:</span>';
+  fbHTML += mb('DC&#x2713;', 'dc', 'y', n_djy);
+  fbHTML += mb('DC&#x2715;', 'dc', 'n', n_djn);
+  fbHTML += mb('AG', 'dc', 'ag', n_ag);
+  fbHTML += '<span class="fblabel">기타:</span>';
+  fbHTML += mbb('GMV&#x2191;', 'surge', n_sur);
+  fbHTML += mbb('&#xC601;&#xC0C1;&#x2191;', 'nv', n_nv);
+  fbHTML += mbb('&#xC601;&#xC0C1;O/&#xB9E4;&#xCD9C;X', 'vid', n_vng);
+  fbHTML += mbb('&#x1F4FA;&#xB77C;&#xC774;&#xBE0C;O', 'live', n_lv);
+  if (MF.tier || MF.dc || MF.surge || MF.nv || MF.vid || MF.live) {
+    fbHTML += '<button class="fb rst" onclick="resetMF()">&#x2715; 초기화</button>';
+  }
+  fbHTML += '</div>';
 
-  var f=a.slice();
-  if(sq)f=f.filter(function(c){return c.h.indexOf(sq.toLowerCase())>=0||(c.uname||'').indexOf(sq.toLowerCase())>=0});
-  if(MF.tier==='new')f=f.filter(function(c){return c.tier==='new'});
-  else if(MF.tier==='active')f=f.filter(function(c){return c.tier==='active'});
-  else if(MF.tier==='vip')f=f.filter(function(c){return c.tier==='vip'||c.tier==='vvip'});
-  if(MF.dc==='y')f=f.filter(function(c){return c.dj});
-  else if(MF.dc==='n')f=f.filter(function(c){return !c.dj&&!c.ag});
-  else if(MF.dc==='ag')f=f.filter(function(c){return c.ag});
-  if(MF.surge)f=f.filter(function(c){return getDelta(c.h,'g')>0});
-  if(MF.nv)f=f.filter(function(c){return getDelta(c.h,'v')>0});
-  if(MF.vid)f=f.filter(function(c){return c.v>0&&c.g===0});
+  var f = a.slice();
+  if (sq) f = f.filter(function(c) { return c.h.indexOf(sq.toLowerCase()) >= 0 || (c.uname || '').indexOf(sq.toLowerCase()) >= 0; });
+  if (MF.tier === 'new') f = f.filter(function(c) { return c.tier === 'new'; });
+  else if (MF.tier === 'active') f = f.filter(function(c) { return c.tier === 'active'; });
+  else if (MF.tier === 'vip') f = f.filter(function(c) { return c.tier === 'vip' || c.tier === 'vvip'; });
+  if (MF.dc === 'y') f = f.filter(function(c) { return c.dj; });
+  else if (MF.dc === 'n') f = f.filter(function(c) { return !c.dj && !c.ag; });
+  else if (MF.dc === 'ag') f = f.filter(function(c) { return c.ag; });
+  if (MF.surge) f = f.filter(function(c) { return getDelta(c.h, 'g') > 0; });
+  if (MF.nv) f = f.filter(function(c) { return getDelta(c.h, 'v') > 0; });
+  if (MF.vid) f = f.filter(function(c) { return c.v > 0 && c.g === 0; });
+  if (MF.live) f = f.filter(function(c) { return c.live_gmv > 0; });
 
-  f.sort(function(a,b){
-    var va=a[sCol],vb=b[sCol];
-    if(typeof va==='string'){va=va.toLowerCase();vb=vb.toLowerCase()}
-    return sDir==='desc'?(va>vb?-1:va<vb?1:0):(va<vb?-1:va>vb?1:0);
+  f.sort(function(a, b) {
+    var va = a[sCol], vb = b[sCol];
+    if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+    return sDir === 'desc' ? (va > vb ? -1 : va < vb ? 1 : 0) : (va < vb ? -1 : va > vb ? 1 : 0);
   });
 
-  function si(col){return sCol===col?'<span style="font-size:8px;margin-left:1px">'+(sDir==='desc'?'&#x25BC;':'&#x25B2;')+'</span>':'';}
-  function th(label,col){return '<th onclick="ts(\''+col+'\')">'+label+si(col)+'</th>';}
+  function si(col) { return sCol === col ? '<span style="font-size:8px;margin-left:1px">' + (sDir === 'desc' ? '&#x25BC;' : '&#x25B2;') + '</span>' : ''; }
+  function th(lbl, col) { return '<th onclick="ts(\'' + col + '\')">' + lbl + si(col) + '</th>'; }
 
-  var tbl='<div class="tw"><table><thead><tr>'+
-    th('Handle','h')+th('Tier','tier')+th('GMV','g')+'<th>&#x0394;GMV</th>'+th('V','v')+'<th>&#x0394;V</th>'+
-    (CV.dc?'<th class="cc">DC</th>':'')+
-    (CV.cn?'<th class="cc">&#x1F331;</th>':'')+
-    (CV.ca?'<th class="cc">&#x1F45F;</th>':'')+
-    (CV.cv?'<th class="cc">&#x2B50;</th>':'')+
-    (CV.ct?'<th class="cc">연락</th>':'')+
-    (CV.rp?'<th class="cc">응답</th>':'')+
-    (CV.nt?'<th>메모</th>':'')+
-    '<th>이메일</th>'+
+  var tbl = '<div class="tw"><table><thead><tr>' +
+    th('Handle', 'h') + th('Tier', 'tier') + th('GMV', 'g') + '<th>&#x0394;GMV</th>' +
+    th('V', 'v') + '<th>&#x0394;V</th>' +
+    '<th title="Shoppable Video GMV">&#x1F3AC;GMV</th><th title="Livestream GMV">&#x1F4FA;GMV</th>' +
+    (CV.dc ? '<th class="cc">DC</th>' : '') +
+    (CV.cn ? '<th class="cc">&#x1F331;</th>' : '') +
+    (CV.ca ? '<th class="cc">&#x1F45F;</th>' : '') +
+    (CV.cv ? '<th class="cc">&#x2B50;</th>' : '') +
+    (CV.ct ? '<th class="cc">&#xC5F0;&#xB77D;</th>' : '') +
+    (CV.rp ? '<th class="cc">&#xC751;&#xB2F5;</th>' : '') +
+    (CV.nt ? '<th>&#xBA54;&#xBAA8;</th>' : '') +
+    '<th>&#xC774;&#xBA54;&#xC77C;</th>' +
     '</tr></thead><tbody>';
 
-  f.forEach(function(c){
-    var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
-    var pd=prevDay();var isN=pd&&hist[pd]&&!hist[pd][c.h];
-    var isUp=c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none';
-    var h='<tr>';
-    h+='<td class="hc"><a href="https://www.tiktok.com/@'+c.h+'" target="_blank">@'+c.h+'</a>';
-    if(c.uname)h+='<span class="un">'+c.uname+'</span>';
-    if(c.ag)h+='<span class="ag">AG</span>';
-    if(isN)h+='<span style="font-size:7px;padding:1px 3px;border-radius:2px;background:var(--cyb);color:var(--cy);margin-left:2px">NEW</span>';
-    h+='</td>';
-    h+='<td><span class="tb t-'+c.tier+'">'+tLabel(c.tier)+'</span>';
-    if(isUp)h+='<span class="tu">&#x2B06;</span>';
-    h+='</td>';
-    h+='<td class="gc '+(c.g>0?'y':'n')+'">'+fmt(c.g)+'</td>';
-    h+='<td class="'+(dg>0?'du':dg<0?'dd':'df')+'">'+(dg===null?'-':dg>0?'+'+fmt(dg):dg<0?fmt(dg):'-')+'</td>';
-    h+='<td>'+c.v+'</td>';
-    h+='<td class="'+(dv>0?'du':'df')+'">'+(dv===null?'-':dv>0?'+'+dv:'-')+'</td>';
-    if(CV.dc)h+='<td class="cc"><input type="checkbox"'+(c.dj?' checked':'')+' onchange="upd(\''+c.h+'\',\'dj\',this.checked)"></td>';
-    if(CV.cn)h+='<td class="cc">'+(c.ag?'':'<input type="checkbox"'+(c.cn?' checked':'')+' onchange="upd(\''+c.h+'\',\'cn\',this.checked)">')+'</td>';
-    if(CV.ca)h+='<td class="cc">'+(c.ag?'':'<input type="checkbox"'+(c.ca?' checked':'')+' onchange="upd(\''+c.h+'\',\'ca\',this.checked)">')+'</td>';
-    if(CV.cv)h+='<td class="cc">'+(c.ag?'':'<input type="checkbox"'+(c.cv?' checked':'')+' onchange="upd(\''+c.h+'\',\'cv\',this.checked)">')+'</td>';
-    if(CV.ct)h+='<td class="cc"><input type="checkbox"'+(c.ct?' checked':'')+' onchange="upd(\''+c.h+'\',\'ct\',this.checked)"></td>';
-    if(CV.rp)h+='<td class="cc"><input type="checkbox"'+(c.rp?' checked':'')+' onchange="upd(\''+c.h+'\',\'rp\',this.checked)"></td>';
-    if(CV.nt)h+='<td><input class="ni" value="'+(c.nt||'')+'" placeholder="..." oninput="updStr(\''+c.h+'\',\'nt\',this.value)" onblur="updStr(\''+c.h+'\',\'nt\',this.value)"></td>';
-    var em=c.email||'';
-    h+='<td><input class="ni em" value="'+em.replace(/"/g,'&quot;')+'" placeholder="이메일..." oninput="updStr(\''+c.h+'\',\'email\',this.value)" onblur="updStr(\''+c.h+'\',\'email\',this.value)"></td>';
-    h+='</tr>';
-    tbl+=h;
+  f.forEach(function(c) {
+    var dg = getDelta(c.h, 'g'), dv = getDelta(c.h, 'v');
+    var pd = prevDay(); var isN = pd && hist[pd] && !hist[pd][c.h];
+    var isUp = c.prevTier && c.prevTier !== c.tier && c.prevTier !== 'none';
+    var vg = c.video_gmv || 0, lg = c.live_gmv || 0;
+    var row = '<tr>';
+    row += '<td class="hc"><a href="https://www.tiktok.com/@' + c.h + '" target="_blank">@' + c.h + '</a>';
+    if (c.uname) row += '<span class="un">' + c.uname + '</span>';
+    if (c.ag) row += '<span class="ag">AG</span>';
+    if (isN) row += '<span style="font-size:7px;padding:1px 3px;border-radius:2px;background:var(--cyb);color:var(--cy);margin-left:2px">NEW</span>';
+    row += '</td>';
+    row += '<td><span class="tb t-' + c.tier + '">' + tLabel(c.tier) + '</span>';
+    if (isUp) row += '<span class="tu">&#x2B06;</span>';
+    row += '</td>';
+    row += '<td class="gc ' + (c.g > 0 ? 'y' : 'n') + '">' + fmt(c.g) + '</td>';
+    row += '<td class="' + (dg > 0 ? 'du' : dg < 0 ? 'dd' : 'df') + '">' + (dg === null ? '-' : dg > 0 ? '+' + fmt(dg) : dg < 0 ? fmt(dg) : '-') + '</td>';
+    row += '<td>' + c.v + '</td>';
+    row += '<td class="' + (dv > 0 ? 'du' : 'df') + '">' + (dv === null ? '-' : dv > 0 ? '+' + dv : '-') + '</td>';
+    row += '<td class="' + (vg > 0 ? 'du' : 'df') + '">' + (vg > 0 ? fmt(vg) : '-') + '</td>';
+    row += '<td class="' + (lg > 0 ? 'du' : 'df') + '">' + (lg > 0 ? '<span class="lv">LIVE</span>' + fmt(lg) : '-') + '</td>';
+    if (CV.dc) row += '<td class="cc"><input type="checkbox"' + (c.dj ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'dj\',this.checked)"></td>';
+    if (CV.cn) row += '<td class="cc">' + (c.ag ? '' : '<input type="checkbox"' + (c.cn ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'cn\',this.checked)">') + '</td>';
+    if (CV.ca) row += '<td class="cc">' + (c.ag ? '' : '<input type="checkbox"' + (c.ca ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'ca\',this.checked)">') + '</td>';
+    if (CV.cv) row += '<td class="cc">' + (c.ag ? '' : '<input type="checkbox"' + (c.cv ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'cv\',this.checked)">') + '</td>';
+    if (CV.ct) row += '<td class="cc"><input type="checkbox"' + (c.ct ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'ct\',this.checked)"></td>';
+    if (CV.rp) row += '<td class="cc"><input type="checkbox"' + (c.rp ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'rp\',this.checked)"></td>';
+    if (CV.nt) row += '<td><input class="ni" value="' + (c.nt || '') + '" placeholder="..." oninput="updStr(\'' + c.h + '\',\'nt\',this.value)" onblur="updStr(\'' + c.h + '\',\'nt\',this.value)"></td>';
+    var em = c.email || '';
+    row += '<td><input class="ni em" value="' + em.replace(/"/g, '&quot;') + '" placeholder="이메일..." oninput="updStr(\'' + c.h + '\',\'email\',this.value)" onblur="updStr(\'' + c.h + '\',\'email\',this.value)"></td>';
+    row += '</tr>';
+    tbl += row;
   });
 
-  tbl+='</tbody></table></div><p style="margin-top:5px;font-size:9px;color:var(--dim)">'+f.length+'/'+a.length+'</p>';
-  $('trkA').innerHTML=fbHTML+tbl;
+  tbl += '</tbody></table></div><p style="margin-top:5px;font-size:9px;color:var(--dim)">' + f.length + '/' + a.length + '</p>';
+  $('trkA').innerHTML = fbHTML + tbl;
 }
 
-function ts(col){if(sCol===col)sDir=sDir==='desc'?'asc':'desc';else{sCol=col;sDir='desc'}renderTrk()}
+function ts(col) { if (sCol === col) sDir = sDir === 'desc' ? 'asc' : 'desc'; else { sCol = col; sDir = 'desc'; } renderTrk(); }
 
-function renderSeg(){
-  var a=Object.values(C);var pd=prevDay();
-  var newC=a.filter(function(c){return c.tier==='new'});
-  var actC=a.filter(function(c){return c.tier==='active'});
-  var vipC=a.filter(function(c){return c.tier==='vip'||c.tier==='vvip'});
+function renderSeg() {
+  var a = Object.values(C); var pd = prevDay();
+  var newC = a.filter(function(c) { return c.tier === 'new'; });
+  var actC = a.filter(function(c) { return c.tier === 'active'; });
+  var vipC = a.filter(function(c) { return c.tier === 'vip' || c.tier === 'vvip'; });
 
-  function card(seg){
-    var html='<div class="sc"><div class="sh" style="background:'+seg.bg+'" onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'block\':\'none\'">';
-    html+='<h3>'+seg.icon+' '+seg.title+'</h3><span class="ct" style="background:'+seg.color+';color:#fff">'+seg.items.length+'</span></div>';
-    html+='<div class="si2" style="'+(seg.items.length===0?'display:none':'')+'"><p class="desc">'+(seg.desc||'')+'</p>';
-    if(!seg.items.length){html+='<p style="font-size:10px;color:var(--dim);text-align:center;padding:8px">해당없음</p>'}
-    else{seg.items.slice(0,40).forEach(function(c){
-      var mt=fmt(c.g);var dg=getDelta(c.h,'g'),dv=getDelta(c.h,'v');
-      if(dg>0)mt+=' <b style="color:var(--gn)">+'+fmt(dg)+'</b>';
-      mt+=' · '+c.v+'개';if(dv>0)mt+=' <b style="color:var(--gn)">+'+dv+'</b>';
-      if(c.uname)mt+=' <span style="font-size:8px;color:#888">'+c.uname+'</span>';
-      if(c.email)mt+=' <span style="font-size:8px;color:var(--ac)">✉</span>';
-      html+='<div class="row"><span class="h">@'+c.h+(c.ag?'<span class="ag">AG</span>':'')+'</span><span class="m">'+mt+'</span></div>';
-    })}
-    html+='</div></div>';return html;
+  function card(seg) {
+    var html = '<div class="sc"><div class="sh" style="background:' + seg.bg + '" onclick="var b=this.nextElementSibling;b.style.display=b.style.display===\'none\'?\'block\':\'none\'">';
+    html += '<h3>' + seg.icon + ' ' + seg.title + '</h3><span class="ct" style="background:' + seg.color + ';color:#fff">' + seg.items.length + '</span></div>';
+    html += '<div class="si2" style="' + (seg.items.length === 0 ? 'display:none' : '') + '">';
+    if (seg.desc) html += '<p class="desc">' + seg.desc + '</p>';
+    if (!seg.items.length) { html += '<p style="font-size:10px;color:var(--dim);text-align:center;padding:8px">해당없음</p>'; }
+    else {
+      seg.items.slice(0, 40).forEach(function(c) {
+        var mt = fmt(c.g);
+        var dg = getDelta(c.h, 'g'), dv = getDelta(c.h, 'v');
+        if (dg > 0) mt += ' <b style="color:var(--gn)">+' + fmt(dg) + '</b>';
+        mt += ' · ' + c.v + '개';
+        if (dv > 0) mt += ' <b style="color:var(--gn)">+' + dv + '</b>';
+        if (c.live_gmv > 0) mt += ' <span class="lv">라이브 ' + fmt(c.live_gmv) + '</span>';
+        if (c.uname) mt += ' <span style="font-size:8px;color:#888">' + c.uname + '</span>';
+        html += '<div class="row"><span class="h">@' + c.h + (c.ag ? '<span class="ag">AG</span>' : '') + '</span><span class="m">' + mt + '</span></div>';
+      });
+    }
+    html += '</div></div>'; return html;
   }
 
-  function section(title,col,segs){
-    var html='<div style="margin-bottom:18px"><div class="sg-hdr" style="color:'+col+'">'+title+'</div><div class="sg">';
-    segs.forEach(function(s){html+=card(s)});
-    html+='</div></div>';return html;
+  function section(title, col, segs) {
+    var html = '<div style="margin-bottom:18px"><div class="sg-hdr" style="color:' + col + '">' + title + '</div><div class="sg">';
+    segs.forEach(function(s) { html += card(s); });
+    html += '</div></div>'; return html;
   }
 
-  var segs_common=[
+  var common = [
     {icon:'&#x26A0;',title:'채널 미배정',color:'var(--rd)',bg:'var(--rdb)',
-      items:a.filter(function(c){return c.dj&&!c.ag&&((c.tier==='new'&&!c.cn)||(c.tier==='active'&&!c.ca)||((c.tier==='vip'||c.tier==='vvip')&&!c.cv))}),
+      items:a.filter(function(c){return c.dj&&!c.ag&&((c.tier==='new'&&!c.cn)||(c.tier==='active'&&!c.ca)||((c.tier==='vip'||c.tier==='vvip')&&!c.cv));}),
       desc:'Discord 입장O / Tier 채널 미배정'},
     {icon:'&#x1F199;',title:'Tier 업 알림',color:'var(--pk)',bg:'var(--pkb)',
-      items:a.filter(function(c){return c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none'}).sort(function(a,b){return b.g-a.g}),
+      items:a.filter(function(c){return c.prevTier&&c.prevTier!==c.tier&&c.prevTier!=='none';}).sort(function(a,b){return b.g-a.g;}),
       desc:'전일 대비 Tier 상승'},
     {icon:'&#x1F6AA;',title:'Discord 미입장',color:'var(--rd)',bg:'var(--rdb)',
-      items:a.filter(function(c){return !c.dj&&!c.ct&&!c.ag}),desc:'AG 제외'},
+      items:a.filter(function(c){return !c.dj&&!c.ct&&!c.ag;}),desc:'AG 제외'},
     {icon:'&#x1F4DE;',title:'연락/미응답',color:'var(--or)',bg:'var(--orb)',
-      items:a.filter(function(c){return c.ct&&!c.rp})}
+      items:a.filter(function(c){return c.ct&&!c.rp;})}
   ];
 
-  var segs_celebrate=[
+  var celebrate = [
     {icon:'&#x1F389;',title:'첫 영상 업로드!',color:'var(--cy)',bg:'var(--cyb)',
-      items:pd?a.filter(function(c){var pv=hist[pd][c.h]?hist[pd][c.h].v:0;return pv===0&&c.v>0}):[],
-      desc:'어제 0개 → 오늘 첫 업로드 | new-creator 채널에서 멘션'},
+      items:pd?a.filter(function(c){var pv=hist[pd][c.h]?hist[pd][c.h].v:0;return pv===0&&c.v>0;}):[],
+      desc:'new-creator 채널에서 멘션'},
     {icon:'&#x1F4B0;',title:'첫 매출 발생!',color:'var(--gn)',bg:'var(--gnb)',
-      items:pd?a.filter(function(c){var pg=hist[pd][c.h]?hist[pd][c.h].g:0;return pg===0&&c.g>0}):[],
-      desc:'어제 $0 → 오늘 첫 매출 | 채널에서 멘션'},
+      items:pd?a.filter(function(c){var pg=hist[pd][c.h]?hist[pd][c.h].g:0;return pg===0&&c.g>0;}):[],
+      desc:'채널에서 멘션'},
     {icon:'&#x1F4C8;',title:'GMV +$50 이상',color:'var(--yw)',bg:'var(--ywb)',
-      items:a.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>=50}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g')})},
+      items:a.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>=50;}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g');})},
     {icon:'&#x1F3AC;',title:'영상 +2개 이상',color:'var(--pk)',bg:'var(--pkb)',
-      items:a.filter(function(c){var d=getDelta(c.h,'v');return d!==null&&d>=2}).sort(function(a,b){return getDelta(b.h,'v')-getDelta(a.h,'v')})}
+      items:a.filter(function(c){var d=getDelta(c.h,'v');return d!==null&&d>=2;}).sort(function(a,b){return getDelta(b.h,'v')-getDelta(a.h,'v');})}
   ];
 
-  var segs_new=[
+  var newSegs = [
     {icon:'&#x1F389;',title:'첫 영상!',color:'var(--cy)',bg:'var(--cyb)',
-      items:pd?newC.filter(function(c){var pv=hist[pd][c.h]?hist[pd][c.h].v:0;return pv===0&&c.v>0}):[],
+      items:pd?newC.filter(function(c){var pv=hist[pd][c.h]?hist[pd][c.h].v:0;return pv===0&&c.v>0;}):[],
       desc:'new-creator 채널에서 멘션'},
     {icon:'&#x1F3AC;',title:'영상O / 매출X',color:'var(--pp)',bg:'var(--ppb)',
-      items:newC.filter(function(c){return c.v>0&&c.g===0}).sort(function(a,b){return b.v-a.v}),desc:'넛징 필요'},
-    {icon:'&#x2B50;',title:'Active 임박 ($1+)',color:'var(--gn)',bg:'var(--gnb)',
-      items:newC.filter(function(c){return c.g>0}).sort(function(a,b){return b.g-a.g})},
+      items:newC.filter(function(c){return c.v>0&&c.g===0;}).sort(function(a,b){return b.v-a.v;}),desc:'넛징 필요'},
+    {icon:'&#x2B50;',title:'Active 임박',color:'var(--gn)',bg:'var(--gnb)',
+      items:newC.filter(function(c){return c.g>0;}).sort(function(a,b){return b.g-a.g;})},
     {icon:'&#x1F4A4;',title:'영상도 매출도 없음',color:'var(--dim)',bg:'rgba(139,141,148,.06)',
-      items:newC.filter(function(c){return c.v===0})}
+      items:newC.filter(function(c){return c.v===0;})}
   ];
 
-  var segs_active=[
+  var actSegs = [
     {icon:'&#x1F4C8;',title:'GMV 급등',color:'var(--yw)',bg:'var(--ywb)',
-      items:actC.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>0}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g')}),
+      items:actC.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>0;}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g');}),
       desc:'채널에서 칭찬/넛징'},
-    {icon:'&#x1F38A;',title:'영상 3개 이상',color:'var(--pk)',bg:'var(--pkb)',
-      items:actC.filter(function(c){return c.v>=3&&c.dj}).sort(function(a,b){return b.v-a.v}),
-      desc:'active-creator 채널에서 칭찬'},
     {icon:'&#x2B50;',title:'VIP 임박 ($300+)',color:'var(--yw)',bg:'var(--ywb)',
-      items:actC.filter(function(c){return c.g>=300}).sort(function(a,b){return b.g-a.g}),
-      desc:'$500 도달시 VIP 채널로 이동'}
+      items:actC.filter(function(c){return c.g>=300;}).sort(function(a,b){return b.g-a.g;}),
+      desc:'$500 도달시 VIP 이동'},
+    {icon:'&#x1F4FA;',title:'라이브 GMV 발생',color:'var(--pp)',bg:'var(--ppb)',
+      items:actC.filter(function(c){return c.live_gmv>0;}).sort(function(a,b){return b.live_gmv-a.live_gmv;}),
+      desc:'라이브 담당자에게 전달'}
   ];
 
-  var segs_vip=[
+  var vipSegs = [
     {icon:'&#x1F4C8;',title:'GMV 급등',color:'var(--yw)',bg:'var(--ywb)',
-      items:vipC.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>0}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g')})},
+      items:vipC.filter(function(c){var d=getDelta(c.h,'g');return d!==null&&d>0;}).sort(function(a,b){return getDelta(b.h,'g')-getDelta(a.h,'g');})},
     {icon:'&#x1F451;',title:'VVIP 임박 ($700+)',color:'var(--pk)',bg:'var(--pkb)',
-      items:vipC.filter(function(c){return c.tier==='vip'&&c.g>=700}).sort(function(a,b){return b.g-a.g}),
+      items:vipC.filter(function(c){return c.tier==='vip'&&c.g>=700;}).sort(function(a,b){return b.g-a.g;}),
       desc:'$1,000 도달시 VVIP'},
-    {icon:'&#x1F3AC;',title:'영상 활동',color:'var(--gn)',bg:'var(--gnb)',
-      items:vipC.filter(function(c){return c.v>0}).sort(function(a,b){return b.v-a.v})}
+    {icon:'&#x1F4FA;',title:'라이브 GMV',color:'var(--pp)',bg:'var(--ppb)',
+      items:vipC.filter(function(c){return c.live_gmv>0;}).sort(function(a,b){return b.live_gmv-a.live_gmv;})}
   ];
 
-  var tot=segs_common.concat(segs_celebrate).reduce(function(s,seg){return s+seg.items.length},0);
-  var bdg=$('sBdg');if(tot>0){bdg.textContent=tot;bdg.style.display='inline'}else{bdg.style.display='none'}
+  var tot = common.concat(celebrate).reduce(function(s, seg) { return s + seg.items.length; }, 0);
+  var bdg = $('sBdg'); if (tot > 0) { bdg.textContent = tot; bdg.style.display = 'inline'; } else { bdg.style.display = 'none'; }
 
-  $('segA').innerHTML=
-    section('&#x1F6A8; 지금 액션 필요','var(--rd)',segs_common)+
-    section('&#x1F389; 오늘 축하할 사람 (채널 멘션)','var(--gn)',segs_celebrate)+
-    section('&#x1F331; New Creator','var(--cy)',segs_new)+
-    section('&#x1F45F; Active Creator','var(--gn)',segs_active)+
-    section('&#x2B50; VIP Creator','var(--yw)',segs_vip);
+  $('segA').innerHTML =
+    section('&#x1F6A8; 지금 액션 필요', 'var(--rd)', common) +
+    section('&#x1F389; 오늘 축하할 사람 (채널 멘션)', 'var(--gn)', celebrate) +
+    section('&#x1F331; New Creator', 'var(--cy)', newSegs) +
+    section('&#x1F45F; Active Creator', 'var(--gn)', actSegs) +
+    section('&#x2B50; VIP Creator', 'var(--yw)', vipSegs);
 }
 
-function renderHist(){
-  var dates=Object.keys(hist).sort();
-  if(!dates.length){$('histA').innerHTML='<div class="sb"><p style="color:var(--dim)">CSV 업로드 후 생성됩니다</p></div>';return}
-  var allH=new Set();
-  dates.forEach(function(d){Object.keys(hist[d]).forEach(function(h){if(hist[d][h].g>0||hist[d][h].v>0)allH.add(h)})});
-  var handles=Array.from(allH).filter(function(h){return C[h]}).sort(function(a,b){return(C[b]?C[b].g:0)-(C[a]?C[a].g:0)});
+function renderHist() {
+  var dates = Object.keys(hist).sort();
+  if (!dates.length) { $('histA').innerHTML = '<div class="sb"><p style="color:var(--dim)">CSV 업로드 후 생성됩니다</p></div>'; return; }
+  var allH = new Set();
+  dates.forEach(function(d) { Object.keys(hist[d]).forEach(function(h) { if (hist[d][h].g > 0 || hist[d][h].v > 0) allH.add(h); }); });
+  var handles = Array.from(allH).filter(function(h) { return C[h]; }).sort(function(a, b) { return (C[b] ? C[b].g : 0) - (C[a] ? C[a].g : 0); });
 
-  var html='<div class="sb" style="padding:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-  html+='<h4 style="color:var(--tx)">&#x1F4C5; 날짜별 GMV + 영상수</h4>';
-  html+='<span style="font-size:9px;color:var(--dim)">전날 대비 변화량 | 녹색↑상승 빨간↓하락</span></div>';
-  html+='<div class="hw"><table class="ht"><thead><tr><th>Handle</th>';
-  dates.forEach(function(d){html+='<th colspan="2" style="text-align:center;border-left:1px solid var(--bd)">'+d.slice(5)+'</th>'});
-  html+='</tr><tr><th></th>';
-  dates.forEach(function(){html+='<th style="color:var(--gn)">GMV</th><th style="color:var(--cy);border-right:1px solid var(--bd)">V</th>'});
-  html+='</tr></thead><tbody>';
+  var html = '<div class="sb" style="padding:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  html += '<h4 style="color:var(--tx)">&#x1F4C5; 날짜별 GMV + 영상수</h4>';
+  html += '<span style="font-size:9px;color:var(--dim)">전날 대비 변화량 | &#x1F7E2;상승 &#x1F534;하락</span></div>';
+  html += '<div class="hw"><table class="ht"><thead><tr><th>Handle</th>';
+  dates.forEach(function(d) { html += '<th colspan="2" style="text-align:center;border-left:1px solid var(--bd)">' + d.slice(5) + '</th>'; });
+  html += '</tr><tr><th></th>';
+  dates.forEach(function() { html += '<th style="color:var(--gn)">GMV</th><th style="color:var(--cy);border-right:1px solid var(--bd)">V</th>'; });
+  html += '</tr></thead><tbody>';
 
-  handles.forEach(function(handle){
-    var c=C[handle];var tc=c?c.tier:'none';
-    var tcol=tc==='vvip'?'var(--pk)':tc==='vip'?'var(--yw)':tc==='active'?'var(--gn)':'var(--cy)';
-    var row='<tr><td style="border-left:3px solid '+tcol+'">';
-    row+='<a href="https://www.tiktok.com/@'+handle+'" target="_blank" style="color:var(--ac);text-decoration:none;font-weight:600">@'+handle+'</a>';
-    if(c&&c.uname)row+='<br><span style="font-size:8px;color:var(--pp)">'+c.uname+'</span>';
-    if(c&&c.ag)row+='<span class="ag">AG</span>';
-    row+='</td>';
-    dates.forEach(function(d,i){
-      var cur=hist[d]&&hist[d][handle]?hist[d][handle]:{g:0,v:0};
-      var prev=i>0&&hist[dates[i-1]]&&hist[dates[i-1]][handle]?hist[dates[i-1]][handle]:{g:0,v:0};
-      var dg=cur.g-prev.g,dv=cur.v-prev.v;
-      row+='<td style="border-left:1px solid var(--bd);color:'+(i>0&&dg>0?'var(--gn)':i>0&&dg<0?'var(--rd)':'inherit')+'">'+fmt(cur.g);
-      if(i>0&&dg!==0)row+='<br><span style="font-size:8px">'+(dg>0?'+':'')+fmt(dg)+'</span>';
-      row+='</td>';
-      row+='<td style="border-right:1px solid var(--bd);min-width:40px">'+cur.v;
-      if(i>0&&dv!==0)row+='<br><span style="font-size:8px;color:'+(dv>0?'var(--gn)':'var(--rd)')+'"> '+(dv>0?'+':'')+dv+'</span>';
-      row+='</td>';
+  handles.forEach(function(handle) {
+    var c = C[handle]; var tc = c ? c.tier : 'none';
+    var tcol = tc === 'vvip' ? 'var(--pk)' : tc === 'vip' ? 'var(--yw)' : tc === 'active' ? 'var(--gn)' : 'var(--cy)';
+    var tierBadge = '<span class="tb t-' + tc + '" style="margin-left:4px;font-size:7px">' + tLabel(tc) + '</span>';
+    var row = '<tr><td style="border-left:3px solid ' + tcol + '">';
+    row += '<a href="https://www.tiktok.com/@' + handle + '" target="_blank" style="color:var(--ac);text-decoration:none;font-weight:600">@' + handle + '</a>';
+    row += tierBadge;
+    if (c && c.uname) row += '<br><span style="font-size:8px;color:var(--pp)">' + c.uname + '</span>';
+    if (c && c.ag) row += '<span class="ag">AG</span>';
+    row += '</td>';
+    dates.forEach(function(d, i) {
+      var cur = hist[d] && hist[d][handle] ? hist[d][handle] : {g: 0, v: 0};
+      var prev = i > 0 && hist[dates[i-1]] && hist[dates[i-1]][handle] ? hist[dates[i-1]][handle] : {g: 0, v: 0};
+      var dg = cur.g - prev.g, dv = cur.v - prev.v;
+      row += '<td style="border-left:1px solid var(--bd);color:' + (i > 0 && dg > 0 ? 'var(--gn)' : i > 0 && dg < 0 ? 'var(--rd)' : 'inherit') + '">' + fmt(cur.g);
+      if (i > 0 && dg !== 0) row += '<br><span style="font-size:8px">' + (dg > 0 ? '+' : '') + fmt(dg) + '</span>';
+      row += '</td>';
+      row += '<td style="border-right:1px solid var(--bd);min-width:40px">' + cur.v;
+      if (i > 0 && dv !== 0) row += '<br><span style="font-size:8px;color:' + (dv > 0 ? 'var(--gn)' : 'var(--rd)') + '"> ' + (dv > 0 ? '+' : '') + dv + '</span>';
+      row += '</td>';
     });
-    row+='</tr>';
-    html+=row;
+    row += '</tr>';
+    html += row;
   });
-  html+='</tbody></table></div></div>';
-  $('histA').innerHTML=html;
+  html += '</tbody></table></div></div>';
+  $('histA').innerHTML = html;
 }
 
-function renderDisc(){
-  var a=Object.values(C);
-  var djC=a.filter(function(c){return c.dj}).length;
-  var chN=a.filter(function(c){return c.cn}).length;
-  var chA=a.filter(function(c){return c.ca}).length;
-  var chV=a.filter(function(c){return c.cv}).length;
-
-  var html='<div class="dstat">';
-  html+='<div class="dcard"><div class="v" style="color:var(--ac)">'+djC+'</div><div class="l">Discord</div></div>';
-  html+='<div class="dcard"><div class="v" style="color:var(--cy)">'+chN+'</div><div class="l">&#x1F331;채널</div></div>';
-  html+='<div class="dcard"><div class="v" style="color:var(--gn)">'+chA+'</div><div class="l">&#x1F45F;채널</div></div>';
-  html+='<div class="dcard"><div class="v" style="color:var(--yw)">'+chV+'</div><div class="l">&#x2B50;채널</div></div>';
-  html+='</div>';
-  html+='<div class="disc-grid">';
-  html+='<div>';
-  html+='<div class="dbox"><h4>&#x1F4CB; 일괄 Discord 체크</h4>';
-  html+='<p class="hint">TikTok 핸들 또는 Discord username (한 줄에 하나)</p>';
-  html+='<textarea class="ta" id="bulkH"></textarea>';
-  html+='<div style="display:flex;gap:4px;margin-top:4px"><button class="btn bp" onclick="bm(\'dj\',true,\'bulkH\',\'bR\')">&#x2713; DC</button><button class="btn bs" onclick="bm(\'dj\',false,\'bulkH\',\'bR\')">&#x2715;</button></div>';
-  html+='<div class="dr" id="bR"></div></div>';
-  html+='<div class="dbox" style="margin-top:10px"><h4>&#x1F4DE; 연락/응답</h4>';
-  html+='<textarea class="ta" id="bulkC" style="height:60px"></textarea>';
-  html+='<div style="display:flex;gap:4px;margin-top:4px"><button class="btn bp" onclick="bm(\'ct\',true,\'bulkC\',\'cR\')">연락</button><button class="btn bp" onclick="bm(\'rp\',true,\'bulkC\',\'cR\')">응답</button></div>';
-  html+='<div class="dr" id="cR"></div></div>';
-  html+='</div>';
-  html+='<div>';
-  html+='<div class="dbox"><h4>&#x1F517; Discord ↔ TikTok 매핑</h4>';
-  html+='<div style="display:flex;gap:4px;margin-bottom:4px">';
-  html+='<input class="si" id="mDN" placeholder="Discord명" style="width:44%">';
-  html+='<input class="si" id="mTT" placeholder="TikTok핸들" style="width:44%">';
-  html+='<button class="btn bp" onclick="addM()" style="padding:5px 8px">+</button></div>';
-  html+='<div id="mL"></div></div>';
-  html+='<div class="dbox" style="margin-top:10px"><h4>&#x1F4E5; 멤버 목록 매칭</h4>';
-  html+='<p class="hint">Discord 멤버 붙여넣기 → 자동 매칭</p>';
-  html+='<textarea class="ta" id="dMem" style="height:70px"></textarea>';
-  html+='<button class="btn bp" style="margin-top:4px" onclick="mDisc()">&#x1F50D;</button>';
-  html+='<div class="dr" id="dMR"></div></div>';
-  html+='</div>';
-  html+='</div>';
-  $('discA').innerHTML=html;
-  rML();
+function renderDisc() {
+  var a = Object.values(C);
+  var djC = a.filter(function(c) { return c.dj; }).length;
+  var chN = a.filter(function(c) { return c.cn; }).length;
+  var chA = a.filter(function(c) { return c.ca; }).length;
+  var chV = a.filter(function(c) { return c.cv; }).length;
+  var html = '<div class="dstat">';
+  html += '<div class="dcard"><div class="v" style="color:var(--ac)">' + djC + '</div><div class="l">Discord</div></div>';
+  html += '<div class="dcard"><div class="v" style="color:var(--cy)">' + chN + '</div><div class="l">&#x1F331;채널</div></div>';
+  html += '<div class="dcard"><div class="v" style="color:var(--gn)">' + chA + '</div><div class="l">&#x1F45F;채널</div></div>';
+  html += '<div class="dcard"><div class="v" style="color:var(--yw)">' + chV + '</div><div class="l">&#x2B50;채널</div></div>';
+  html += '</div>';
+  html += '<div class="disc-grid"><div>';
+  html += '<div class="dbox"><h4>&#x1F4CB; 일괄 Discord 체크</h4><p class="hint">TikTok 핸들 또는 Discord username (한 줄)</p>';
+  html += '<textarea class="ta" id="bulkH"></textarea>';
+  html += '<div style="display:flex;gap:4px;margin-top:4px"><button class="btn bp" onclick="bm(\'dj\',true,\'bulkH\',\'bR\')">&#x2713; DC</button><button class="btn bs" onclick="bm(\'dj\',false,\'bulkH\',\'bR\')">&#x2715;</button></div>';
+  html += '<div class="dr" id="bR"></div></div>';
+  html += '<div class="dbox" style="margin-top:10px"><h4>&#x1F4DE; 연락/응답</h4>';
+  html += '<textarea class="ta" id="bulkC" style="height:60px"></textarea>';
+  html += '<div style="display:flex;gap:4px;margin-top:4px"><button class="btn bp" onclick="bm(\'ct\',true,\'bulkC\',\'cR\')">연락</button><button class="btn bp" onclick="bm(\'rp\',true,\'bulkC\',\'cR\')">응답</button></div>';
+  html += '<div class="dr" id="cR"></div></div></div>';
+  html += '<div><div class="dbox"><h4>&#x1F517; Discord &#x2194; TikTok 매핑</h4>';
+  html += '<div style="display:flex;gap:4px;margin-bottom:4px"><input class="si" id="mDN" placeholder="Discord명" style="width:44%"><input class="si" id="mTT" placeholder="TikTok핸들" style="width:44%"><button class="btn bp" onclick="addM()" style="padding:5px 8px">+</button></div>';
+  html += '<div id="mL"></div></div>';
+  html += '<div class="dbox" style="margin-top:10px"><h4>&#x1F4E5; 멤버 목록 매칭</h4><p class="hint">Discord 멤버 붙여넣기 → 자동 매칭</p>';
+  html += '<textarea class="ta" id="dMem" style="height:70px"></textarea>';
+  html += '<button class="btn bp" style="margin-top:4px" onclick="mDisc()">&#x1F50D;</button>';
+  html += '<div class="dr" id="dMR"></div></div></div></div>';
+  $('discA').innerHTML = html; rML();
 }
 
-function bm(field,val,taId,resId){
-  var text=$(taId).value.trim();if(!text)return;
-  var hs=text.split('\n').map(function(h){return h.trim().toLowerCase().replace(/^@/,'')}).filter(Boolean);
-  var ok=0,bad=[];
-  hs.forEach(function(h){
-    var target=C[h]?h:(discMap[h]||null);
-    if(target&&C[target]){C[target][field]=val;ok++}else{bad.push(h)}
+function bm(field, val, taId, resId) {
+  var text = $(taId).value.trim(); if (!text) return;
+  var hs = text.split('\n').map(function(h) { return h.trim().toLowerCase().replace(/^@/, ''); }).filter(Boolean);
+  var ok = 0, bad = [];
+  hs.forEach(function(h) {
+    var target = C[h] ? h : (discMap[h] || null);
+    if (target && C[target]) { C[target][field] = val; ok++; } else { bad.push(h); }
   });
-  $(resId).innerHTML='<p class="ok">&#x2705;'+ok+'</p>'+(bad.length?'<p class="no">&#x274C;'+bad.join(', ')+'</p>':'');
+  $(resId).innerHTML = '<p class="ok">&#x2705;' + ok + '</p>' + (bad.length ? '<p class="no">&#x274C;' + bad.join(', ') + '</p>' : '');
   render();
 }
 
-function addM(){
-  var dn=$('mDN').value.trim(),tt=$('mTT').value.trim().toLowerCase().replace(/^@/,'');
-  if(!dn||!tt)return;if(!C[tt]){toast('@'+tt+' 없음');return}
-  discMap[dn.toLowerCase()]=tt;$('mDN').value='';$('mTT').value='';rML();toast(dn+' → @'+tt);
+function addM() {
+  var dn = $('mDN').value.trim(), tt = $('mTT').value.trim().toLowerCase().replace(/^@/, '');
+  if (!dn || !tt) return; if (!C[tt]) { toast('@' + tt + ' 없음'); return; }
+  discMap[dn.toLowerCase()] = tt; $('mDN').value = ''; $('mTT').value = ''; rML(); toast(dn + ' → @' + tt);
+}
+function delM(k) { delete discMap[k]; rML(); }
+function rML() {
+  var el = $('mL'); if (!el) return;
+  var e = Object.entries(discMap).slice(0, 15);
+  if (!e.length) { el.innerHTML = '<p style="font-size:10px;color:var(--dim)">-</p>'; return; }
+  var h = '<table class="mt"><thead><tr><th>Discord</th><th>TikTok</th><th></th></tr></thead><tbody>';
+  e.forEach(function(p) { h += '<tr><td>' + p[0] + '</td><td>@' + p[1] + '</td><td><button class="btn" style="background:var(--rd);color:#fff;padding:1px 4px;font-size:8px" onclick="delM(\'' + p[0].replace(/'/g, "\\'") + '\')">x</button></td></tr>'; });
+  h += '</tbody></table>'; el.innerHTML = h;
 }
 
-function delM(k){delete discMap[k];rML()}
-
-function rML(){
-  var el=$('mL');if(!el)return;
-  var e=Object.entries(discMap).slice(0,15);
-  if(!e.length){el.innerHTML='<p style="font-size:10px;color:var(--dim)">-</p>';return}
-  var h='<table class="mt"><thead><tr><th>Discord</th><th>TikTok</th><th></th></tr></thead><tbody>';
-  e.forEach(function(p){
-    h+='<tr><td>'+p[0]+'</td><td>@'+p[1]+'</td>';
-    h+='<td><button class="btn" style="background:var(--rd);color:#fff;padding:1px 4px;font-size:8px" onclick="delM(\''+p[0].replace(/\'/g,"\\'")+'\')" >x</button></td></tr>';
-  });
-  h+='</tbody></table>';el.innerHTML=h;
-}
-
-function lev(a,b){
-  var m=a.length,n=b.length,d=[];
-  for(var i=0;i<=m;i++){d[i]=[];for(var j=0;j<=n;j++)d[i][j]=0;d[i][0]=i}
-  for(var j=0;j<=n;j++)d[0][j]=j;
-  for(var i=1;i<=m;i++)for(var j=1;j<=n;j++)
-    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));
+function lev(a, b) {
+  var m = a.length, n = b.length, d = [];
+  for (var i = 0; i <= m; i++) { d[i] = []; for (var j = 0; j <= n; j++) d[i][j] = 0; d[i][0] = i; }
+  for (var j = 0; j <= n; j++) d[0][j] = j;
+  for (var i = 1; i <= m; i++) for (var j = 1; j <= n; j++)
+    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));
   return d[m][n];
 }
 
-function mDisc(){
-  var text=$('dMem').value.trim();if(!text)return;
-  var mems=text.split('\n').map(function(m){return m.trim()}).filter(Boolean);
-  var ks=Object.keys(C);var exact=[],fuzzy=[],none=[];
-  mems.forEach(function(m){
-    var ml=m.toLowerCase().replace(/^@/,'');
-    if(C[ml]){C[ml].dj=true;exact.push(ml);return}
-    if(discMap[ml]&&C[discMap[ml]]){C[discMap[ml]].dj=true;exact.push(ml+'→'+discMap[ml]);return}
-    var cands=ks.filter(function(h){return(ml.length>=4&&h.indexOf(ml)>=0)||(lev(ml,h)<=2&&ml.length>=4)});
-    if(cands.length)fuzzy.push({d:m,c:cands});else none.push(m);
+function mDisc() {
+  var text = $('dMem').value.trim(); if (!text) return;
+  var mems = text.split('\n').map(function(m) { return m.trim(); }).filter(Boolean);
+  var ks = Object.keys(C); var exact = [], fuzzy = [], none = [];
+  mems.forEach(function(m) {
+    var ml = m.toLowerCase().replace(/^@/, '');
+    if (C[ml]) { C[ml].dj = true; exact.push(ml); return; }
+    if (discMap[ml] && C[discMap[ml]]) { C[discMap[ml]].dj = true; exact.push(ml + '→' + discMap[ml]); return; }
+    var cands = ks.filter(function(h) { return (ml.length >= 4 && h.indexOf(ml) >= 0) || (lev(ml, h) <= 2 && ml.length >= 4); });
+    if (cands.length) fuzzy.push({d: m, c: cands}); else none.push(m);
   });
-  var h='<p style="font-weight:600;font-size:10px">'+(exact.length)+'/'+mems.length+'</p>';
-  if(fuzzy.length){
-    h+='<details open><summary style="cursor:pointer;color:var(--yw);font-size:10px">&#x1F7E1;후보('+fuzzy.length+')</summary>';
-    fuzzy.forEach(function(e){
-      h+='<div class="fy">'+e.d+' ';
-      e.c.forEach(function(c){h+='<button class="btn bp" style="padding:1px 4px;font-size:8px" onclick="cfm(\''+e.d.replace(/\'/g,"\\'")+'\',\''+c+'\')">@'+c+'</button> '});
-      h+='</div>';
+  var h = '<p style="font-weight:600;font-size:10px">' + exact.length + '/' + mems.length + '</p>';
+  if (fuzzy.length) {
+    h += '<details open><summary style="cursor:pointer;color:var(--yw);font-size:10px">&#x1F7E1;후보(' + fuzzy.length + ')</summary>';
+    fuzzy.forEach(function(e) {
+      h += '<div class="fy">' + e.d + ' ';
+      e.c.forEach(function(c) { h += '<button class="btn bp" style="padding:1px 4px;font-size:8px" onclick="cfm(\'' + e.d.replace(/'/g, "\\'") + '\',\'' + c + '\')">@' + c + '</button> '; });
+      h += '</div>';
     });
-    h+='</details>';
+    h += '</details>';
   }
-  $('dMR').innerHTML=h;render();
+  $('dMR').innerHTML = h; render();
 }
+function cfm(dn, tt) { discMap[dn.toLowerCase()] = tt; if (C[tt]) C[tt].dj = true; rML(); mDisc(); }
 
-function cfm(dn,tt){discMap[dn.toLowerCase()]=tt;if(C[tt])C[tt].dj=true;rML();mDisc()}
-
-function init(){
-  RAW_P.forEach(function(r){
-    var h=r[0],g=r[1],v=r[2],w=r[3],lp=r[4];
-    var s=RAW_S[h]||[0,0,0,0];
-    var sv=SAVED_TRACKING[h]||{};
-    var dci=DC_INFO[h]||{};var ct=CONTACTS[h]||{};
-    var t=sv.tier||tier(g,v);
-    C[h]={h:h,g:g,v:v,w:w,lp:lp,vc:s[0],lc:s[1],vg:s[2],lg:s[3],
-      dj:sv.dj!==undefined?sv.dj:dcSet.has(h),
-      ct:sv.ct||false,rp:sv.rp||false,nt:sv.nt||'',ag:agSet.has(h),
-      cn:sv.cn||false,ca:sv.ca||false,cv:sv.cv||false,
-      uname:sv.uname||dci.u||'',email:sv.email||ct.em||'',
-      phone:sv.phone||ct.ph||'',prevTier:sv.prevTier||'',tier:t};
+function init() {
+  RAW_P.forEach(function(r) {
+    var h = r[0], g = r[1], v = r[2], w = r[3], lp = r[4];
+    var sv = SAVED_TRACKING[h] || {};
+    var dci = DC_INFO[h] || {}; var ct = CONTACTS[h] || {};
+    var sb = SUBS_DATA[h] || {vg: 0, vc: 0, lg: 0, lc: 0};
+    var t = sv.tier || tier(g, v);
+    C[h] = {h: h, g: g, v: v, w: w,
+      dj: sv.dj !== undefined ? sv.dj : dcSet.has(h),
+      ct: sv.ct || false, rp: sv.rp || false, nt: sv.nt || '', ag: agSet.has(h),
+      cn: sv.cn || false, ca: sv.ca || false, cv: sv.cv || false,
+      uname: sv.uname || dci.u || '', email: sv.email || ct.em || '',
+      phone: sv.phone || ct.ph || '', prevTier: sv.prevTier || '', tier: t,
+      video_gmv: sb.vg || 0, video_count: sb.vc || 0, live_gmv: sb.lg || 0, live_count: sb.lc || 0};
   });
   // Apply latest hist GMV
-  var dates=Object.keys(hist).sort();var latest=dates[dates.length-1];
-  if(latest&&hist[latest])Object.keys(hist[latest]).forEach(function(h){
-    if(C[h]&&hist[latest][h]){C[h].g=hist[latest][h].g;C[h].v=hist[latest][h].v;C[h].tier=tier(C[h].g,C[h].v)}
-  });
-  Object.values(C).forEach(function(c){c.ag=agSet.has(c.h)});
-  // Auto-load from server
-  if(API!==null){
-    setSt('연결중...','var(--yw)');
-    fetch('/api/state').then(function(r){return r.json()}).then(function(st){
-      applyState(st);render();setSt('서버 연결됨');
-    }).catch(function(){render();setSt('로컬 모드','var(--dim)')});
-  } else {render()}
+  var dates = Object.keys(hist).sort(); var latest = dates[dates.length - 1];
+  if (latest && hist[latest]) {
+    Object.keys(hist[latest]).forEach(function(h) {
+      if (C[h] && hist[latest][h]) { C[h].g = hist[latest][h].g; C[h].v = hist[latest][h].v; C[h].tier = tier(C[h].g, C[h].v); }
+    });
+  }
+  Object.values(C).forEach(function(c) { c.ag = agSet.has(c.h); });
+  if (API !== null) {
+    setSt('연결중...', 'var(--yw)');
+    fetch('/api/state')
+      .then(function(r) { return r.json(); })
+      .then(function(st) { applyState(st); render(); setSt('서버 연결됨'); })
+      .catch(function() { render(); setSt('로컬 모드', 'var(--dim)'); });
+  } else { render(); }
 }
-
 init();
 
 </script>
