@@ -404,15 +404,14 @@ function pf(file, type) {
           var w = parseInt((row['Total Views']||'0').replace(/,/g,''))||0;
           var o = saved[h]||{};
           var dci = DC_INFO[h]||{}; var ct = CONTACTS[h]||{};
-          var sb = SUBS_DATA[h]||{vg:0,vc:0,lg:0,lc:0};
           C[h] = {h:h,g:g,v:v,w:w,
             dj:o.dj!==undefined?o.dj:dcSet.has(h),
             ct:o.ct||false,rp:o.rp||false,nt:o.nt||'',ag:agSet.has(h),
             cn:o.cn||false,ca:o.ca||false,cv:o.cv||false,
             uname:o.uname||dci.u||'',email:o.email||ct.em||'',
             phone:o.phone||ct.ph||'',prevTier:o.tier||'',tier:o.tier||tier(g,v),
-            video_gmv:o.video_gmv||sb.vg||0,video_count:sb.vc||0,
-            live_gmv:o.live_gmv||sb.lg||0,live_count:sb.lc||0};
+            video_gmv:0,video_count:0,
+            live_gmv:0,live_count:0};
         });
         var td = today();
         var snap = {}; Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v};});
@@ -927,7 +926,6 @@ function init() {
     var h = r[0], g = r[1], v = r[2], w = r[3], lp = r[4];
     var sv = SAVED_TRACKING[h] || {};
     var dci = DC_INFO[h] || {}; var ct = CONTACTS[h] || {};
-    var sb = SUBS_DATA[h] || {vg: 0, vc: 0, lg: 0, lc: 0};
     var t = sv.tier || tier(g, v);
     C[h] = {h: h, g: g, v: v, w: w,
       dj: sv.dj !== undefined ? sv.dj : dcSet.has(h),
@@ -935,7 +933,7 @@ function init() {
       cn: sv.cn || false, ca: sv.ca || false, cv: sv.cv || false,
       uname: sv.uname || dci.u || '', email: sv.email || ct.em || '',
       phone: sv.phone || ct.ph || '', prevTier: sv.prevTier || '', tier: t,
-      video_gmv: sb.vg || 0, video_count: sb.vc || 0, live_gmv: sb.lg || 0, live_count: sb.lc || 0};
+      video_gmv: 0, video_count: 0, live_gmv: 0, live_count: 0};
   });
   // Apply latest hist GMV
   var dates = Object.keys(hist).sort(); var latest = dates[dates.length - 1];
