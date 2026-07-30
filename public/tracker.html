@@ -581,9 +581,9 @@ function renderTrk() {
   var tbl = '<div class="tw"><table><thead><tr>' +
     thDD('Handle', 'h', [['전체','__all__']]) +
     thDD('Tier', 'tier', [['전체','__all__'],['🌱 New','new'],['👟 Active','active'],['⭐ VIP+','vip']]) +
-    th('GMV', 'g') + '<th>&#x0394;GMV</th>' +
+    th('Total GMV', 'g') + '<th>&#x0394;GMV</th>' +
     th('V', 'v') + '<th>&#x0394;V</th>' +
-    '<th>&#x1F3AC;GMV</th><th>&#x1F4FA;GMV</th>' +
+    '<th>Video GMV</th><th>Live GMV</th>' +
     (CV.dc ? thCkDD('DC','dc') : '') +
     (CV.cn ? thCkDD('&#x1F331;','cn') : '') +
     (CV.ca ? thCkDD('&#x1F45F;','ca') : '') +
@@ -613,7 +613,7 @@ function renderTrk() {
     row += '<td>' + c.v + '</td>';
     row += '<td class="' + (dv > 0 ? 'du' : 'df') + '">' + (dv === null ? '-' : dv > 0 ? '+' + dv : '-') + '</td>';
     row += '<td class="' + (vg > 0 ? 'du' : 'df') + '">' + (vg > 0 ? fmt(vg) : '-') + '</td>';
-    row += '<td class="' + (lg > 0 ? 'du' : 'df') + '">' + (lg > 0 ? '<span class="lv">LIVE</span>' + fmt(lg) : '-') + '</td>';
+    row += '<td class="' + (lg > 0 ? 'du' : 'df') + '">' + (lg > 0 ? fmt(lg) : '-') + '</td>';
     if (CV.dc) row += '<td class="cc"><input type="checkbox"' + (c.dj ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'dj\',this.checked)"></td>';
     if (CV.cn) row += '<td class="cc">' + (c.ag ? '' : '<input type="checkbox"' + (c.cn ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'cn\',this.checked)">') + '</td>';
     if (CV.ca) row += '<td class="cc">' + (c.ag ? '' : '<input type="checkbox"' + (c.ca ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'ca\',this.checked)">') + '</td>';
