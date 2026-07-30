@@ -188,8 +188,18 @@ var sCol = 'g', sDir = 'desc', sq = '';
 var MF = {tier: null, dc: null, surge: false, nv: false, vid: false, live: false, cn: null, ca: null, cv: null, ct: null, rp: null};
 var CV = {dc: true, cn: true, ca: true, cv: true, ct: true, rp: true, nt: true};
 var API = (window.location.protocol === 'file:') ? null : '';
-var _saveTimer = null, _saving = false;
+var _saving = false;
 
+function autoSave() {
+  if (API === null) { setSt('로컬', 'var(--dim)'); return; }
+  if (_saving) { setTimeout(autoSave, 500); return; }
+  _saving = true;
+  setSt('저장중...', 'var(--yw)');
+  fetch('/api/state', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(buildState())})
+    .then(function(r) { _saving = false; return r.json(); })
+    .then(function(d) { setSt(new Date().toLocaleTimeString('ko-KR', {hour: '2-digit', minute: '2-digit'}) + ' 저장됨'); })
+    .catch(function() { _saving = false; setSt('실패', 'var(--rd)'); setTimeout(autoSave, 2000); });
+}
 function setSt(m, col) { var e = $('sst'); if (e) { e.textContent = m; e.style.color = col || 'var(--gn)'; } }
 
 function buildState() {
@@ -199,20 +209,6 @@ function buildState() {
       uname: c.uname || '', email: c.email || '', phone: c.phone || '', prevTier: c.prevTier || '', tier: c.tier};
   });
   return s;
-}
-
-function autoSave() {
-  if (API === null) { setSt('로컬', 'var(--dim)'); return; }
-  setSt('...', 'var(--yw)');
-  if (_saveTimer) clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(function() {
-    if (_saving) return;
-    _saving = true;
-    fetch('/api/state', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(buildState())})
-      .then(function(r) { _saving = false; return r.json(); })
-      .then(function(d) { setSt(new Date().toLocaleTimeString('ko-KR', {hour: '2-digit', minute: '2-digit'}) + ' 저장됨'); })
-      .catch(function() { _saving = false; setSt('실패', 'var(--rd)'); });
-  }, 1500);
 }
 
 function applyState(st) {
