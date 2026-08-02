@@ -421,7 +421,7 @@ function pf(file, type) {
             uname:o.uname||dci.u||'',email:o.email||ct.em||'',
             phone:o.phone||ct.ph||'',prevTier:o.tier||'',tier:o.tier||tier(g,v),
             video_gmv:0,video_count:0,
-            live_gmv:0,live_count:0};
+            live_gmv:0,live_count:0,subs:[]};
         });
         var td = today();
         var snap = {}; Object.values(C).forEach(function(c){snap[c.h]={g:c.g,v:c.v};});
@@ -988,7 +988,7 @@ function init() {
       cn: sv.cn || false, ca: sv.ca || false, cv: sv.cv || false,
       uname: sv.uname || dci.u || '', email: sv.email || ct.em || '',
       phone: sv.phone || ct.ph || '', prevTier: sv.prevTier || '', tier: t,
-      video_gmv: 0, video_count: 0, live_gmv: 0, live_count: 0};
+      video_gmv: 0, video_count: 0, live_gmv: 0, live_count: 0, subs: []};
   });
   // Apply latest hist GMV
   var dates = Object.keys(hist).sort(); var latest = dates[dates.length - 1];
