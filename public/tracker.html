@@ -46,6 +46,16 @@ tr:hover td{background:rgba(88,101,242,.04)}
 .lv{display:inline-block;font-size:7px;padding:1px 3px;border-radius:2px;background:rgba(155,89,182,.15);color:var(--pp);font-weight:700;margin-left:2px}
 .ni{background:transparent;border:1px solid transparent;border-radius:3px;padding:2px 4px;color:var(--tx);font-size:10px;width:70px}
 .ni:focus{border-color:var(--ac);outline:none;background:var(--s2)}.ni.em{width:120px}
+.exp-btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:3px;background:var(--s3);color:var(--dim);font-size:11px;font-weight:700;border:1px solid var(--bd);margin-right:4px;user-select:none;vertical-align:middle;line-height:1}
+.exp-btn:hover{background:var(--ac);color:#fff;border-color:var(--ac)}
+.sub-row td{background:var(--s1)!important;padding:2px 6px;border-bottom:1px solid rgba(63,65,71,.5)}
+.sub-row .sub-link{color:var(--ac);text-decoration:none;font-size:10px;max-width:320px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.sub-row .sub-link:hover{text-decoration:underline}
+.sub-row .sub-type{display:inline-block;font-size:7px;padding:1px 4px;border-radius:2px;font-weight:700;margin-right:4px;vertical-align:middle}
+.sub-type.sv{background:rgba(0,180,216,.12);color:var(--cy)}
+.sub-type.sl{background:rgba(155,89,182,.15);color:var(--pp)}
+.sub-row .sub-gmv{font-weight:700;font-size:10px}
+.sub-row .sub-meta{color:var(--dim);font-size:9px}
 .up-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
 .up-card{background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:12px}
 .up-card h4{font-size:11px;color:var(--dim);margin-bottom:6px}
@@ -326,7 +336,7 @@ function renderKPI() {
   html += '<div class="kpi"><div class="v" style="color:var(--cy)">' + a.filter(function(c) { return c.tier === 'new'; }).length + '</div><div class="l">New</div></div>';
   html += '<div class="kpi"><div class="v" style="color:var(--gn)">' + a.filter(function(c) { return c.tier === 'active'; }).length + '</div><div class="l">Active</div></div>';
   html += '<div class="kpi"><div class="v" style="color:var(--yw)">' + a.filter(function(c) { return c.tier === 'vip' || c.tier === 'vvip'; }).length + '</div><div class="l">VIP+</div></div>';
-  html += '<div class="kpi"><div class="v" style="color:var(--pp)">' + a.filter(function(c) { return c.live_gmv > 0; }).length + '</div><div class="l">라이브O</div></div>';
+  html += '<div class="kpi"><div class="v" style="color:var(--pp)">' + a.filter(function(c) { return c.live_gmv > 0 || c.live_count > 0; }).length + '</div><div class="l">라이브O</div></div>';
   html += '<div class="kpi"><div class="v" style="color:var(--or)">' + a.filter(function(c) { return c.ag; }).length + '</div><div class="l">AG</div></div>';
   html += '</div>';
   $('kpiA').innerHTML = html;
@@ -429,13 +439,23 @@ function pf(file, type) {
         doRebuild(null,null,null);
       }
     } else if (type === 's') {
+      // Reset subs for all creators
+      Object.values(C).forEach(function(c) { c.subs = []; c.video_gmv = 0; c.video_count = 0; c.live_gmv = 0; c.live_count = 0; });
       data.forEach(function(row) {
         var h = (row['Creator']||'').trim().toLowerCase().replace(/^@/,'');
         var t = row['Type']||'';
         var g = parseFloat((row['GMV']||'0').replace(/[$,]/g,''))||0;
+        var link = row['Video Link']||'-';
+        var posted = row['Posted Time']||'';
+        var views = row['Views']||'-';
+        var lsStart = row['Livestream Start']||'';
+        var sparkCode = row['Spark Code']||'-';
+        var itemsSold = parseInt(row['Items Sold']||'0')||0;
         if (C[h]) {
           if (t==='Video'){C[h].video_gmv=(C[h].video_gmv||0)+g;C[h].video_count=(C[h].video_count||0)+1;}
           else if (t==='Livestream'){C[h].live_gmv=(C[h].live_gmv||0)+g;C[h].live_count=(C[h].live_count||0)+1;}
+          C[h].subs = C[h].subs || [];
+          C[h].subs.push({type:t, link:link, gmv:g, posted:posted, views:views, lsStart:lsStart, sparkCode:sparkCode, itemsSold:itemsSold});
         }
       });
       render(); toast('Submissions 로드됨');
@@ -486,7 +506,7 @@ function renderTrk() {
   var n_sur = a.filter(function(c) { return getDelta(c.h, 'g') > 0; }).length;
   var n_nv  = a.filter(function(c) { return getDelta(c.h, 'v') > 0; }).length;
   var n_vng = a.filter(function(c) { return c.v > 0 && c.g === 0; }).length;
-  var n_lv  = a.filter(function(c) { return c.live_gmv > 0; }).length;
+  var n_lv  = a.filter(function(c) { return c.live_gmv > 0 || c.live_count > 0; }).length;
 
   function mb(label, key, val, cnt) {
     var on = (MF[key] === val);
@@ -528,7 +548,7 @@ function renderTrk() {
   if (MF.surge) f = f.filter(function(c) { return getDelta(c.h, 'g') > 0; });
   if (MF.nv) f = f.filter(function(c) { return getDelta(c.h, 'v') > 0; });
   if (MF.vid) f = f.filter(function(c) { return c.v > 0 && c.g === 0; });
-  if (MF.live) f = f.filter(function(c) { return c.live_gmv > 0; });
+  if (MF.live) f = f.filter(function(c) { return c.live_gmv > 0 || c.live_count > 0; });
   // Column header checkbox filters
   if (MF.dc === 'y') f = f.filter(function(c) { return c.dj; });
   else if (MF.dc === 'n') f = f.filter(function(c) { return !c.dj; });
@@ -593,16 +613,21 @@ function renderTrk() {
     '<th>&#xC774;&#xBA54;&#xC77C;</th>' +
     '</tr></thead><tbody>';
 
-  f.forEach(function(c) {
+  f.forEach(function(c, idx) {
     var dg = getDelta(c.h, 'g'), dv = getDelta(c.h, 'v');
     var pd = prevDay(); var isN = pd && hist[pd] && !hist[pd][c.h];
     var isUp = c.prevTier && c.prevTier !== c.tier && c.prevTier !== 'none';
     var vg = c.video_gmv || 0, lg = c.live_gmv || 0;
+    var hasSubs = c.subs && c.subs.length > 0;
+    var rowId = 'sr_' + idx;
     var row = '<tr>';
-    row += '<td class="hc"><a href="https://www.tiktok.com/@' + c.h + '" target="_blank">@' + c.h + '</a>';
+    row += '<td class="hc">';
+    if (hasSubs) row += '<span class="exp-btn" onclick="toggleSubs(\'' + rowId + '\',this)">+</span>';
+    row += '<a href="https://www.tiktok.com/@' + c.h + '" target="_blank">@' + c.h + '</a>';
     if (c.uname) row += '<span class="un">' + c.uname + '</span>';
     if (c.ag) row += '<span class="ag">AG</span>';
     if (isN) row += '<span style="font-size:7px;padding:1px 3px;border-radius:2px;background:var(--cyb);color:var(--cy);margin-left:2px">NEW</span>';
+    if (hasSubs) row += '<span style="font-size:9px;color:var(--dim);margin-left:4px">(' + c.subs.length + ')</span>';
     row += '</td>';
     row += '<td><span class="tb t-' + c.tier + '">' + tLabel(c.tier) + '</span>';
     if (isUp) row += '<span class="tu">&#x2B06;</span>';
@@ -611,8 +636,10 @@ function renderTrk() {
     row += '<td class="' + (dg > 0 ? 'du' : dg < 0 ? 'dd' : 'df') + '">' + (dg === null ? '-' : dg > 0 ? '+' + fmt(dg) : dg < 0 ? fmt(dg) : '-') + '</td>';
     row += '<td>' + c.v + '</td>';
     row += '<td class="' + (dv > 0 ? 'du' : 'df') + '">' + (dv === null ? '-' : dv > 0 ? '+' + dv : '-') + '</td>';
-    row += '<td class="' + (vg > 0 ? 'du' : 'df') + '">' + (vg > 0 ? fmt(vg) : '-') + '</td>';
-    row += '<td class="' + (lg > 0 ? 'du' : 'df') + '">' + (lg > 0 ? fmt(lg) : '-') + '</td>';
+    var vc = c.video_count || 0;
+    row += '<td class="' + (vg > 0 ? 'du' : vc > 0 ? '' : 'df') + '">' + (vg > 0 ? fmt(vg) : vc > 0 ? '<span style="color:var(--cy);font-size:9px">' + vc + '개 $0</span>' : '-') + '</td>';
+    var lc = c.live_count || 0;
+    row += '<td class="' + (lg > 0 ? 'du' : lc > 0 ? '' : 'df') + '">' + (lg > 0 ? fmt(lg) : lc > 0 ? '<span style="color:var(--pp);font-size:9px">' + lc + '회 $0</span>' : '-') + '</td>';
     if (CV.dc) row += '<td class="cc"><input type="checkbox"' + (c.dj ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'dj\',this.checked)"></td>';
     if (CV.cn) row += '<td class="cc">' + (c.ag ? '' : '<input type="checkbox"' + (c.cn ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'cn\',this.checked)">') + '</td>';
     if (CV.ca) row += '<td class="cc">' + (c.ag ? '' : '<input type="checkbox"' + (c.ca ? ' checked' : '') + ' onchange="upd(\'' + c.h + '\',\'ca\',this.checked)">') + '</td>';
@@ -624,12 +651,40 @@ function renderTrk() {
     row += '<td><input class="ni em" value="' + em.replace(/"/g, '&quot;') + '" placeholder="이메일..." oninput="updStr(\'' + c.h + '\',\'email\',this.value)" onblur="updStr(\'' + c.h + '\',\'email\',this.value)"></td>';
     row += '</tr>';
     tbl += row;
+    // Sub rows (hidden by default)
+    if (hasSubs) {
+      var colSpan = 8 + (CV.dc?1:0) + (CV.cn?1:0) + (CV.ca?1:0) + (CV.cv?1:0) + (CV.ct?1:0) + (CV.rp?1:0) + (CV.nt?1:0) + 1;
+      c.subs.sort(function(a,b){ return b.gmv - a.gmv; });
+      c.subs.forEach(function(s) {
+        var isLive = s.type === 'Livestream';
+        var typeBadge = isLive ? '<span class="sub-type sl">LIVE</span>' : '<span class="sub-type sv">Video</span>';
+        var linkLabel = isLive ? (s.lsStart || s.posted || '-') : (s.link !== '-' ? s.link : s.posted);
+        var linkHTML = (s.link && s.link !== '-') ?
+          '<a href="' + s.link + '" target="_blank" class="sub-link">' + linkLabel + '</a>' :
+          '<span class="sub-meta">' + (s.lsStart || s.posted || '-') + '</span>';
+        var gmvClass = s.gmv > 0 ? 'color:var(--gn)' : 'color:var(--dim)';
+        var viewsStr = (s.views && s.views !== '-') ? parseInt(s.views.toString().replace(/,/g,''),10).toLocaleString() : '-';
+        tbl += '<tr class="sub-row ' + rowId + '" style="display:none">';
+        tbl += '<td colspan="' + colSpan + '" style="padding-left:36px">';
+        tbl += typeBadge + ' ' + linkHTML;
+        tbl += '<span class="sub-gmv" style="margin-left:12px;' + gmvClass + '">' + fmt(s.gmv) + '</span>';
+        tbl += '<span class="sub-meta" style="margin-left:10px">Views: ' + viewsStr + '</span>';
+        tbl += '<span class="sub-meta" style="margin-left:10px">' + (s.posted || '') + '</span>';
+        tbl += '</td></tr>';
+      });
+    }
   });
 
   tbl += '</tbody></table></div><p style="margin-top:5px;font-size:9px;color:var(--dim)">' + f.length + '/' + a.length + '</p>';
   $('trkA').innerHTML = fbHTML + tbl;
 }
 
+function toggleSubs(rowId, btn) {
+  var rows = document.querySelectorAll('.' + rowId);
+  var show = rows[0] && rows[0].style.display === 'none';
+  rows.forEach(function(r) { r.style.display = show ? 'table-row' : 'none'; });
+  btn.textContent = show ? '−' : '+';
+}
 function ts(col) { if (sCol === col) sDir = sDir === 'desc' ? 'asc' : 'desc'; else { sCol = col; sDir = 'desc'; } renderTrk(); }
 function toggleColDD(id) {
   document.querySelectorAll('.col-dd').forEach(function(d) { if (d.id !== id) d.style.display='none'; });
@@ -737,8 +792,8 @@ function renderSeg() {
     {icon:'&#x2B50;',title:'VIP 임박 ($300+)',color:'var(--yw)',bg:'var(--ywb)',
       items:actC.filter(function(c){return c.g>=300;}).sort(function(a,b){return b.g-a.g;}),
       desc:'$500 도달시 VIP 이동'},
-    {icon:'&#x1F4FA;',title:'라이브 GMV 발생',color:'var(--pp)',bg:'var(--ppb)',
-      items:actC.filter(function(c){return c.live_gmv>0;}).sort(function(a,b){return b.live_gmv-a.live_gmv;}),
+    {icon:'&#x1F4FA;',title:'라이브 참여',color:'var(--pp)',bg:'var(--ppb)',
+      items:actC.filter(function(c){return c.live_gmv>0||c.live_count>0;}).sort(function(a,b){return b.live_gmv-a.live_gmv;}),
       desc:'라이브 담당자에게 전달'}
   ];
 
@@ -748,8 +803,8 @@ function renderSeg() {
     {icon:'&#x1F451;',title:'VVIP 임박 ($700+)',color:'var(--pk)',bg:'var(--pkb)',
       items:vipC.filter(function(c){return c.tier==='vip'&&c.g>=700;}).sort(function(a,b){return b.g-a.g;}),
       desc:'$1,000 도달시 VVIP'},
-    {icon:'&#x1F4FA;',title:'라이브 GMV',color:'var(--pp)',bg:'var(--ppb)',
-      items:vipC.filter(function(c){return c.live_gmv>0;}).sort(function(a,b){return b.live_gmv-a.live_gmv;})}
+    {icon:'&#x1F4FA;',title:'라이브 참여',color:'var(--pp)',bg:'var(--ppb)',
+      items:vipC.filter(function(c){return c.live_gmv>0||c.live_count>0;}).sort(function(a,b){return b.live_gmv-a.live_gmv;})}
   ];
 
   var tot = common.concat(celebrate).reduce(function(s, seg) { return s + seg.items.length; }, 0);
