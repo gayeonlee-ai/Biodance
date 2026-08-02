@@ -535,6 +535,7 @@ function renderTrk() {
   if (MF.tier || MF.dc || MF.surge || MF.nv || MF.vid || MF.live) {
     fbHTML += '<button class="fb rst" onclick="resetMF()">&#x2715; 초기화</button>';
   }
+  fbHTML += '<button class="fb" style="margin-left:auto;background:var(--gnb);color:var(--gn);border-color:var(--gn)" onclick="exportXLS()">&#x1F4E5; 엑셀 추출</button>';
   fbHTML += '</div>';
 
   var f = a.slice();
@@ -676,9 +677,11 @@ function renderTrk() {
   });
 
   tbl += '</tbody></table></div><p style="margin-top:5px;font-size:9px;color:var(--dim)">' + f.length + '/' + a.length + '</p>';
+  lastFiltered = f;
   $('trkA').innerHTML = fbHTML + tbl;
 }
 
+var lastFiltered = [];
 function toggleSubs(rowId, btn) {
   var rows = document.querySelectorAll('.' + rowId);
   var show = rows[0] && rows[0].style.display === 'none';
@@ -686,6 +689,58 @@ function toggleSubs(rowId, btn) {
   btn.textContent = show ? '−' : '+';
 }
 function ts(col) { if (sCol === col) sDir = sDir === 'desc' ? 'asc' : 'desc'; else { sCol = col; sDir = 'desc'; } renderTrk(); }
+
+function exportXLS() {
+  var data = lastFiltered || Object.values(C);
+  if (!data.length) { toast('추출할 데이터 없음'); return; }
+  var headers = ['TikTok Handle','Discord Username','Tier','Total GMV','Videos','Video GMV','Video Count','Live GMV','Live Count','Discord 입장','🌱채널','👟채널','⭐채널','연락','응답','이메일','전화번호','메모'];
+  function tl(t) { return t === 'vvip' ? 'VVIP' : t === 'vip' ? 'VIP' : t === 'active' ? 'Active' : t === 'new' ? 'New' : 'None'; }
+  function yn(v) { return v ? 'O' : ''; }
+  var rows = data.map(function(c) {
+    return [
+      '@' + c.h,
+      c.uname || '',
+      tl(c.tier),
+      c.g || 0,
+      c.v || 0,
+      c.video_gmv || 0,
+      c.video_count || 0,
+      c.live_gmv || 0,
+      c.live_count || 0,
+      yn(c.dj),
+      yn(c.cn),
+      yn(c.ca),
+      yn(c.cv),
+      yn(c.ct),
+      yn(c.rp),
+      c.email || '',
+      c.phone || '',
+      c.nt || ''
+    ];
+  });
+  var csvContent = '\uFEFF' + [headers].concat(rows).map(function(r) {
+    return r.map(function(cell) {
+      var s = String(cell);
+      if (s.indexOf(',') >= 0 || s.indexOf('"') >= 0 || s.indexOf('\n') >= 0) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }).join(',');
+  }).join('\n');
+  var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  var filterName = MF.tier ? '_' + MF.tier : '';
+  filterName += MF.dc === 'y' ? '_DC' : MF.dc === 'n' ? '_noDC' : MF.dc === 'ag' ? '_AG' : '';
+  if (MF.live) filterName += '_live';
+  a.href = url;
+  a.download = 'biodance_creators' + filterName + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(data.length + '명 추출 완료');
+}
 function toggleColDD(id) {
   document.querySelectorAll('.col-dd').forEach(function(d) { if (d.id !== id) d.style.display='none'; });
   var el = document.getElementById(id);
