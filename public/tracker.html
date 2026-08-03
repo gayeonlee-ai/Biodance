@@ -624,7 +624,7 @@ function renderTrk() {
     var row = '<tr>';
     row += '<td class="hc">';
     if (hasSubs) row += '<span class="exp-btn" onclick="toggleSubs(\'' + rowId + '\',this)">+</span>';
-    row += '<a href="https://www.tiktok.com/@' + c.h + '" target="_blank">@' + c.h + '</a>';
+    row += '<a href="https://www.tiktok.com/@' + c.h + '" target="_blank" rel="noreferrer noopener">@' + c.h + '</a>';
     if (c.uname) row += '<span class="un">' + c.uname + '</span>';
     if (c.ag) row += '<span class="ag">AG</span>';
     if (isN) row += '<span style="font-size:7px;padding:1px 3px;border-radius:2px;background:var(--cyb);color:var(--cy);margin-left:2px">NEW</span>';
@@ -661,7 +661,7 @@ function renderTrk() {
         var typeBadge = isLive ? '<span class="sub-type sl">LIVE</span>' : '<span class="sub-type sv">Video</span>';
         var linkLabel = isLive ? (s.lsStart || s.posted || '-') : (s.link !== '-' ? s.link : s.posted);
         var linkHTML = (s.link && s.link !== '-') ?
-          '<a href="' + s.link + '" target="_blank" class="sub-link">' + linkLabel + '</a>' :
+          '<a href="' + s.link + '" target="_blank" rel="noreferrer noopener" class="sub-link">' + linkLabel + '</a>' :
           '<span class="sub-meta">' + (s.lsStart || s.posted || '-') + '</span>';
         var gmvClass = s.gmv > 0 ? 'color:var(--gn)' : 'color:var(--dim)';
         var viewsStr = (s.views && s.views !== '-') ? parseInt(s.views.toString().replace(/,/g,''),10).toLocaleString() : '-';
@@ -894,7 +894,7 @@ function renderHist() {
     var tcol = tc === 'vvip' ? 'var(--pk)' : tc === 'vip' ? 'var(--yw)' : tc === 'active' ? 'var(--gn)' : 'var(--cy)';
     var tierBadge = '<span class="tb t-' + tc + '" style="margin-left:4px;font-size:7px">' + tLabel(tc) + '</span>';
     var row = '<tr><td style="border-left:3px solid ' + tcol + '">';
-    row += '<a href="https://www.tiktok.com/@' + handle + '" target="_blank" style="color:var(--ac);text-decoration:none;font-weight:600">@' + handle + '</a>';
+    row += '<a href="https://www.tiktok.com/@' + handle + '" target="_blank" rel="noreferrer noopener" style="color:var(--ac);text-decoration:none;font-weight:600">@' + handle + '</a>';
     row += tierBadge;
     if (c && c.uname) row += '<br><span style="font-size:8px;color:var(--pp)">' + c.uname + '</span>';
     if (c && c.ag) row += '<span class="ag">AG</span>';
