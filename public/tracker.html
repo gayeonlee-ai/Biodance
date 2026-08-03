@@ -662,7 +662,7 @@ function renderTrk() {
         var typeBadge = isLive ? '<span class="sub-type sl">LIVE</span>' : '<span class="sub-type sv">Video</span>';
         var linkLabel = isLive ? (s.lsStart || s.posted || '-') : (s.link !== '-' ? s.link : s.posted);
         var linkHTML = (s.link && s.link !== '-') ?
-          '<a href="' + s.link + '" target="_blank" rel="noreferrer noopener" class="sub-link">' + linkLabel + '</a>' :
+          '<a href="' + s.link + '" onclick="copyLink(event,\'' + s.link.replace(/'/g,"\\'") + '\')" class="sub-link" title="클릭하면 링크 복사">' + linkLabel + ' 📋</a>' :
           '<span class="sub-meta">' + (s.lsStart || s.posted || '-') + '</span>';
         var gmvClass = s.gmv > 0 ? 'color:var(--gn)' : 'color:var(--dim)';
         var viewsStr = (s.views && s.views !== '-') ? parseInt(s.views.toString().replace(/,/g,''),10).toLocaleString() : '-';
@@ -683,6 +683,21 @@ function renderTrk() {
 }
 
 var lastFiltered = [];
+function copyLink(e, url) {
+  e.preventDefault();
+  navigator.clipboard.writeText(url).then(function() {
+    toast('링크 복사됨 — 주소창에 붙여넣기 하세요 📋');
+  }).catch(function() {
+    // fallback
+    var ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('링크 복사됨 — 주소창에 붙여넣기 하세요 📋');
+  });
+}
 function toggleSubs(rowId, btn) {
   var rows = document.querySelectorAll('.' + rowId);
   var show = rows[0] && rows[0].style.display === 'none';
