@@ -660,9 +660,9 @@ function renderTrk() {
       c.subs.forEach(function(s) {
         var isLive = s.type === 'Livestream';
         var typeBadge = isLive ? '<span class="sub-type sl">LIVE</span>' : '<span class="sub-type sv">Video</span>';
-        var linkLabel = isLive ? (s.lsStart || s.posted || '-') : (s.link !== '-' ? s.link : s.posted);
+        var linkLabel = isLive ? (s.lsStart || s.posted || '-') : (s.link !== '-' ? s.link.replace('https://www.tiktok.com','tiktok.com') : s.posted);
         var linkHTML = (s.link && s.link !== '-') ?
-          '<a href="' + s.link + '" onclick="copyLink(event,\'' + s.link.replace(/'/g,"\\'") + '\')" class="sub-link" title="클릭하면 링크 복사">' + linkLabel + ' 📋</a>' :
+          '<a href="' + s.link + '" target="_blank" class="sub-link">' + linkLabel + ' ↗</a>' :
           '<span class="sub-meta">' + (s.lsStart || s.posted || '-') + '</span>';
         var gmvClass = s.gmv > 0 ? 'color:var(--gn)' : 'color:var(--dim)';
         var viewsStr = (s.views && s.views !== '-') ? parseInt(s.views.toString().replace(/,/g,''),10).toLocaleString() : '-';
@@ -683,21 +683,6 @@ function renderTrk() {
 }
 
 var lastFiltered = [];
-function copyLink(e, url) {
-  e.preventDefault();
-  navigator.clipboard.writeText(url).then(function() {
-    toast('링크 복사됨 — 주소창에 붙여넣기 하세요 📋');
-  }).catch(function() {
-    // fallback
-    var ta = document.createElement('textarea');
-    ta.value = url;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    toast('링크 복사됨 — 주소창에 붙여넣기 하세요 📋');
-  });
-}
 function toggleSubs(rowId, btn) {
   var rows = document.querySelectorAll('.' + rowId);
   var show = rows[0] && rows[0].style.display === 'none';
@@ -1010,9 +995,36 @@ function rML() {
     h += '<td><button class="btn" style="background:var(--rd);color:#fff;padding:1px 4px;font-size:8px" onclick="delM(\'' + p[0].replace(/'/g, "\'") + '\')">x</button></td></tr>';
   });
   h += '</tbody></table></div><p style="font-size:9px;color:var(--dim);margin-top:4px">' + entries.length + '개 매핑</p>';
+  // Non-Euka 추출 버튼
+  var nonEuka = entries.filter(function(p) { return !C[p[1].toLowerCase().replace(/^@/,'')]; });
+  if (nonEuka.length) {
+    h += '<button class="btn bp" style="margin-top:6px;width:100%;font-size:10px" onclick="exportNonEuka()">&#x1F4E5; Euka 미참가 Discord 인원 추출 (' + nonEuka.length + '명)</button>';
+  }
   el.innerHTML = h;
 }
 
+function exportNonEuka() {
+  var entries = Object.entries(discMap);
+  var nonEuka = entries.filter(function(p) { return !C[p[1].toLowerCase().replace(/^@/,'')]; });
+  if (!nonEuka.length) { toast('Euka 미참가 인원 없음'); return; }
+  var headers = ['Discord Username', 'TikTok Handle'];
+  var rows = nonEuka.map(function(p) { return [p[0], '@' + p[1]]; });
+  var csv = '\uFEFF' + [headers].concat(rows).map(function(r) {
+    return r.map(function(c) {
+      var s = String(c);
+      return s.indexOf(',') >= 0 ? '"' + s + '"' : s;
+    }).join(',');
+  }).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'discord_non_euka_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(nonEuka.length + '명 추출 완료');
+}
 function lev(a, b) {
   var m = a.length, n = b.length, d = [];
   for (var i = 0; i <= m; i++) { d[i] = []; for (var j = 0; j <= n; j++) d[i][j] = 0; d[i][0] = i; }
