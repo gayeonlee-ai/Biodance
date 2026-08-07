@@ -12,7 +12,7 @@ const LOCAL_FILE = path.join(__dirname, 'data', 'state.json');
 
 if (!fs.existsSync(path.join(__dirname, 'data'))) fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
 
-const EMPTY = { tracking: {}, hist: {}, discMap: {}, agList: [], dcList: [] };
+const EMPTY = { tracking: {}, hist: {}, discMap: {}, agList: [], dcList: [], tipsLog: [] };
 let STATE = null; // In-memory state
 let savePending = false;
 let lastSHA = null;
@@ -117,6 +117,47 @@ app.use(function(req, res, next) {
 });
 
 app.use(express.static(path.join(__dirname, 'public'), { etag: false, lastModified: false }));
+
+// ── Tips Tracking ─────────────────────────────────────────────
+// Config: Set your Google Docs URL here
+const TIPS_URLS = {
+  default: process.env.TIPS_URL || 'https://docs.google.com/document/d/YOUR_DOC_ID/edit?usp=sharing'
+};
+
+// GET /tips/:channel — track click + redirect to doc
+app.get('/tips/:channel', (req, res) => {
+  const ch = req.params.channel || 'unknown';
+  const u = (req.query.u || 'anonymous').toLowerCase();
+  const docUrl = req.query.doc || TIPS_URLS[ch] || TIPS_URLS.default;
+  if (!STATE) STATE = EMPTY;
+  if (!STATE.tipsLog) STATE.tipsLog = [];
+  STATE.tipsLog.push({
+    user: u,
+    channel: ch,
+    time: new Date().toISOString(),
+    doc: docUrl.substring(0, 60)
+  });
+  // Keep last 5000 entries
+  if (STATE.tipsLog.length > 5000) STATE.tipsLog = STATE.tipsLog.slice(-5000);
+  queueSave();
+  res.redirect(docUrl);
+});
+
+// GET /api/tips-log — return tracking data
+app.get('/api/tips-log', (req, res) => {
+  res.json((STATE && STATE.tipsLog) || []);
+});
+
+// POST /api/tips-url — update the Google Docs URL
+app.post('/api/tips-url', (req, res) => {
+  if (req.body.url) {
+    TIPS_URLS.default = req.body.url;
+    if (req.body.channel) TIPS_URLS[req.body.channel] = req.body.url;
+  }
+  res.json({ ok: true, urls: TIPS_URLS });
+});
+
+// ── Express Routes ─────────────────────────────────────────────
 
 app.get('/tracker', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'tracker.html'));
