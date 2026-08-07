@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, EmbedBuilder, Partials, REST, Routes, SlashCommandBuilder } = require("discord.js");
+const { Client, GatewayIntentBits, EmbedBuilder, Partials, REST, Routes, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
 const http = require("http");
 const https = require("https");
 
@@ -246,6 +246,17 @@ const commands = [
     .setName("find")
     .setDescription("TikTok 핸들로 Discord 유저 조회")
     .addStringOption(opt => opt.setName("tiktok").setDescription("TikTok 핸들 (@없이)").setRequired(true)),
+  // ─── /tips — Tips 리소스 버튼 게시 ───
+  new SlashCommandBuilder()
+    .setName("tips")
+    .setDescription("Tips 리소스 버튼을 채널에 게시합니다 (관리자용)")
+    .addStringOption(opt => opt.setName("title").setDescription("공지 제목").setRequired(false))
+    .addStringOption(opt => opt.setName("channel_type").setDescription("채널 타입").setRequired(false)
+      .addChoices(
+        { name: "🌱 New", value: "new" },
+        { name: "👟 Active", value: "active" },
+        { name: "⭐ VIP", value: "vip" }
+      )),
 ].map(cmd => cmd.toJSON());
 
 // ─── 봇 실행 ───
@@ -476,6 +487,54 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply({ embeds: [embedFn()] });
     console.log("✅ /" + interaction.commandName + " 커맨드 응답 완료");
   }
+
+  // ─── /tips — 버튼 공지 게시 ───
+  if (interaction.commandName === "tips") {
+    const title = interaction.options.getString("title") || "🚨 NEW: Top GMV Video Breakdown";
+    const chType = interaction.options.getString("channel_type") || "new";
+    const embed = new EmbedBuilder()
+      .setColor(0x7c6af7)
+      .setTitle(title)
+      .setDescription("We analyzed the highest-converting Caviar PDRN Serum videos and broke down exactly what makes them work — key hooks, selling points, and full scripts you can remix for your own content. 🔥\n\nClick the button below to check it out!")
+      .setFooter({ text: "Biodance Creator Tips • " + chType.toUpperCase() + " Channel" });
+    const btn = new ButtonBuilder()
+      .setCustomId("tips_" + chType)
+      .setLabel("📄 View Tips & Scripts")
+      .setStyle(ButtonStyle.Primary);
+    const row = new ActionRowBuilder().addComponents(btn);
+    await interaction.reply({ embeds: [embed], components: [row] });
+    console.log("✅ /tips 버튼 공지 게시 — " + chType);
+  }
+});
+
+// ─── 버튼 클릭 핸들러 ───
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isButton()) return;
+  if (!interaction.customId.startsWith("tips_")) return;
+
+  const chType = interaction.customId.replace("tips_", "");
+  const discordUser = interaction.user.username;
+
+  // discMap에서 TikTok 핸들 조회
+  let tiktokHandle = discordUser;
+  try {
+    const result = await trackerAPI("/api/lookup", { type: "discord", value: discordUser });
+    if (result && result.tiktok) tiktokHandle = result.tiktok;
+  } catch (e) {}
+
+  // 서버에 클릭 기록
+  try {
+    await trackerAPI("/api/tips-click", { user: tiktokHandle, discord: discordUser, channel: chType });
+  } catch (e) { console.log("Tips 기록 실패:", e.message); }
+
+  const BASE_URL = process.env.RENDER_URL || "https://biodance.onrender.com";
+  const tipsUrl = BASE_URL + "/tips-page/" + chType + "?u=" + encodeURIComponent(tiktokHandle) + "&d=" + encodeURIComponent(discordUser);
+
+  await interaction.reply({
+    content: "📄 Here's your personalized tips link!\n" + tipsUrl,
+    ephemeral: true
+  });
+  console.log("✅ Tips 버튼 클릭: " + discordUser + " → " + tiktokHandle + " (" + chType + ")");
 });
 
 client.login(CONFIG.TOKEN);
