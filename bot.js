@@ -270,8 +270,10 @@ client.once("clientReady", async () => {
   console.log("📊 서버 " + client.guilds.cache.size + "개에 연결됨");
   try {
     const rest = new REST({ version: "10" }).setToken(CONFIG.TOKEN);
-    await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
-    console.log("✅ 슬래시 커맨드 등록 완료!");
+    for (const guild of client.guilds.cache.values()) {
+      await rest.put(Routes.applicationGuildCommands(client.user.id, guild.id), { body: commands });
+      console.log("✅ 슬래시 커맨드 등록 완료! (" + guild.name + ")");
+    }
   } catch (e) { console.error("❌ 슬래시 커맨드 등록 실패:", e); }
 
   for (const guild of client.guilds.cache.values()) {
