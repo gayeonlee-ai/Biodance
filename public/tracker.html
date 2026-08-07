@@ -924,52 +924,88 @@ function renderTips() {
   var html = '<div style="padding:8px 0">';
   html += '<h3 style="font-size:14px;color:var(--tx);margin-bottom:12px">Tips 열람 추적</h3>';
   html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:14px;margin-bottom:14px">';
-  html += '<p style="font-size:12px;color:var(--dim);margin-bottom:8px">Discord 채널별로 다른 링크를 공유하면 채널별 열람 수를 추적할 수 있습니다.</p>';
-  html += '<div style="font-size:11px;color:var(--tx);line-height:1.8">';
-  html += '<b style="color:var(--cy)">New:</b> <code style="background:var(--s3);padding:2px 6px;border-radius:3px;font-size:10px">/tips/new</code><br>';
-  html += '<b style="color:var(--gn)">Active:</b> <code style="background:var(--s3);padding:2px 6px;border-radius:3px;font-size:10px">/tips/active</code><br>';
-  html += '<b style="color:var(--yw)">VIP:</b> <code style="background:var(--s3);padding:2px 6px;border-radius:3px;font-size:10px">/tips/vip</code>';
+  html += '<p style="font-size:12px;color:var(--dim);margin-bottom:8px">Discord 채널에서 <code style="background:var(--s3);padding:2px 6px;border-radius:3px;font-size:10px">/tips</code> 커맨드로 버튼 공지를 게시하면 크리에이터별 열람 + 영상 클릭을 추적할 수 있습니다.</p>';
   html += '</div>';
-  html += '<p style="font-size:10px;color:var(--dim);margin-top:8px">Google Docs URL은 서버 환경변수 TIPS_URL에서 설정합니다.</p>';
-  html += '</div>';
-  // Fetch tips log
   html += '<div id="tipsLogArea"><button class="btn" onclick="loadTipsLog()" style="font-size:11px">열람 기록 불러오기</button></div>';
   html += '</div>';
   $('tipsA').innerHTML = html;
 }
 
 function loadTipsLog() {
-  fetch('/api/tips-log').then(function(r) { return r.json(); }).then(function(log) {
-    if (!log || !log.length) { $('tipsLogArea').innerHTML = '<p style="font-size:11px;color:var(--dim)">열람 기록 없음</p>'; return; }
-    // Summary by channel
-    var byChannel = {};
-    var byUser = {};
-    log.forEach(function(e) {
-      byChannel[e.channel] = (byChannel[e.channel] || 0) + 1;
-      var k = e.user + '|' + e.channel;
-      if (!byUser[k]) byUser[k] = { user: e.user, channel: e.channel, count: 0, last: '' };
-      byUser[k].count++;
-      if (e.time > byUser[k].last) byUser[k].last = e.time;
-    });
+  $('tipsLogArea').innerHTML = '<p style="font-size:11px;color:var(--dim)">불러오는 중...</p>';
+  fetch('/api/tips-log').then(function(r) { return r.json(); }).then(function(data) {
+    var views = data.views || [];
+    var clicks = data.clicks || [];
+    var videos = data.videos || [];
+    if (!views.length && !clicks.length) { $('tipsLogArea').innerHTML = '<p style="font-size:11px;color:var(--dim)">열람 기록 없음</p>'; return; }
+
     var html = '<div style="margin-top:10px">';
-    html += '<div style="display:flex;gap:10px;margin-bottom:12px">';
+
+    // KPI cards
+    var byChannel = {};
+    views.forEach(function(e) { byChannel[e.channel] = (byChannel[e.channel]||0)+1; });
+    var totalClicks = clicks.length;
+    html += '<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">';
+    html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--ac)">' + views.length + '</div><div style="font-size:10px;color:var(--dim)">총 열람</div></div>';
     Object.keys(byChannel).forEach(function(ch) {
-      var color = ch === 'new' ? 'var(--cy)' : ch === 'active' ? 'var(--gn)' : ch === 'vip' ? 'var(--yw)' : 'var(--dim)';
-      html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;text-align:center">';
-      html += '<div style="font-size:20px;font-weight:700;color:' + color + '">' + byChannel[ch] + '</div>';
-      html += '<div style="font-size:10px;color:var(--dim)">' + ch.toUpperCase() + ' 클릭</div></div>';
+      var color = ch==='new'?'var(--cy)':ch==='active'?'var(--gn)':ch==='vip'?'var(--yw)':'var(--dim)';
+      html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;text-align:center"><div style="font-size:22px;font-weight:700;color:'+color+'">'+byChannel[ch]+'</div><div style="font-size:10px;color:var(--dim)">'+ch.toUpperCase()+'</div></div>';
     });
+    html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--pk)">'+totalClicks+'</div><div style="font-size:10px;color:var(--dim)">영상 클릭</div></div>';
     html += '</div>';
-    // Table
-    html += '<div style="overflow-x:auto"><table class="mt"><thead><tr><th>핸들</th><th>채널</th><th>클릭수</th><th>마지막 열람</th></tr></thead><tbody>';
-    var users = Object.values(byUser).sort(function(a, b) { return b.count - a.count; });
+
+    // Video click ranking
+    if (clicks.length) {
+      var byVid = {};
+      clicks.forEach(function(c) { byVid[c.videoId] = (byVid[c.videoId]||0)+1; });
+      html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:14px;margin-bottom:14px">';
+      html += '<h4 style="font-size:12px;color:var(--tx);margin-bottom:10px">영상별 클릭 수</h4>';
+      videos.forEach(function(v) {
+        var cnt = byVid[v.id] || 0;
+        var maxCnt = Math.max.apply(null, Object.values(byVid)) || 1;
+        var pct = Math.round(cnt/maxCnt*100);
+        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
+        html += '<span style="font-size:11px;color:var(--dim);width:50px">Video '+v.id+'</span>';
+        html += '<div style="flex:1;height:18px;background:var(--s3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--ac);border-radius:4px;transition:.3s"></div></div>';
+        html += '<span style="font-size:11px;font-weight:700;color:var(--ac);width:30px;text-align:right">'+cnt+'</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+
+    // Creator detail table
+    var byUser = {};
+    views.forEach(function(e) {
+      var k = e.user;
+      if (!byUser[k]) byUser[k] = {user:e.user,discord:e.discord||'',channel:e.channel,viewCount:0,lastView:'',videos:{}};
+      byUser[k].viewCount++;
+      if (e.time > byUser[k].lastView) byUser[k].lastView = e.time;
+    });
+    clicks.forEach(function(c) {
+      var k = c.user;
+      if (!byUser[k]) byUser[k] = {user:c.user,discord:c.discord||'',channel:'',viewCount:0,lastView:'',videos:{}};
+      if (!byUser[k].discord && c.discord) byUser[k].discord = c.discord;
+      byUser[k].videos[c.videoId] = (byUser[k].videos[c.videoId]||0)+1;
+    });
+
+    html += '<div style="overflow-x:auto"><table class="mt"><thead><tr><th>핸들</th><th>Discord</th><th>채널</th><th>열람수</th>';
+    videos.forEach(function(v) { html += '<th>V'+v.id+'</th>'; });
+    html += '<th>마지막 열람</th></tr></thead><tbody>';
+    var users = Object.values(byUser).sort(function(a,b){return b.viewCount-a.viewCount;});
     users.forEach(function(u) {
-      var t = new Date(u.last);
-      var tStr = t.toLocaleDateString('ko') + ' ' + t.toLocaleTimeString('ko', {hour:'2-digit',minute:'2-digit'});
-      html += '<tr><td style="font-weight:600">@' + u.user + '</td><td>' + u.channel + '</td><td>' + u.count + '</td><td style="color:var(--dim)">' + tStr + '</td></tr>';
+      var t = u.lastView ? new Date(u.lastView) : null;
+      var tStr = t ? t.toLocaleDateString('ko')+' '+t.toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit'}) : '-';
+      html += '<tr><td style="font-weight:600">@'+u.user+'</td>';
+      html += '<td style="color:var(--dim);font-size:10px">'+u.discord+'</td>';
+      html += '<td>'+u.channel+'</td>';
+      html += '<td>'+u.viewCount+'</td>';
+      videos.forEach(function(v) {
+        var cnt = u.videos[v.id] || 0;
+        html += '<td style="color:'+(cnt>0?'var(--gn)':'var(--dim)')+'">'+( cnt>0?cnt+'회':'-')+'</td>';
+      });
+      html += '<td style="color:var(--dim);font-size:10px">'+tStr+'</td></tr>';
     });
     html += '</tbody></table></div>';
-    // Export button
     html += '<button class="btn" onclick="exportTipsLog()" style="font-size:10px;margin-top:8px">엑셀 추출</button>';
     html += '</div>';
     $('tipsLogArea').innerHTML = html;
@@ -977,16 +1013,36 @@ function loadTipsLog() {
 }
 
 function exportTipsLog() {
-  fetch('/api/tips-log').then(function(r) { return r.json(); }).then(function(log) {
-    var headers = ['핸들','채널','열람시간'];
-    var rows = log.map(function(e) { return [e.user, e.channel, e.time]; });
-    var csv = '\uFEFF' + [headers].concat(rows).map(function(r) { return r.join(','); }).join('\n');
-    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  fetch('/api/tips-log').then(function(r) { return r.json(); }).then(function(data) {
+    var views = data.views || [];
+    var clicks = data.clicks || [];
+    var videos = data.videos || [];
+    var byUser = {};
+    views.forEach(function(e) {
+      if (!byUser[e.user]) byUser[e.user] = {user:e.user,discord:e.discord||'',channel:e.channel,viewCount:0,lastView:'',videos:{}};
+      byUser[e.user].viewCount++;
+      if (e.time > byUser[e.user].lastView) byUser[e.user].lastView = e.time;
+    });
+    clicks.forEach(function(c) {
+      if (!byUser[c.user]) byUser[c.user] = {user:c.user,discord:c.discord||'',channel:'',viewCount:0,lastView:'',videos:{}};
+      byUser[c.user].videos[c.videoId] = (byUser[c.user].videos[c.videoId]||0)+1;
+    });
+    var headers = ['핸들','Discord Username','채널','열람수'];
+    videos.forEach(function(v) { headers.push('Video '+v.id+' ('+v.title+')'); });
+    headers.push('마지막 열람');
+    var rows = Object.values(byUser).map(function(u) {
+      var r = [u.user,u.discord,u.channel,u.viewCount];
+      videos.forEach(function(v) { r.push(u.videos[v.id]||0); });
+      r.push(u.lastView);
+      return r;
+    });
+    var csv = '\uFEFF' + [headers].concat(rows).map(function(r) { return r.map(function(c){var s=String(c);if(s.indexOf(',')>=0||s.indexOf('"')>=0)return '"'+s.replace(/"/g,'""')+'"';return s;}).join(','); }).join('\n');
+    var blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = 'tips_log_' + new Date().toISOString().slice(0,10) + '.csv';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    toast('Tips 열람 기록 추출 완료');
+    a.href=url;a.download='tips_analytics_'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    toast('Tips 분석 데이터 추출 완료');
   });
 }
 
