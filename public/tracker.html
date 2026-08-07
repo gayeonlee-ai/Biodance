@@ -119,6 +119,7 @@ tr:hover td{background:rgba(88,101,242,.04)}
   <div class="tab" data-t="segments" onclick="sw('segments')">&#x1F3AF; 세그먼트<span class="bdg" id="sBdg" style="display:none"></span></div>
   <div class="tab" data-t="discord" onclick="sw('discord')">&#x1F7E3; Discord</div>
   <div class="tab" data-t="history" onclick="sw('history')">&#x1F4C5; 히스토리</div>
+  <div class="tab" data-t="tips" onclick="sw('tips')">&#x1F4D6; Tips 열람</div>
 </div>
 <div class="cnt">
   <div class="pnl on" id="p-upload"><div id="upA"></div></div>
@@ -126,6 +127,7 @@ tr:hover td{background:rgba(88,101,242,.04)}
   <div class="pnl" id="p-segments"><div id="segA"></div></div>
   <div class="pnl" id="p-discord"><div id="discA"></div></div>
   <div class="pnl" id="p-history"><div id="histA"></div></div>
+  <div class="pnl" id="p-tips"><div id="tipsA"></div></div>
 </div>
 <div class="toast" id="tst"></div>
 <script>
@@ -323,7 +325,7 @@ function getDelta(h, field) {
   return C[h][field] - prev;
 }
 
-function render() { renderUp(); renderKPI(); renderTrk(); renderSeg(); renderDisc(); renderHist(); }
+function render() { renderUp(); renderKPI(); renderTrk(); renderSeg(); renderDisc(); renderHist(); renderTips(); }
 
 function renderKPI() {
   var a = Object.values(C);
@@ -916,6 +918,76 @@ function renderHist() {
   });
   html += '</tbody></table></div></div>';
   $('histA').innerHTML = html;
+}
+
+function renderTips() {
+  var html = '<div style="padding:8px 0">';
+  html += '<h3 style="font-size:14px;color:var(--tx);margin-bottom:12px">Tips 열람 추적</h3>';
+  html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:14px;margin-bottom:14px">';
+  html += '<p style="font-size:12px;color:var(--dim);margin-bottom:8px">Discord 채널별로 다른 링크를 공유하면 채널별 열람 수를 추적할 수 있습니다.</p>';
+  html += '<div style="font-size:11px;color:var(--tx);line-height:1.8">';
+  html += '<b style="color:var(--cy)">New:</b> <code style="background:var(--s3);padding:2px 6px;border-radius:3px;font-size:10px">/tips/new</code><br>';
+  html += '<b style="color:var(--gn)">Active:</b> <code style="background:var(--s3);padding:2px 6px;border-radius:3px;font-size:10px">/tips/active</code><br>';
+  html += '<b style="color:var(--yw)">VIP:</b> <code style="background:var(--s3);padding:2px 6px;border-radius:3px;font-size:10px">/tips/vip</code>';
+  html += '</div>';
+  html += '<p style="font-size:10px;color:var(--dim);margin-top:8px">Google Docs URL은 서버 환경변수 TIPS_URL에서 설정합니다.</p>';
+  html += '</div>';
+  // Fetch tips log
+  html += '<div id="tipsLogArea"><button class="btn" onclick="loadTipsLog()" style="font-size:11px">열람 기록 불러오기</button></div>';
+  html += '</div>';
+  $('tipsA').innerHTML = html;
+}
+
+function loadTipsLog() {
+  fetch('/api/tips-log').then(function(r) { return r.json(); }).then(function(log) {
+    if (!log || !log.length) { $('tipsLogArea').innerHTML = '<p style="font-size:11px;color:var(--dim)">열람 기록 없음</p>'; return; }
+    // Summary by channel
+    var byChannel = {};
+    var byUser = {};
+    log.forEach(function(e) {
+      byChannel[e.channel] = (byChannel[e.channel] || 0) + 1;
+      var k = e.user + '|' + e.channel;
+      if (!byUser[k]) byUser[k] = { user: e.user, channel: e.channel, count: 0, last: '' };
+      byUser[k].count++;
+      if (e.time > byUser[k].last) byUser[k].last = e.time;
+    });
+    var html = '<div style="margin-top:10px">';
+    html += '<div style="display:flex;gap:10px;margin-bottom:12px">';
+    Object.keys(byChannel).forEach(function(ch) {
+      var color = ch === 'new' ? 'var(--cy)' : ch === 'active' ? 'var(--gn)' : ch === 'vip' ? 'var(--yw)' : 'var(--dim)';
+      html += '<div style="background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;text-align:center">';
+      html += '<div style="font-size:20px;font-weight:700;color:' + color + '">' + byChannel[ch] + '</div>';
+      html += '<div style="font-size:10px;color:var(--dim)">' + ch.toUpperCase() + ' 클릭</div></div>';
+    });
+    html += '</div>';
+    // Table
+    html += '<div style="overflow-x:auto"><table class="mt"><thead><tr><th>핸들</th><th>채널</th><th>클릭수</th><th>마지막 열람</th></tr></thead><tbody>';
+    var users = Object.values(byUser).sort(function(a, b) { return b.count - a.count; });
+    users.forEach(function(u) {
+      var t = new Date(u.last);
+      var tStr = t.toLocaleDateString('ko') + ' ' + t.toLocaleTimeString('ko', {hour:'2-digit',minute:'2-digit'});
+      html += '<tr><td style="font-weight:600">@' + u.user + '</td><td>' + u.channel + '</td><td>' + u.count + '</td><td style="color:var(--dim)">' + tStr + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+    // Export button
+    html += '<button class="btn" onclick="exportTipsLog()" style="font-size:10px;margin-top:8px">엑셀 추출</button>';
+    html += '</div>';
+    $('tipsLogArea').innerHTML = html;
+  }).catch(function() { $('tipsLogArea').innerHTML = '<p style="font-size:11px;color:var(--rd)">서버 연결 실패</p>'; });
+}
+
+function exportTipsLog() {
+  fetch('/api/tips-log').then(function(r) { return r.json(); }).then(function(log) {
+    var headers = ['핸들','채널','열람시간'];
+    var rows = log.map(function(e) { return [e.user, e.channel, e.time]; });
+    var csv = '\uFEFF' + [headers].concat(rows).map(function(r) { return r.join(','); }).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'tips_log_' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast('Tips 열람 기록 추출 완료');
+  });
 }
 
 function renderDisc() {
