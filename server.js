@@ -122,11 +122,31 @@ app.use(express.static(path.join(__dirname, 'public'), { etag: false, lastModifi
 const TIPS_URL = process.env.TIPS_URL || '';
 
 const TIPS_VIDEOS = [
-  { id: '1', title: 'Botox alternative', creator: '@catawellness', url: 'https://www.tiktok.com/@catawellness/video/7669774284654529806' },
-  { id: '2', title: 'Product review', creator: '@tucarritonaranja1', url: 'https://www.tiktok.com/@tucarritonaranja1/video/7667419819586718989' },
-  { id: '3', title: 'PDRN debunk', creator: '@estybestieshopfinds', url: 'https://www.tiktok.com/@estybestieshopfinds/video/7665196247736732959' },
-  { id: '4', title: 'Anti-aging critique', creator: '@allure_fashion', url: 'https://www.tiktok.com/@allure_fashion/video/7666553552461974798' },
-  { id: '5', title: 'Celebrity treatment', creator: '@stephnicole923', url: 'https://www.tiktok.com/@stephnicole923/video/7665164039827328270' },
+  { id: '1', title: 'Botox Alternative', creator: '@catawellness',
+    url: 'https://www.tiktok.com/@catawellness/video/7669774284654529806',
+    hook: '"I cancelled my Botox appointment."',
+    points: ['Caviar Water → Glow + Firmness', 'Salmon PDRN → Fine lines + Skin texture', 'Panthenol = Repair, Squalane = Elasticity'],
+    direction: 'Show your face close-up. Talk about skin losing quality. Pivot to the serum as the game changer.' },
+  { id: '2', title: 'Product Review & Price Drop', creator: '@tucarritonaranja1',
+    url: 'https://www.tiktok.com/@tucarritonaranja1/video/7667419819586718989',
+    hook: '"If you have not bought this anti-aging serum yet — now is the time."',
+    points: ['1000 ppm Salmon PDRN → Renew skin elasticity from within', '6 types of Hyaluronic Acid → Layered hydration', 'Niacinamide → Even skin tone'],
+    direction: 'Urgency angle — price just dropped + free shipping. Position as an anti-aging powerhouse.' },
+  { id: '3', title: 'PDRN Debunk', creator: '@estybestieshopfinds',
+    url: 'https://www.tiktok.com/@estybestieshopfinds/video/7665196247736732959',
+    hook: '"Turns out Salmon Sperm IS A LIE."',
+    points: ['Liposomal technology protects DNA fragments for deeper absorption', 'Daily affordable ritual vs $1,200 PDRN facials', 'Sustained cellular repair, not a spike'],
+    direction: 'Controversial hook → debunk cheap PDRN → introduce Biodance as the real deal. Compare to $1,200 facials.' },
+  { id: '4', title: 'Anti-Aging Critique + Applicator', creator: '@allure_fashion',
+    url: 'https://www.tiktok.com/@allure_fashion/video/7666553552461974798',
+    hook: '"If you are doing anti-aging wrong, it can actually make you look older."',
+    points: ['Syringe applicator targets specific spots', '67% Hyaluronic Water — highest concentration', 'Panthenol repairs, Squalane locks in moisture'],
+    direction: 'Start with a bold claim about doing anti-aging wrong. Show the applicator. Emphasize the 67% concentration.' },
+  { id: '5', title: 'Celebrity Treatment', creator: '@stephnicole923',
+    url: 'https://www.tiktok.com/@stephnicole923/video/7665164039827328270',
+    hook: '"This is the treatment celebrities get before big events."',
+    points: ['Caviar + PDRN dual-action rejuvenation', 'Skin booster = improve skin quality, not change face shape', 'Works like professional injectable treatments'],
+    direction: 'Celebrity angle → demo the product → "filter on your face" result. Emphasize it just launched.' },
 ];
 
 // POST /api/tips-click — bot calls this when button is clicked
@@ -191,55 +211,65 @@ app.get('/tips/:channel', (req, res) => {
 });
 
 function buildTipsPage(channel, user, discord) {
-  const vLinks = TIPS_VIDEOS.map(v =>
-    '<a href="/watch/' + v.id + '?u=' + encodeURIComponent(user) + '&d=' + encodeURIComponent(discord) + '" target="_blank" class="vc">' +
-    '<div class="vn">' + v.id + '</div>' +
-    '<div class="vi"><div class="vt">' + v.title + '</div><div class="vs">' + v.creator + '</div></div>' +
-    '<div class="va">Watch ↗</div></a>'
-  ).join('');
+  var vCards = TIPS_VIDEOS.map(v => {
+    var watchUrl = '/watch/' + v.id + '?u=' + encodeURIComponent(user) + '&d=' + encodeURIComponent(discord);
+    var pointsHtml = v.points.map(p => '<div class="sp">✦ ' + p + '</div>').join('');
+    return '<div class="vc">' +
+      '<div class="vh">' +
+        '<div class="vn">' + v.id + '</div>' +
+        '<div class="vi"><div class="vt">' + v.title + '</div><div class="vs">' + v.creator + '</div></div>' +
+        '<a href="' + watchUrl + '" target="_blank" class="va">▶ Watch</a>' +
+      '</div>' +
+      '<div class="vb">' +
+        '<div class="hook">🎣 Hook: <span>' + v.hook + '</span></div>' +
+        '<div class="sps">' + pointsHtml + '</div>' +
+        '<div class="dir">🎬 Direction: ' + v.direction + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+  '<meta name="referrer" content="no-referrer">' +
   '<title>Biodance Creator Tips</title>' +
   '<style>' +
-  'body{margin:0;background:#0e0f13;color:#e8eaf0;font-family:Segoe UI,sans-serif;padding:20px;max-width:680px;margin:0 auto}' +
+  'body{margin:0;background:#0e0f13;color:#e8eaf0;font-family:Segoe UI,sans-serif;padding:20px;max-width:720px;margin:0 auto}' +
   '.hdr{text-align:center;padding:30px 0 20px;border-bottom:1px solid #252830;margin-bottom:24px}' +
   '.hdr h1{font-size:24px;color:#fff;margin:0 0 6px}.hdr p{font-size:13px;color:#7b7e8e}' +
   '.badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;margin-bottom:12px}' +
   '.b-new{background:rgba(0,180,216,.15);color:#00b4d8}.b-active{background:rgba(62,207,142,.15);color:#3ecf8e}.b-vip{background:rgba(245,197,66,.15);color:#f5c542}' +
   '.sec{background:#16181f;border:1px solid #252830;border-radius:12px;padding:20px;margin-bottom:16px}' +
   '.sec h2{font-size:16px;color:#fff;margin:0 0 14px}' +
-  '.vc{display:flex;align-items:center;gap:12px;padding:12px;background:#1a1d27;border-radius:8px;margin-bottom:8px;text-decoration:none;color:#e8eaf0;border:1px solid #252830;transition:.2s}' +
-  '.vc:hover{border-color:#7c6af7;background:#1e2030}' +
-  '.vn{width:32px;height:32px;background:#7c6af7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}' +
-  '.vi{flex:1}.vt{font-weight:600;font-size:14px;color:#fff}.vs{font-size:11px;color:#7b7e8e;margin-top:2px}' +
-  '.va{font-size:12px;color:#7c6af7;font-weight:600;white-space:nowrap}' +
+  '.vc{background:#16181f;border:1px solid #252830;border-radius:12px;margin-bottom:14px;overflow:hidden}' +
+  '.vh{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#1a1d27;border-bottom:1px solid #252830}' +
+  '.vn{width:34px;height:34px;background:#7c6af7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}' +
+  '.vi{flex:1}.vt{font-weight:700;font-size:15px;color:#fff}.vs{font-size:11px;color:#7b7e8e;margin-top:2px}' +
+  '.va{font-size:12px;color:#fff;font-weight:600;background:#7c6af7;padding:6px 14px;border-radius:6px;text-decoration:none;white-space:nowrap}' +
+  '.va:hover{background:#6b5ce0}' +
+  '.vb{padding:14px 16px}' +
+  '.hook{font-size:13px;color:#e8eaf0;margin-bottom:10px;padding:8px 12px;background:rgba(124,106,247,.08);border-left:3px solid #7c6af7;border-radius:0 6px 6px 0}' +
+  '.hook span{font-weight:700;color:#fff;font-style:italic}' +
+  '.sps{margin-bottom:10px}' +
+  '.sp{font-size:12px;color:#b0b3c6;padding:3px 0;display:flex;gap:6px}' +
+  '.dir{font-size:12px;color:#7b7e8e;padding:8px 12px;background:#1a1d27;border-radius:6px;line-height:1.6}' +
+  '.ft{text-align:center;padding:20px 0;font-size:11px;color:#3a3d4a}' +
   '.tip{background:#1a1d27;border-left:3px solid #3ecf8e;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:8px;font-size:13px}' +
   '.tip b{color:#3ecf8e}' +
-  '.ft{text-align:center;padding:20px 0;font-size:11px;color:#3a3d4a}' +
   '</style></head><body>' +
   '<div class="hdr">' +
   '<div class="badge b-' + channel + '">' + channel.toUpperCase() + ' CHANNEL</div>' +
   '<h1>🔥 Top GMV Video Breakdown</h1>' +
-  '<p>Caviar PDRN Serum — Proven hooks, selling points & scripts</p></div>' +
+  '<p>Caviar PDRN Serum — Watch the video, study the hook, remix it for your content</p></div>' +
 
-  '<div class="sec"><h2>📺 Top performing videos</h2>' +
-  '<p style="font-size:12px;color:#7b7e8e;margin-bottom:14px">Click any video to watch and study the format</p>' +
-  vLinks + '</div>' +
+  '<div class="sec"><h2>📺 Top 5 Videos + Hooks & Scripts</h2>' +
+  '<p style="font-size:12px;color:#7b7e8e;margin-bottom:14px">Click ▶ Watch to see the actual video, then use the hook and direction for your own version!</p>' +
+  vCards + '</div>' +
 
-  '<div class="sec"><h2>🎯 Filming tips that work right now</h2>' +
-  '<div class="tip"><b>Hook 1 — Syringe applicator:</b> Show the applicator targeting frown lines or smile lines. "I cancelled my Botox appointment because of this."</div>' +
-  '<div class="tip"><b>Hook 2 — Talk in the car:</b> Casual vibe. "Standard PDRN just doesn\'t work — you need Liposomal PDRN combined with Caviar."</div>' +
-  '<div class="tip"><b>Hook 3 — Booking screen:</b> Show a clinic booking. "I have a limited budget for wrinkles — so I found this instead."</div>' +
-  '<div class="tip"><b>Hook 4 — B&A close-up:</b> Start with a close-up of your skin. "My forehead looks like this, my neck looks like this..."</div>' +
-  '<div class="tip"><b>Hook 5 — Price shock:</b> "Skin booster treatments cost $1,200+ — but this serum uses the same ingredients."</div>' +
-  '</div>' +
-
-  '<div class="sec"><h2>🔑 Key selling points to mention</h2>' +
-  '<div class="tip"><b>1000 ppm Salmon PDRN</b> — Renew and improve skin elasticity from within</div>' +
-  '<div class="tip"><b>Liposomal technology</b> — Protects DNA fragments for deeper absorption</div>' +
-  '<div class="tip"><b>67% Hyaluronic Water</b> — Highest concentration, best form</div>' +
-  '<div class="tip"><b>Caviar + PDRN dual-action</b> — Surface glow + deep repair</div>' +
-  '<div class="tip"><b>Syringe applicator</b> — Targets specific spots like frown lines</div>' +
+  '<div class="sec"><h2>💡 Quick Filming Tips</h2>' +
+  '<div class="tip"><b>Volume wins:</b> Post at least 5+ videos — TikTok needs data to find your winning hook</div>' +
+  '<div class="tip"><b>Car filming:</b> Casual, authentic vibe that converts well right now</div>' +
+  '<div class="tip"><b>B&A close-ups:</b> Start with a close-up of your skin concern — wrinkles, texture, fine lines</div>' +
+  '<div class="tip"><b>Price anchor:</b> Compare to $1,200+ clinic treatments — makes $35 serum feel like a steal</div>' +
+  '<div class="tip"><b>End with CTA:</b> "Link above my name" / "Check the link below before it\'s gone"</div>' +
   '</div>' +
 
   '<div class="ft">Biodance Creator Tips • Pick your angle, film today, post it! 🚀</div>' +
